@@ -1,11 +1,35 @@
+# server: 
+#     port: 8080
+
+# spring:
+#     datasource:
+#         url: jdbc:postgresql://dpg-ct124upu0jms73cbhf7g-a.oregon-postgres.render.com:5432/bancoreserva
+#         username: bancoreserva_user
+#         password: II5uJszqkqqZCgFn0mVzZo2UxOFyVF9e
+#         driver-class-name: org.postgresql.Driver
+#         initialize: true
+    
+#     jpa:
+#         hibernate:
+#             ddl-auto: create-drop
+#             generate-ddl: true
+        
+#     sql:
+#         init:
+#             schema-locations: classpath:/schema-postgresql.sql
+#             mode: always
+#             platform: postgres
+
+
+# ////// RODANDO LOCALMENTE ///////////////////
 server: 
     port: 8080
 
 spring:
     datasource:
-        url: jdbc:postgresql://dpg-ct124upu0jms73cbhf7g-a.oregon-postgres.render.com:5432/bancoreserva
-        username: bancoreserva_user
-        password: II5uJszqkqqZCgFn0mVzZo2UxOFyVF9e
+        url: jdbc:postgresql://localhost:5432/dbzinho
+        username: postgres
+        password: root
         driver-class-name: org.postgresql.Driver
         initialize: true
     
