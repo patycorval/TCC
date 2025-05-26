@@ -85,15 +85,6 @@ header {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    max-width: 1600px;
-    margin: 0 auto;
-}
-
-
 /* Estilo da logo */
 .logo-fatec{
     max-width: 100px;
@@ -428,6 +419,36 @@ h2 .sucesso{
     border-radius: 10px;
 }
 
+/* NAV DA HEADER (SOBRESCREVENDO BOOTSTRAP) */
+.nav-pills .nav-link {
+    color: #c30000 !important; 
+}
 
+.nav-pills .nav-link:hover {
+    color: #ff0000; 
+}
+
+.nav-pills .nav-link.active {
+    background-color: #c30000; 
+    color: white !important;
+}
+
+/* LOGIN */
+
+.centered-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .form-box {
+    max-width: 400px;
+    width: 100%;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  }
 
 
