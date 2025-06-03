@@ -12,13 +12,25 @@ img{
     border-radius: 10px;
 }
 
+.h2{
+    margin: 0;
+    padding: 0;
+}
+
+h1{
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    font-weight: 600 ;
+}
+
 h1, h2{
     padding-left: 10px;
     margin-left: 25px;
 }
 
 h3{
-    font-weight: 400;
+    font-weight: 700;
+    padding-top: 6px;
 }
 
 
@@ -44,10 +56,11 @@ h3{
 .div-reservar{
     background-color: rgb(120, 4, 4);
     color: white;
-    padding: 5px;
+    padding: 10px;
+    border-radius: 8px;
 }
 
-.btn{
+.div-reservar .btn{
     width: 150px;
     height: 35px;
     border-radius: 5px;
@@ -56,7 +69,11 @@ h3{
     margin-bottom: 5px;
     border-style: none;
     font-weight: 400;
-    transition: transform 0.2s;
+    transition: transform 0.3s;
+}
+
+.btn{
+    transition: transform all 1s;
 }
 
 .btn:hover{
@@ -425,7 +442,7 @@ h2 .sucesso{
 }
 
 .nav-pills .nav-link:hover {
-    color: #ff0000; 
+    color: #ffffff; 
 }
 
 .nav-pills .nav-link.active {
@@ -451,4 +468,43 @@ h2 .sucesso{
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
   }
 
+.dia {
+    border-radius: 8px;
+    height: 100px;
+    width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+    font-size: 1.2rem;
+    background-color: #a0a0a0;
+}
 
+.grid-mensal {
+    display: grid;
+    grid-template-columns: repeat(7, 150px);
+    gap: 15px;
+}
+
+.form-box {
+    max-width: 400px;
+    width: 100%;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.form-box img {
+    width: auto;
+    height: 80px;
+    object-fit: contain;
+}
+
+.login{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

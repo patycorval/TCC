@@ -1,8 +1,12 @@
 package com.bd.sitebd.controller;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -82,10 +86,23 @@ public class CadastroController {
         return "redirect:/listagem";
     }
 
-    @GetMapping("/contato") 
-    public String Contato(Model model){
-        model.addAttribute("activePage", "contato");
-        return "contato"; 
+    @GetMapping("/auditorio")
+    public String auditorio(Model model) {
+    YearMonth yearMonth = YearMonth.now(); // Mês atual
+    int diasNoMes = yearMonth.lengthOfMonth();
+
+    List<Integer> diasDoMes = IntStream.rangeClosed(1, diasNoMes)
+                                       .boxed()
+                                       .collect(Collectors.toList());
+
+    model.addAttribute("diasDoMes", diasDoMes);
+    model.addAttribute("activePage", "auditorio");
+    return "auditorio";
     }
 
+    @GetMapping("/login")
+    public String login(Model model) {
+    model.addAttribute("activePage", "login");
+    return "login";
+    }
 }

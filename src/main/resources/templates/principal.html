@@ -30,15 +30,19 @@
                    th:classappend="${activePage == 'listagem'} ? ' active' : ''">Minhas Reservas</a>
             </li>
             <li class="nav-item">
-                <a th:href="@{/contato}" class="nav-link" 
-                   th:classappend="${activePage == 'contato'} ? ' active' : ''">Auditorio</a>
+                <a th:href="@{/auditorio}" class="nav-link" 
+                   th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditorio</a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/login}" class="nav-link" 
+                   th:classappend="${activePage == 'login'} ? ' active' : ''">Login</a>
             </li>
         </ul>
     </header>
 </div>
 
     <main>
-        <h1>Reserva de Salas e Laboratórios - FATEC Rubens Lara</h1>
+        <h1> Reserva de Salas e Laboratórios - FATEC Rubens Lara </h1>
 
         <h2 class="subtitulo"> Salas e Laboratórios 3º andar </h2>
 
