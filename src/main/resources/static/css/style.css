@@ -54,14 +54,30 @@ h3{
 }
 
 .div-reservar{
+    margin: 10px 5px;
+    width: 17%;
     background-color: rgb(120, 4, 4);
     color: white;
     padding: 10px;
     border-radius: 8px;
 }
 
+.div-reservar img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.div-esquerda-principal {
+    text-align: left ;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 10px;
+}
+
 .div-reservar .btn{
-    width: 150px;
+    width: 80%;
     height: 35px;
     border-radius: 5px;
     background-color: rgb(255, 255, 255);
@@ -72,8 +88,10 @@ h3{
     transition: transform 0.3s;
 }
 
+
+/* ----- BUTTONS ----- */
 .btn{
-    transition: transform all 1s;
+    transition: transform 1s ease;
 }
 
 .btn:hover{
@@ -83,6 +101,8 @@ h3{
 div p{
     line-height: 1.0;
 }
+
+
 
 
 /************* HEADER ****************/
@@ -113,38 +133,32 @@ header {
     transform: scale(1.10); 
 }
 
-/* Lista de links */
-.links {
-    display: flex; 
-    gap: 20px; 
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.nav-link {
+    color: rgb(255, 0, 0); 
+    background-color: transparent;
+    border-radius: 8px;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    padding: 6px 14px;
+    margin-right: 8px;
 }
 
-/* Links individuais */
-.links a {
-    text-decoration: none;
+/* Hover suave */
+.nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.233); 
+    color: white !important;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.37);
+}
+
+/* Link ativo */
+.nav-link.active {
+    background-color: rgb(255, 0, 0); /* Cor forte */
     color: white;
-    font-size: 1rem;
-    transition: color 0.3s ease;
+    pointer-events: none; 
 }
 
-/* Hover nos links */
-.links a:hover {
-    color: #fc8888;
-}
-
-.links a.active {
-    color: white; /* Mantém a cor do texto no ativo */
-    background-color: #555; /* Fundo escuro para o link ativo */
-    pointer-events: none; /* Desativa a interação para o link ativo */
-}
-
-/* Impede o hover no link ativo */
-.links a.active:hover {
-    color: white; /* Não altera a cor do texto */
-    background-color: #555; /* Mantém o fundo */
+.nav-link.active:hover {
+    background-color: rgb(255, 0, 0);
+    color: white;
 }
 
 /* Responsividade */
@@ -487,6 +501,8 @@ h2 .sucesso{
     gap: 15px;
 }
 
+
+/*----- LOGIN -----*/
 .form-box {
     max-width: 400px;
     width: 100%;
@@ -537,3 +553,5 @@ h2 .sucesso{
     font-size: .75rem;
     color: black;
 }
+
+/*-------------------*/
