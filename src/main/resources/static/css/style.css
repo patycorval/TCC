@@ -13,19 +13,20 @@ img{
 }
 
 .h2{
-    margin: 0;
+    margin-bottom: -10px;
     padding: 0;
 }
 
 h1{
-    font-size: 3.5rem;
-    margin-bottom: 10px;
-    font-weight: 600 ;
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 30px;
+    font-weight: 700 ;
 }
 
 h1, h2{
     padding-left: 10px;
-    margin-left: 25px;
+    margin-left: 90px;
 }
 
 h3{
@@ -95,24 +96,25 @@ h3{
 }
 
 .btn:hover{
-    transform: scale(1.10);
+    transform: scale(1.10); 
+    color: black;
 }
 
 div p{
     line-height: 1.0;
 }
 
+.btn-login{
+    background-color: #c30000;
+    color: white;
+}
 
-
+.btn-login:hover{
+    color: white;
+    background-color: #8d0000;
+}
 
 /************* HEADER ****************/
-
-.active {
-    color: #fff; 
-    background-color: #555;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
 
 /* Estilo do Header */
 header {
@@ -121,45 +123,36 @@ header {
     color: white;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 /* Estilo da logo */
 .logo-fatec{
     max-width: 100px;
     max-height: 60px;
     transition: transform 0.2s;
 }
-
 .logo-fatec:hover {
     transform: scale(1.10); 
 }
-
+/*CONFIG DAS NAV PILLS*/
 .nav-link {
-    color: rgb(255, 0, 0); 
+    color: rgb(255, 255, 255); 
     background-color: transparent;
     border-radius: 8px;
     transition: background-color 0.4s ease, color 0.4s ease;
     padding: 6px 14px;
     margin-right: 8px;
 }
-
 /* Hover suave */
 .nav-link:hover {
     background-color: rgba(0, 0, 0, 0.233); 
     color: white !important;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.37);
 }
-
-/* Link ativo */
-.nav-link.active {
-    background-color: rgb(255, 0, 0); /* Cor forte */
-    color: white;
-    pointer-events: none; 
-}
-
-.nav-link.active:hover {
-    background-color: rgb(255, 0, 0);
+/* LINK ATIVO*/
+.nav-pills .nav-link.active {
+    background-color: #c30000; 
     color: white;
 }
+
 
 /* Responsividade */
 @media (max-width: 500px) { /*abaixo de 500 */
@@ -198,7 +191,7 @@ strong{
 
 /* PÁGINA RESERVA DO AUDITÓRIO*/
 
-.informacoes-audi, .reserva-audi {
+/* .informacoes-audi, .reserva-audi {
     max-width: 800px;
     margin: 2rem auto;
     padding: 1rem;
@@ -264,7 +257,7 @@ strong{
 
 .reserva-audi button:hover {
     transform: scale(1.10);
-}
+} */
 
 
 /******* FORMULÁRIOS **********/
@@ -450,28 +443,9 @@ h2 .sucesso{
     border-radius: 10px;
 }
 
-/* NAV DA HEADER (SOBRESCREVENDO BOOTSTRAP) */
-.nav-pills .nav-link {
-    color: #c30000 !important; 
-}
 
-.nav-pills .nav-link:hover {
-    color: #ffffff; 
-}
 
-.nav-pills .nav-link.active {
-    background-color: #c30000; 
-    color: white !important;
-}
-
-/* LOGIN */
-
-.centered-login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-  }
+/* AUDITORIO */
 
   .form-box {
     max-width: 400px;
@@ -552,6 +526,11 @@ h2 .sucesso{
     left: 0.75rem;
     font-size: .75rem;
     color: black;
+}
+
+#h1-login{
+    margin: 0;
+    text-align: center;
 }
 
 /*-------------------*/
