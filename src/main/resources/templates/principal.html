@@ -44,6 +44,45 @@
     <main>
         <h1> Reserva de Salas e Laboratórios - FATEC Rubens Lara </h1>
 
+<div class="container my-4">
+    <h4>Filtros</h4>
+    <form class="row g-3">
+
+        <div class="col-md-3">
+            <label for="andar" class="form-label">Andar</label>
+            <select class="form-select" id="andar">
+                <option value="">Todos</option>
+                <option value="3">3º Andar</option>
+                <option value="5">5º Andar</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="recurso" class="form-label">Recursos</label>
+            <select class="form-select" id="recurso">
+                <option value="">Todos</option>
+                <option value="TV">TV</option>
+                <option value="Projetor">Projetor</option>
+                <option value="Lab">Laboratório</option>
+                <option value="Sala">Sala</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="Tipo de sala" class="form-label">Tipo de Sala</label>
+            <select class="form-select" id="tiposala">
+                <option value="">Todos</option>
+                <option value="Lab">Laboratório</option>
+                <option value="Sala">Sala de aula</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 align-self-end">
+            <button type="button" class="btn btn-login w-100" onclick="aplicarFiltros()">Filtrar</button>
+        </div>
+    </form>
+</div>
+
         <h2 class="subtitulo"> Salas e Laboratórios 3º andar </h2>
 
         <section class="andar3"> 

@@ -96,7 +96,8 @@ h3{
 }
 
 .btn:hover{
-    transform: scale(1.10);
+    transform: scale(1.10); 
+    color: black;
 }
 
 div p{
