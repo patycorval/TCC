@@ -12,9 +12,8 @@ img{
     border-radius: 10px;
 }
 
-.h2{
-    margin-bottom: -10px;
-    padding: 0;
+h2{
+    margin-left: 96px;
 }
 
 h1{
@@ -24,16 +23,17 @@ h1{
     font-weight: 700 ;
 }
 
-h1, h2{
-    padding-left: 10px;
-    margin-left: 90px;
-}
-
 h3{
     font-weight: 700;
     padding-top: 6px;
 }
 
+.filtro-div{
+    padding: 3%;
+    border-radius: 15px;
+    background-color: #2e2d2d;
+    color: white;
+}
 
 .andar3, .andar5{
     display: flex;
@@ -529,6 +529,7 @@ h2 .sucesso{
 }
 
 #h1-login{
+    font-size:36px;
     margin: 0;
     text-align: center;
 }
