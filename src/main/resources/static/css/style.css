@@ -168,96 +168,6 @@ header {
     }
 }
 
-/*PAGINA CONTATO*/
-
-.contato {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 8px  rgb(120, 4, 4);
-}
-
-.contato h2{
-    color: rgb(120, 4, 4);
-    font-weight: 400;
-    padding-bottom: 2px;
-}
-
-strong{
-    font-weight: 500;
-}
-
-/* PÁGINA RESERVA DO AUDITÓRIO*/
-
-/* .informacoes-audi, .reserva-audi {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)
-}
-
-.informacoes-audi h2{
-    color: rgb(120, 4, 4);
-    font-weight: 500;
-}
-
-.informacoes-audi p{
-   margin-left: 1rem;
-   line-height: 1;
-}
-
-.informacoes-audi img {
-    width: 45%;
-    height: auto;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.fotos{
-    display: flex;
-    justify-content: center;
-    gap:10px
-}
-
-.reserva-audi h2{
-    color: rgb(120, 4, 4);
-    font-weight: 500;
-}
-
-.reserva-audi label {
-    display: block;
-    margin: 0.5rem;
-    font-weight: 500;
-}
-
-.reserva-audi input, .reserva-audi textarea {
-    width: 90%;
-    padding: 0.5rem;
-    margin: auto 1rem 1rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.reserva-audi button {
-    display: inline-block;
-    margin: 1rem;
-    padding: 0.7rem 1.5rem;
-    background-color: rgb(120, 4, 4);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: transform 0.2s;
-    font-weight: 400;
-}
-
-.reserva-audi button:hover {
-    transform: scale(1.10);
-} */
 
 
 /******* FORMULÁRIOS **********/
@@ -457,24 +367,91 @@ h2 .sucesso{
   }
 
 .dia {
-    border-radius: 8px;
-    height: 100px;
-    width: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: white;
-    font-size: 1.2rem;
-    background-color: #a0a0a0;
+  border-radius: 8px;
+  height: 100px;
+  width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+  font-size: 1.2rem;
+  background-color: #a0a0a0;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.2s; 
+}
+
+/* Cores de status */
+.dia.disponivel {
+  background-color: #f0f0f0; /* Cinza claro */
+  color: #333; /* Cor de texto para dias disponíveis */
+}
+
+.dia.indisponivel {
+  background-color: #333; /* Cinza escuro */
+  cursor: not-allowed;
+}
+
+.dia.evento {
+  background-color: #e74c3c; /* Vermelho */
+  cursor: pointer;
+}
+
+/* Efeito no hover */
+.dia:hover {
+  transform: translateY(-5px); /* Eleva o elemento no hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para um visual 3D */
+  z-index: 2;
 }
 
 .grid-mensal {
-    display: grid;
-    grid-template-columns: repeat(7, 150px);
-    gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(7, 150px);
+  gap: 15px;
 }
 
+/* Pop-up do evento */
+.pop-up-evento {
+  display: none; /* Inicia escondido */
+  position: absolute;
+  top: 105%; 
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  height: 200px;
+  z-index: 10;
+  white-space: nowrap; /* Impede a quebra de linha em telas pequenas */
+}
+
+/* Regra para mostrar o pop-up no hover */
+.dia.evento:hover .pop-up-evento {
+  display: block;
+}
+
+.h2-aud{
+    margin-left: 0;
+}
+
+.pop-up-evento h4{
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #e74c3c;
+}   
+
+.pop-up-evento p {
+    font-size: 1rem;
+    margin: 0;
+    padding: 0.2rem 0; 
+    line-height: 1.4; 
+}
 
 /*----- LOGIN -----*/
 .form-box {

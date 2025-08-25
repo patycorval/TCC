@@ -1,5 +1,6 @@
 package com.bd.sitebd.controller;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.bd.sitebd.model.Reserva;
 import com.bd.sitebd.model.ReservaService;
 import com.bd.sitebd.model.Tool;
 //gerencia as rotas HTTP e interage com modelo e as views
+import com.bd.sitebd.model.dto.DiaCalendario;
 
 @Controller
 public class CadastroController {
@@ -86,19 +88,74 @@ public class CadastroController {
         return "redirect:/listagem";
     }
 
+    // @GetMapping("/auditorio")
+    // public String auditorio(Model model) {
+    //     YearMonth yearMonth = YearMonth.now();
+    //     int diasNoMes = yearMonth.lengthOfMonth();
+
+    //     ReservaService rs = context.getBean(ReservaService.class);
+    //     List<Map<String, Object>> reservasMap = rs.obterTodasReservas();
+    //     List<Reserva> reservas = new ArrayList<>();
+    //     for (Map<String, Object> registro : reservasMap) {
+    //         reservas.add(Tool.converterReserva(registro));
+    //     }
+
+    //     List<DiaCalendario> diasDoMes = new ArrayList<>();
+    //     LocalDate hoje = LocalDate.now();
+
+    //     for (int i = 1; i <= diasNoMes; i++) {
+    //         final int diaAtual = i;
+    //         boolean temReserva = reservas.stream()
+    //             .anyMatch(reserva -> {
+    //                 // Verifique se a data da reserva não é nula antes de tentar acessá-la
+    //                 return reserva.getData() != null && reserva.getData().getDayOfMonth() == diaAtual;
+    //             });
+            
+    //         // Lógica para definir os status
+    //         String status;
+    //         if (temReserva) {
+    //             status = "evento";
+    //         } else if (LocalDate.of(hoje.getYear(), hoje.getMonth(), i).isBefore(hoje)) {
+    //             // Se a data já passou, considere indisponível (opcional, pode ajustar a regra)
+    //             status = "indisponivel";
+    //         } else {
+    //             status = "disponivel";
+    //         }
+
+    //         diasDoMes.add(new DiaCalendario(diaAtual, status));
+    //     }
+
+    //     model.addAttribute("diasDoMes", diasDoMes);
+    //     model.addAttribute("activePage", "auditorio");
+    //     return "auditorio";
+    // }
+
     @GetMapping("/auditorio")
-    public String auditorio(Model model) {
-    YearMonth yearMonth = YearMonth.now(); // Mês atual
+public String auditorio(Model model) {
+    YearMonth yearMonth = YearMonth.now();
     int diasNoMes = yearMonth.lengthOfMonth();
-
-    List<Integer> diasDoMes = IntStream.rangeClosed(1, diasNoMes)
-                                       .boxed()
-                                       .collect(Collectors.toList());
-
+    
+    // Lista para simular os dias do calendário
+    List<DiaCalendario> diasDoMes = new ArrayList<>();
+    
+    // Lógica para simular o status de cada dia
+    for (int i = 1; i <= diasNoMes; i++) {
+        String status = "disponivel"; // Status padrão: disponível
+        
+        // Simulação de eventos em dias específicos
+        if (i == 5 || i == 12 || i == 20) {
+            status = "evento"; // Marquei os dias 5, 12 e 20 como evento
+        } else if (i == 8 || i == 15) {
+            status = "indisponivel"; // Marquei os dias 8 e 15 como indisponíveis
+        }
+        
+        diasDoMes.add(new DiaCalendario(i, status));
+    }
+    
     model.addAttribute("diasDoMes", diasDoMes);
     model.addAttribute("activePage", "auditorio");
     return "auditorio";
-    }
+}
 
     @GetMapping("/login")
     public String login(Model model) {
