@@ -357,15 +357,6 @@ h2 .sucesso{
 
 /* AUDITORIO */
 
-  .form-box {
-    max-width: 400px;
-    width: 100%;
-    padding: 2rem;
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-  }
-
 .dia {
   border-radius: 8px;
   height: 100px;
@@ -373,9 +364,8 @@ h2 .sucesso{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   background-color: #a0a0a0;
   position: relative;
   z-index: 1;
@@ -384,24 +374,25 @@ h2 .sucesso{
 
 /* Cores de status */
 .dia.disponivel {
-  background-color: #f0f0f0; /* Cinza claro */
-  color: #333; /* Cor de texto para dias disponíveis */
+  background-color: #f0f0f0; 
+  color: #333; 
 }
 
 .dia.indisponivel {
-  background-color: #333; /* Cinza escuro */
+  background-color: #333; 
   cursor: not-allowed;
 }
 
 .dia.evento {
-  background-color: #e74c3c; /* Vermelho */
+  background-color: #e74c3c; 
   cursor: pointer;
 }
 
 /* Efeito no hover */
 .dia:hover {
-  transform: translateY(-5px); /* Eleva o elemento no hover */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para um visual 3D */
+  transform: translateY(-5px) scale(1.05); 
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
   z-index: 2;
 }
 
@@ -452,6 +443,137 @@ h2 .sucesso{
     padding: 0.2rem 0; 
     line-height: 1.4; 
 }
+
+.dia .conteudo-dia {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.dia .conteudo-dia span {
+    transition: transform 0.3s ease; /* Adiciona a transição para o movimento */
+}
+
+/* Estilo para o botão de solicitação */
+.btn-solicitar-reserva {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: absolute; 
+  bottom: 10px; 
+  opacity: 0; 
+  transition: opacity 0.3s ease, transform 0.3s ease; 
+}
+
+
+.dia.disponivel:hover .btn-solicitar-reserva {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.icone-solicitar {
+  width: 40px; 
+  height: 40px;
+}
+
+.dia.disponivel span {
+    color: #333; 
+}
+
+.dia.disponivel:hover .conteudo-dia span {
+    transform: translateY(-20px);
+}
+
+/* FORM DO AUDITORIO! */
+/* Overlay e Efeito de Fundo */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Cor de fundo escura com transparência */
+    display: none; /* Começa escondido */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Garante que fique acima de tudo */
+    backdrop-filter: blur(5px); /* Efeito de desfoque no fundo */
+}
+
+.form-modal {
+    background-color: #fff;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+}
+
+.solicitacao-form h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.solicitacao-form p {
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.btn-fechar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #c0392b;
+}
+
 
 /*----- LOGIN -----*/
 .form-box {
