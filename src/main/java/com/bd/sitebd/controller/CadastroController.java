@@ -157,6 +157,33 @@ public String auditorio(Model model) {
     return "auditorio";
 }
 
+@GetMapping("/auditorio-admin")
+public String auditorioAdmin(Model model) {
+    YearMonth yearMonth = YearMonth.now();
+    int diasNoMes = yearMonth.lengthOfMonth();
+    
+    // Lista para simular os dias do calendário
+    List<DiaCalendario> diasDoMes = new ArrayList<>();
+    
+    // Lógica para simular o status de cada dia
+    for (int i = 1; i <= diasNoMes; i++) {
+        String status = "disponivel"; // Status padrão: disponível
+        
+        // Simulação de eventos em dias específicos
+        if (i == 5 || i == 12 || i == 20) {
+            status = "evento"; // Marquei os dias 5, 12 e 20 como evento
+        } else if (i == 8 || i == 15) {
+            status = "indisponivel"; // Marquei os dias 8 e 15 como indisponíveis
+        }
+        
+        diasDoMes.add(new DiaCalendario(i, status));
+    }
+    
+    model.addAttribute("diasDoMes", diasDoMes);
+    model.addAttribute("activePage", "auditorio");
+    return "auditorio-admin";
+}
+
     @GetMapping("/login")
     public String login(Model model) {
     model.addAttribute("activePage", "login");

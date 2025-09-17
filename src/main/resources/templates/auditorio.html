@@ -36,8 +36,9 @@
     </header>
 </div>
 <main class="container my-5">
-    <h2 class="mb-4 h2-aud">Programacao Semanal</h2>
-    <div class="d-flex gap-3 flex-wrap">
+
+    <h2 class="my-4 h2-aud">Programacao Mensal</h2>
+    <div class="d-flex gap-3 flex-wrap my-4">
         <div class="dia semanal ">Seg</div>
         <div class="dia semanal ">Ter</div>
         <div class="dia semanal ">Qua</div>
@@ -45,8 +46,6 @@
         <div class="dia semanal ">Sex</div>
         <div class="dia semanal ">Sab</div>
     </div>
-
-    <h2 class="my-4 h2-aud">Programacao Mensal</h2>
     <div class="grid-mensal">
     <div 
         th:each="dia : ${diasDoMes}" 
