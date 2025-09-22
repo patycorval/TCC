@@ -491,6 +491,50 @@ h2 .sucesso{
     transform: translateY(-20px);
 }
 
+/* Container para os ícones de ação do evento */
+.icones-evento {
+    position: absolute;
+    top: 5px; /* Ajuste o espaçamento do topo */
+    left: 5px; /* Ícone "X" no canto superior esquerdo */
+    right: 5px; /* Ícone de edição no canto superior direito */
+    display: flex; /* Para controlar o alinhamento dos ícones */
+    justify-content: space-between; /* Espaço entre os ícones */
+    width: calc(100% - 10px); /* Ajusta a largura para os 5px de cada lado */
+    z-index: 3; /* Garante que os ícones fiquem na frente do texto do dia */
+    opacity: 0; /* Começam invisíveis */
+    transition: opacity 0.3s ease;
+}
+
+/* Mostra os ícones no hover do dia do evento */
+.dia.evento:hover .icones-evento {
+    opacity: 1;
+}
+
+/* Estilo para os botões de ação */
+.btn-acao {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Estilo para os ícones SVG */
+.btn-acao img {
+    width: 20px;
+    height: 20px;
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%); /* Muda a cor para branco */
+}
+
+/* Adiciona um efeito de hover aos ícones */
+.btn-acao:hover img {
+    transform: scale(1.1);
+}
+
+/* Oculta o pop-up quando os ícones são visíveis no hover */
+.dia.evento:hover .pop-up-evento {
+    display: none;
+}
+
 /* FORM DO AUDITORIO! */
 /* Overlay e Efeito de Fundo */
 .overlay {

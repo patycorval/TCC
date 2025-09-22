@@ -52,6 +52,14 @@
         class="dia mensal" 
         th:classappend="${dia.status == 'evento'} ? 'evento' : (${dia.status == 'indisponivel'} ? 'indisponivel' : 'disponivel')"
     >   
+        <div th:if="${dia.status == 'evento'}" class="icones-evento">
+            <button class="btn-acao btn-excluir">
+                <img th:src="@{/img/close-square-svgrepo-com.svg}" alt="excluir evento">
+            </button>
+            <button class="btn-acao btn-editar">
+                <img th:src="@{/img/edit-3-svgrepo-com.svg}" alt="editar">
+            </button>
+        </div>
         <div class="conteudo-dia"> 
             <span th:text="${dia.dia}"></span>
 
