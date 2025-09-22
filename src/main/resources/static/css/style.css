@@ -535,6 +535,47 @@ h2 .sucesso{
     display: none;
 }
 
+.legenda-cores {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.legenda-cores p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.item-legenda {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cor-legenda {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* Reutilizando as cores já definidas para as caixinhas da legenda */
+.cor-legenda.evento {
+    background-color: #e74c3c;
+    border: none;
+}
+
+.cor-legenda.disponivel {
+    background-color: #f0f0f0;
+}
+
+.cor-legenda.indisponivel {
+    background-color: #333;
+    border: none;
+}
+
 /* FORM DO AUDITORIO! */
 /* Overlay e Efeito de Fundo */
 .overlay {
