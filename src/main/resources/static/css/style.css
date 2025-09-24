@@ -721,3 +721,89 @@ h2 .sucesso{
 }
 
 /*-------------------*/
+
+/* GRADE */
+
+/* Container de Filtros */
+.filtros-grade {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end; /* Alinha os botões e selects na parte inferior */
+}
+
+.filtros-grade .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filtros-grade .form-select,
+.filtros-grade .btn {
+    min-width: 150px;
+}
+
+/* Estrutura da Tabela da Grade */
+.grade-tabela {
+    display: grid;
+    /* 1 coluna para o horário e 6 para os dias da semana */
+    grid-template-columns: 100px repeat(6, 1fr); 
+    grid-gap: 2px; /* Espaçamento entre as células */
+}
+
+/* Cabeçalho da Tabela */
+.grade-header {
+    display: contents; /* Os filhos se tornam itens diretos do grid pai */
+}
+
+.grade-header .horario-label,
+.grade-header .dia-label {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 5px;
+    border-radius: 5px;
+}
+
+/* Corpo da Tabela */
+.grade-body {
+    display: contents; /* Os filhos se tornam itens diretos do grid pai */
+}
+
+.linha-horario {
+    display: contents;
+}
+
+.horario-celula {
+    background-color: #f0f0f0;
+    padding: 10px 5px;
+    text-align: center;
+    font-size: 0.9rem;
+    border-radius: 5px;
+}
+
+.celula-grade {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+    /* Estilos para a célula de aula */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.celula-grade .detalhes-aula {
+    font-size: 0.9rem;
+}
+
+.celula-grade .detalhes-aula p {
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Estilos adicionais para as células preenchidas */
+.celula-grade:not(:empty) {
+    background-color: #e6e6e6; /* Cinza claro para células preenchidas */
+    cursor: pointer;
+}

@@ -131,7 +131,7 @@ public class CadastroController {
     // }
 
     @GetMapping("/auditorio")
-public String auditorio(Model model) {
+    public String auditorio(Model model) {
     YearMonth yearMonth = YearMonth.now();
     int diasNoMes = yearMonth.lengthOfMonth();
     
@@ -188,5 +188,11 @@ public String auditorioAdmin(Model model) {
     public String login(Model model) {
     model.addAttribute("activePage", "login");
     return "login";
+    }
+
+    @GetMapping("/grade")
+    public String grade(Model model) {
+    model.addAttribute("activepage", "grade");
+    return "grade";
     }
 }
