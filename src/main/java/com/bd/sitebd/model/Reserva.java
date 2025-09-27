@@ -1,57 +1,55 @@
 package com.bd.sitebd.model;
 
+import com.bd.sitebd.model.enums.StatusReserva;
+import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
+@Entity
 public class Reserva {
-    
-    private int id;
-    private String numero, nome;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String numero;
+    private String nome;
+
+    // Novo campo para o nome do evento, usado em reservas de auditório
+    private String evento;
+
+    // Novo campo para associar a reserva ao e-mail do requisitor
+    private String emailRequisitor;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate data ;
+    private LocalDate data;
 
-    // @DateTimeFormat: Diz ao Spring que a variável data deve ser tratada com um formato específico de data. Garante que o Spring saiba como fazer a conversão entre o formato da data enviada e o tipo Java(LocalDate)
-    // pattern = "yyyy-MM-dd": Especifica o padrão que o Spring deve usar para entender a data no formato YYYY-MM-DD. Este é o formato que o HTML <input type="date"> envia por padrão.
+    private LocalTime hora;
 
-    private LocalTime hora; 
     private int duracao;
-   
 
-    public Reserva(){ 
-        
+    @Enumerated(EnumType.STRING)
+    private StatusReserva status;
+
+    // Construtores
+    public Reserva() {
     }
 
-    public Reserva(int id, String numero, String nome, LocalDate data , LocalTime hora, int duracao){
-        this.id=id;
-        this.numero=numero;
-        this.nome=nome;
-        this.data=data;
-        this.hora=hora;
-        this.duracao=duracao;
-    }
-
-    public Reserva(String numero, String nome, LocalDate data , LocalTime hora, int duracao){
-        this.numero=numero;
-        this.nome=nome;
-        this.data=data;
-        this.hora=hora;
-        this.duracao=duracao;
-    }
-
-
-    public int getId() {
+    // Getters e Setters
+    public Long getId() {
         return id;
     }
-    public void setId(int id) {
+
+    public void setId(Long id) {
         this.id = id;
     }
 
     public String getNumero() {
         return numero;
     }
+
     public void setNumero(String numero) {
         this.numero = numero;
     }
@@ -59,11 +57,29 @@ public class Reserva {
     public String getNome() {
         return nome;
     }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-   
+    // Novo getter e setter para o campo 'evento'
+    public String getEvento() {
+        return evento;
+    }
+
+    public void setEvento(String evento) {
+        this.evento = evento;
+    }
+
+    // Novo getter e setter para o campo 'emailRequisitor'
+    public String getEmailRequisitor() {
+        return emailRequisitor;
+    }
+
+    public void setEmailRequisitor(String emailRequisitor) {
+        this.emailRequisitor = emailRequisitor;
+    }
+
     public LocalDate getData() {
         return data;
     }
@@ -88,5 +104,12 @@ public class Reserva {
         this.duracao = duracao;
     }
 
-    
+    // Getter e Setter para o campo 'status'
+    public StatusReserva getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusReserva status) {
+        this.status = status;
+    }
 }

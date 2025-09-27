@@ -1,73 +1,145 @@
 <!DOCTYPE html>
-<html lang="pt-br"  xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{css/style.css}">
-    <script th:src="@{js/projeto.js}"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-    </style>
-    <title> Salas Reservadas </title>
-</head>
-<body>
-    <div class="container-fluid px-0">
-        <header class="d-flex justify-content-between align-items-center py-3 px-5 mb-4 border-bottom">
-            <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto" 
-            th:classappend="${activePage == 'principal'} ? ' active' : ''">
-            <img class="logo-fatec" th:src="@{/img/logo-fatec-branco.png}" alt="Logo Fatec">
-            </a>
+<html lang="pt-br"  xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+        <link rel="stylesheet" th:href="@{css/style.css}">
+        <script th:src="@{js/projeto.js}"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        </style>
+        <title> Salas Reservadas </title>
+        <meta name="_csrf" th:content="${_csrf.token}" />
+        <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    </head>
 
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a th:href="@{/}" class="nav-link" 
-                    th:classappend="${activePage == 'principal'} ? ' active' : ''">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/listagem}" class="nav-link" 
-                    th:classappend="${activePage == 'listagem'} ? ' active' : ''">Minhas Reservas</a>
-                </li>
-                <li class="nav-item">
-                <a th:href="@{/auditorio}" class="nav-link" 
-                   th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditorio</a>
-                </li>
-            </ul>
-        </header>
-    </div>
+    <body>
+        <div class="container-fluid px-0">
+            <header class="d-flex justify-content-between align-items-center py-3 px-5 mb-4 border-bottom">
+                <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto">
+                    <img class="logo-fatec" th:src="@{/img/logo-fatec-branco.png}" alt="Logo Fatec">
+                    <img class="logo-cps" th:src="@{/img/Logo_CPS-01.png}" alt="Logo Centro Paula Souza">
+                </a>
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a th:href="@{/}" class="nav-link" 
+                        th:classappend="${activePage == 'principal'} ? ' active' : ''">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/listagem}" class="nav-link" 
+                        th:classappend="${activePage == 'listagem'} ? ' active' : ''">Minhas Reservas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/auditorio}" class="nav-link" 
+                        th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/contato}" class="nav-link" 
+                        th:classappend="${activePage == 'contato'} ? ' active' : ''">Contato</a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-light" title="Sair">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </header>
+        </div>
+
         <h1>Salas reservadas</h1>
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Numero da Sala</th>
-                    <th> Nome </th>
+                    <th>Número da Sala</th>
+                    <th>Nome</th>
                     <th>Data</th>
-                    <th>Horario</th>
+                    <th>Horário</th>
                     <th>Duração</th>
-                    <th>Ações</th>  
+                    <th>Status</th> <th>Ações</th> 
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="reserva : ${reservas}"> <!--reservas é um atributo do Model que foi passado do controller p a view -->
+                <tr th:each="reserva : ${reservas}">
                     <td th:text="${reserva.id}"></td>
                     <td th:text="${reserva.numero}"></td>
                     <td th:text="${reserva.nome}"></td>
                     <td th:text="${reserva.data}"></td>
                     <td th:text="${reserva.hora}"></td>
                     <td th:text="${reserva.duracao} + ' hora(s)'"></td>
-                    <td>
-                        <form th:action="@{'/atualizar/' + ${reserva.id}}" method="get">
-                            <button type="submit" id="atualizar"> Atualizar </button>
+                    <td th:text="${reserva.status}"></td> <td>
+                        <form th:action="@{'/reservas/editar/' + ${reserva.id}}" method="get">
+                            <button type="submit" id="atualizar">Atualizar</button>
                         </form>
-                        <form th:action="@{'/deletar/' + ${reserva.id}}" method="post" class="btn-apagar">
-                            <button type="submit" id="apagar"> Cancelar reserva </button>
+                        <form th:action="@{'/deletar/' + ${reserva.id}}" method="post" class="form-apagar logout">
+                            <button type="button" class="btn-apagar" id="apagar" th:attr="data-id=${reserva.id}">Cancelar reserva</button>
                         </form>
                     </td>
                 </tr>
             </tbody>
         </table>
         <a class="voltar" th:href="@{/}">Voltar</a>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-</body>
+        <div id="confirmModal" class="modal">
+            <div class="modal-content">
+                <p>Tem certeza que deseja excluir esta reserva?</p>
+                <div class="modal-buttons">
+                    <button id="btnConfirm" class="btn">Sim</button>
+                    <button id="btnCancel" class="btn">Não</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const modal = document.getElementById('confirmModal');
+            const btnConfirm = document.getElementById('btnConfirm');
+            const btnCancel = document.getElementById('btnCancel');
+    
+            let reservaIdParaExcluir = null;
+    
+            const botoesApagar = document.querySelectorAll('.btn-apagar');
+    
+            botoesApagar.forEach(botao => {
+                botao.addEventListener('click', () => {
+                reservaIdParaExcluir = botao.getAttribute('data-id');
+                modal.style.display = 'flex';
+                });
+            });
+    
+            btnCancel.addEventListener('click', () => {
+                modal.style.display = 'none';
+                reservaIdParaExcluir = null;
+            });
+    
+            btnConfirm.addEventListener('click', () => {
+                if (reservaIdParaExcluir) {
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/deletar/' + reservaIdParaExcluir;
+    
+                    // Pega os tokens do meta
+                    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = '_csrf';
+                    input.value = csrfToken;
+                    form.appendChild(input);
+    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+    
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                modal.style.display = "none";
+                reservaIdParaExcluir = null;
+                }
+            }
+        </script>
+    </body>
 </html>
