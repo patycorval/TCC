@@ -5,30 +5,24 @@
 }
 
 /* PAGINA PRINCIPAL*/
-
 img{
     width:230px;
     height: 180px;
     border-radius: 10px;
 }
-
 h2{
     margin-left: 96px;
 }
-
 h1{
     text-align: center;
     font-size: 3rem;
     margin-bottom: 30px;
     font-weight: 700 ;
 }
-
 h3{
     font-weight: 700;
     padding-top: 6px;
 }
-
-
 .andar3, .andar5{
     display: flex;
     justify-content: center;
@@ -42,11 +36,9 @@ h3{
     text-align: center;
     align-items: center;
 }
-
 .subtitulo{
     display: block;
 }
-
 .div-reservar{
     margin: 10px 5px;
     width: 17%;
@@ -55,13 +47,11 @@ h3{
     padding: 10px;
     border-radius: 8px;
 }
-
 .div-reservar img {
     width: 100%;
     height: auto;
     border-radius: 8px;
 }
-
 .div-esquerda-principal {
     text-align: left ;
     display: flex;
@@ -69,7 +59,6 @@ h3{
     align-items: flex-start;
     padding: 0 10px;
 }
-
 .div-reservar .btn{
     width: 80%;
     height: 35px;
@@ -81,78 +70,60 @@ h3{
     font-weight: 400;
     transition: transform 0.3s;
 }
-
-
 /* ----- BUTTONS ----- */
 .btn{
     transition: transform 1s ease;
 }
-
 .btn:hover{
     transform: scale(1.10); 
     color: black;
 }
-
 div p{
     line-height: 1.0;
 }
-
 .btn-login{
     background-color: #c30000;
     color: white;
 }
-
 .btn-login:hover{
     color: white;
     background-color: #8d0000;
 }
-
 a .btn {
   color: black !important;
-    font-weight: bold;             /* cor normal */
+    font-weight: bold;          /* cor normal */
   text-decoration: none !important; /* remove sublinhado */
 }
-
 a .btn:hover {
   color: black !important; /* cor no hover */
 }
-
 a .btn:active {
   background-color: #e0e0e0; /* corzinha de clique */
   transform: scale(0.98);    /* dá sensação de "pressionado" */
 }
-
 /************* HEADER ****************/
-
-/* Estilo do Header */
 header {
     background-color: #333;
     padding: 10px 20px;
     color: white;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
-
-/* Estilo da logo */
 .logo-fatec{
     max-width: 100px;
     max-height: 60px;
     transition: transform 0.2s;
 }
-
 .logo-cps {
     width: 100px;    
     height: auto;  
     transition: transform 0.2s;  
 }
-
 .logo-fatec:hover, .logo-cps:hover {
     transform: scale(1.10); 
 }
-
 .d-flex.align-items-center {
   gap: 10px; /* controla o espaço entre os logos */
 }
-/*CONFIG DAS NAV PILLS*/
 .nav-link {
     color: rgb(255, 255, 255); 
     background-color: transparent;
@@ -161,36 +132,27 @@ header {
     padding: 6px 14px;
     margin-right: 8px;
 }
-
-/* Hover suave */
 .nav-link:hover {
     background-color: rgba(0, 0, 0, 0.233); 
     color: white !important;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.37);
 }
-/* LINK ATIVO*/
 .nav-pills .nav-link.active {
     background-color: #c30000; 
     color: white;
 }
-
-
-/* Responsividade */
 @media (max-width: 500px) { /*abaixo de 500 */
     .header {
         flex-direction: column;
         align-items: center;
         text-align: center;
     }
-    
     .header ul {
         flex-direction: column;
         gap: 10px;
     }
 }
-
 /*PAGINA CONTATO*/
-
 .contato {
     max-width: 600px;
     margin: 2rem auto;
@@ -199,19 +161,15 @@ header {
     border-radius: 8px;
     box-shadow: 0 0 8px  rgb(120, 4, 4);
 }
-
 .contato h2{
     color: rgb(120, 4, 4);
     font-weight: 400;
     padding-bottom: 2px;
 }
-
 strong{
     font-weight: 500;
 }
-
 /* PÁGINA RESERVA DO AUDITÓRIO*/
-
 .informacoes-audi, .reserva-audi {
     max-width: 800px;
     margin: 2rem auto;
@@ -220,41 +178,34 @@ strong{
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)
 }
-
 .informacoes-audi h2{
     color: rgb(120, 4, 4);
     font-weight: 500;
 }
-
 .informacoes-audi p{
    margin-left: 1rem;
    line-height: 1;
 }
-
 .informacoes-audi img {
     width: 45%;
     height: auto;
     border-radius: 8px;
     margin-bottom: 1rem;
 }
-
 .fotos{
     display: flex;
     justify-content: center;
     gap:10px
 }
-
 .reserva-audi h2{
     color: rgb(120, 4, 4);
     font-weight: 500;
 }
-
 .reserva-audi label {
     display: block;
     margin: 0.5rem;
     font-weight: 500;
 }
-
 .reserva-audi input, .reserva-audi textarea {
     width: 90%;
     padding: 0.5rem;
@@ -262,7 +213,6 @@ strong{
     border: 1px solid #ddd;
     border-radius: 4px;
 }
-
 .reserva-audi button {
     display: inline-block;
     margin: 1rem;
@@ -275,15 +225,10 @@ strong{
     transition: transform 0.2s;
     font-weight: 400;
 }
-
 .reserva-audi button:hover {
     transform: scale(1.10);
 }
-
-
 /******* FORMULÁRIOS **********/
-
-/* Estilo geral do formulário */
 form.form {
     max-width: 600px;
     margin: 20px auto;
@@ -293,21 +238,19 @@ form.form {
     background-color: #f9f9f9;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
-/* Estilo dos labels */
 form label {
     font-weight: 400;
     margin: 10px 0 5px;
     display: block;
     font-size: 1.1em;
 }
-
-/* Estilo dos campos de entrada */
-form input[type="text"],
-form input[type="date"],
-form input[type="time"],
-form input[type="number"],
-form input[type="submit"] {
+form:not(.login-form):not(.register-form) input[type="text"],
+form:not(.login-form):not(.register-form) input[type="password"],
+form:not(.login-form):not(.register-form) input[type="email"],
+form:not(.login-form):not(.register-form) input[type="date"],
+form:not(.login-form):not(.register-form) input[type="time"],
+form:not(.login-form):not(.register-form) input[type="number"],
+form:not(.login-form):not(.register-form) input[type="submit"] {
     width: 90%;
     padding: 10px;
     margin-bottom: 15px;
@@ -317,9 +260,6 @@ form input[type="submit"] {
     align-items: center;
     display: flex;
 }
-
-
-/* Estilo do botão*/
 #reservar, #atualiza {
     background-color: rgb(120, 4, 4);
     color: white;
@@ -328,14 +268,9 @@ form input[type="submit"] {
     transition: background-color 0.3s ease;
     width: 40%;
 }
-
-/* Efeito de hover no botão*/
 #reservar:hover, #atualiza:hover {
     background-color:rgb(87, 1, 1);
 }
-
-
-/* Estilo do link "Voltar" */
 form a {
     display: block;
     margin-top: 10px;
@@ -344,19 +279,13 @@ form a {
     font-size: 1em;
     font-weight: bold;
 }
-
-/* Efeito de hover no link "Voltar" */
 form a:hover {
     text-decoration: underline;
 }
-
-/* Ajuste para os campos de entrada apenas leitura */
 form input[readonly] {
     background-color: #f0f0f0;
     border: 1px solid #ddd;
 }
-
-/* ******* TITULO RESERVA ******** */
 .titulo-reserva {
     display: flex;
     align-items: center;
@@ -364,13 +293,11 @@ form input[readonly] {
     margin-bottom: 20px;
     color: rgb(120, 4, 4);
 }
-
 .titulo-reserva h2 {
     font-weight: 500;
     font-size: 1.5rem;
     margin: 0;
 }
-
 .titulo-reserva .numero-sala {
     font-weight: 700;
     font-size: 1rem;
@@ -378,19 +305,14 @@ form input[readonly] {
     color: white;
     padding: 4px 10px;
     border-radius: 6px;
-    user-select: none; /* evita seleção do número por acidente */
+    user-select: none;
 }
-
-
 /****** PAGINA LISTAGEM *********/
-
-/* Estilo geral da tabela */
 table {
     width: 75%;
     border-collapse: collapse;
     margin: 20px auto;
 }
-
 th {
     background-color: rgb(120, 4, 4);
     color: white;
@@ -398,23 +320,18 @@ th {
     padding: 8px;
     text-align: center;
 }
-
 td {
     background-color: #f4f4f4;
     padding: 8px;
     text-align: center;
     border: 1px solid #ddd;
 }
-
-/* Borda da tabela */
 table, th, td {
     border: 1px solid #555;
 }
-
 tr:hover {
     background-color: #e0e0e0;
 }
-
 button#apagar {
     background-color: #dc3545;
     color: white;
@@ -425,11 +342,9 @@ button#apagar {
     transition: background-color 0.3s ease;
     font-size: 16px;
 }
-
 tbody button#apagar:hover {
     background-color: #c82333;
 }
-
 tbody #atualizar{
     background-color: #3e3b3b;
     color: white;
@@ -440,13 +355,10 @@ tbody #atualizar{
     transition: background-color 0.3s ease;
     font-size: 16px;
     margin-bottom: 10px;
-
 }
-
 tbody #atualizar:hover{
     background-color: #2e2d2d;
 }
-/* LINK VOLTAR GERAL */
 a.voltar {
     margin: 10px 20px 20px 30px;
     color: #007BFF;
@@ -454,31 +366,24 @@ a.voltar {
     font-size: 1em;
     font-weight: bold;
 }
-
 a.voltar:hover {
     text-decoration: underline;
 }
-
-
 /****** PAGINA SUCESSO ******/
-
 h2 .sucesso{
     margin-top: 0;
     margin-bottom: 10px ; 
 }
-
 .sucesso{
     color: #015b0e;
     text-align: center;
     font-weight: 400;
     margin-bottom: 5px;
 }
-
 .sucessop{
     text-align:left;
     font-weight: 500;
 }
-
 .divp{
     display: flex;
     flex-direction: column; 
@@ -489,11 +394,7 @@ h2 .sucesso{
     background-color: #f0f0f0; 
     border-radius: 10px;
 }
-
-
-
 /* AUDITORIO */
-
 .dia {
     border-radius: 8px;
     height: 100px;
@@ -508,40 +409,31 @@ h2 .sucesso{
     z-index: 1;
     transition: transform 0.2s; 
 }
-
-/* Cores de status */
 .dia.disponivel {
     background-color: #f0f0f0; 
     color: #333; 
 }
-
 .dia.indisponivel {
     background-color: #333; 
     cursor: not-allowed;
 }
-
 .dia.evento {
     background-color: #e74c3c; 
     cursor: pointer;
 }
-
-/* Efeito no hover */
 .dia:hover {
     transform: translateY(-5px) scale(1.05); 
     font-weight: 700;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
     z-index: 2;
 }
-
 .grid-mensal {
     display: grid;
     grid-template-columns: repeat(7, 150px);
     gap: 15px;
 }
-
-/* Pop-up do evento */
 .pop-up-evento {
-    display: none; /* Inicia escondido */
+    display: none;
     position: absolute;
     top: 105%; 
     left: 50%;
@@ -554,18 +446,14 @@ h2 .sucesso{
     width: 400px;
     height: 200px;
     z-index: 10;
-    white-space: nowrap; /* Impede a quebra de linha em telas pequenas */
+    white-space: nowrap;
 }
-
-/* Regra para mostrar o pop-up no hover */
 .dia.evento:hover .pop-up-evento {
     display: block;
 }
-
 .h2-aud{
     margin-left: 0;
 }
-
 .pop-up-evento h4{
     font-size: 2rem;
     font-weight: 600;
@@ -573,7 +461,6 @@ h2 .sucesso{
     margin-bottom: 0.5rem;
     color: #e74c3c;
 }   
-
 .pop-up-evento p {
     font-size: 1rem;
     margin: 0;
@@ -589,12 +476,9 @@ h2 .sucesso{
   height: 100%;
   position: relative;
 }
-
 .dia .conteudo-dia span {
-    transition: transform 0.3s ease; /* Adiciona a transição para o movimento */
+    transition: transform 0.3s ease;
 }
-
-/* Estilo para o botão de solicitação */
 .btn-solicitar-reserva {
   background: none;
   border: none;
@@ -605,69 +489,52 @@ h2 .sucesso{
   opacity: 0; 
   transition: opacity 0.3s ease, transform 0.3s ease; 
 }
-
 .dia.disponivel:hover .btn-solicitar-reserva {
   opacity: 1;
   transform: translateY(0);
 }
-
 .icone-solicitar {
   width: 40px; 
   height: 40px;
 }
-
 .dia.disponivel span {
     color: #333; 
 }
-
 .dia.disponivel:hover .conteudo-dia span {
     transform: translateY(-20px);
 }
-
-/* Container para os ícones de ação do evento */
 .icones-evento {
     position: absolute;
-    top: 5px; /* Ajuste o espaçamento do topo */
-    left: 5px; /* Ícone "X" no canto superior esquerdo */
-    right: 5px; /* Ícone de edição no canto superior direito */
-    display: flex; /* Para controlar o alinhamento dos ícones */
-    justify-content: space-between; /* Espaço entre os ícones */
-    width: calc(100% - 10px); /* Ajusta a largura para os 5px de cada lado */
-    z-index: 3; /* Garante que os ícones fiquem na frente do texto do dia */
-    opacity: 0; /* Começam invisíveis */
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 10px);
+    z-index: 3;
+    opacity: 0;
     transition: opacity 0.3s ease;
 }
-
-/* Mostra os ícones no hover do dia do evento */
 .dia.evento:hover .icones-evento {
     opacity: 1;
 }
-
-/* Estilo para os botões de ação */
 .btn-acao {
     background: none;
     border: none;
     cursor: pointer;
     padding: 5px;
 }
-
-/* Estilo para os ícones SVG */
 .btn-acao img {
     width: 20px;
     height: 20px;
-    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%); /* Muda a cor para branco */
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%);
 }
-
-/* Adiciona um efeito de hover aos ícones */
 .btn-acao:hover img {
     transform: scale(1.1);
 }
-
-/* Oculta o pop-up quando os ícones são visíveis no hover */
 .dia.evento:hover .pop-up-evento {
     display: none;
 }
-
 .legenda-cores {
     display: flex;
     align-items: center;
@@ -675,56 +542,45 @@ h2 .sucesso{
     font-size: 0.9rem;
     color: #666;
 }
-
 .legenda-cores p {
     margin: 0;
     font-weight: 500;
 }
-
 .item-legenda {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-
 .cor-legenda {
     width: 20px;
     height: 20px;
     border-radius: 4px;
     border: 1px solid #ddd;
 }
-
-/* Reutilizando as cores já definidas para as caixinhas da legenda */
 .cor-legenda.evento {
     background-color: #e74c3c;
     border: none;
 }
-
 .cor-legenda.disponivel {
     background-color: #f0f0f0;
 }
-
 .cor-legenda.indisponivel {
     background-color: #333;
     border: none;
 }
-
-/* FORM DO AUDITORIO! */
-/* Overlay e Efeito de Fundo */
 .overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* Cor de fundo escura com transparência */
-    display: none; /* Começa escondido */
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Garante que fique acima de tudo */
-    backdrop-filter: blur(5px); /* Efeito de desfoque no fundo */
+    z-index: 1000;
+    backdrop-filter: blur(5px);
 }
-
 .form-modal {
     background-color: #fff;
     padding: 2.5rem;
@@ -735,41 +591,36 @@ h2 .sucesso{
     max-width: 500px;
     max-height: 95vh;    
     overflow-y: auto;
-    display: flex;            /* centraliza conteúdo verticalmente */
-    flex-direction: column;   /* conteúdo empilhado */
+    display: flex;
+    flex-direction: column;
 }
 .modal-content-inner {
    overflow-y: auto;
-    flex: 1;                  /* ocupa todo o espaço disponível */
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;  
 }
-
 .solicitacao-form h3 {
     text-align: center;
     color: #333;
     margin-bottom: 0.5rem;
 }
-
 .solicitacao-form p {
     text-align: center;
     color: #666;
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
 }
-
 .form-group {
     margin-bottom: 1rem;
 }
-
 .form-group label {
     display: block;
     font-weight: 500;
     margin-bottom: 0.5rem;
     color: #555;
 }
-
 .form-group input {
     width: 100%;
     padding: 0.75rem;
@@ -777,7 +628,6 @@ h2 .sucesso{
     border-radius: 5px;
     font-size: 1rem;
 }
-
 .btn-fechar {
     position: absolute;
     top: 10px;
@@ -788,7 +638,6 @@ h2 .sucesso{
     color: #888;
     cursor: pointer;
 }
-
 .btn-submit {
     width: 100%;
     padding: 0.75rem;
@@ -800,73 +649,11 @@ h2 .sucesso{
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-
 .btn-submit:hover {
     background-color: #c0392b;
 }
-
-/*----- LOGIN -----*/
-.form-box {
-    max-width: 400px;
-    width: 100%;
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.form-box img {
-    width: auto;
-    height: 80px;
-    object-fit: contain;
-}
-
-.login{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-}
-
-.form-group{
-    position: relative;
-}
-
-.styled-input {
-    padding-top: 1.5rem;
-    padding-bottom: .5rem;
-    height: 3.5rem;
-}
-
-.floating-label {
-    position: absolute;
-    top: 1.2rem;
-    left: 0.75rem;
-    color: #6c757d;
-    font-size: 1rem;
-    pointer-events: none;
-    transition: 0.2s ease all;
-}
-
-.styled-input:focus + .floating-label,
-.styled-input:not(:placeholder-shown) + .floating-label {
-    top: -0.1rem;
-    left: 0.75rem;
-    font-size: .75rem;
-    color: black;
-}
-
-#h1-login{
-    font-size:36px;
-    margin: 0;
-    text-align: center;
-}
-
-/*-------------------*/
-/******** MODAL EXCLUIR ***************/
 .modal {
-  display: none; /* fica escondido por padrão */
+  display: none;
   position: fixed;
   z-index: 999;
   left: 0;
@@ -882,7 +669,7 @@ h2 .sucesso{
   margin-top: 20px;
   display: flex;
   justify-content: center;
-  gap: 18px; /* espaçamento entre os botões */
+  gap: 18px;
 }
 .modal-content {
   background-color: white;
@@ -892,31 +679,21 @@ h2 .sucesso{
   text-align: center;
   box-shadow: 0 0 10px #00000055;
 }
-
 #btnConfirm {
-  background-color: #c82333; /* vermelho escuro */
+  background-color: #c82333;
   color:white
 }
-
 #btnConfirm:hover {
-  background-color: rgb(180, 19, 36); /* vermelho mais claro no hover */
+  background-color: rgb(180, 19, 36);
 }
-
 #btnCancel {
-  background-color: #a0a0a0; /* cinza escuro */
+  background-color: #a0a0a0;
 }
-
 #btnCancel:hover {
-  background-color: #95a5a6; /* cinza claro no hover */
+  background-color: #95a5a6;
 }
-
-/*-------------------*/
-
-/* GRADE */
-
-/* Modal de Edição da Grade */
 .modal-grade {
-    display: none; /* Inicia invisível */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -927,17 +704,6 @@ h2 .sucesso{
     justify-content: center;
     align-items: center;
 }
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
 .fechar-modal {
     position: absolute;
     top: 10px;
@@ -947,44 +713,33 @@ h2 .sucesso{
     font-weight: bold;
     cursor: pointer;
 }
-
 .fechar-modal:hover,
 .fechar-modal:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
 }
-
-/* Container de Filtros */
 .filtros-grade {
     display: flex;
     gap: 15px;
-    align-items: flex-end; /* Alinha os botões e selects na parte inferior */
+    align-items: flex-end;
 }
-
 .filtros-grade .form-group {
     display: flex;
     flex-direction: column;
 }
-
 .filtros-grade .form-select,
 .filtros-grade .btn {
     min-width: 150px;
 }
-
-/* Estrutura da Tabela da Grade */
 .grade-tabela {
     display: grid;
-    /* 1 coluna para o horário e 6 para os dias da semana */
     grid-template-columns: 100px repeat(6, 1fr); 
-    grid-gap: 2px; /* Espaçamento entre as células */
+    grid-gap: 2px;
 }
-
-/* Cabeçalho da Tabela */
 .grade-header {
-    display: contents; /* Os filhos se tornam itens diretos do grid pai */
+    display: contents;
 }
-
 .grade-header .horario-label,
 .grade-header .dia-label {
     background-color: #f0f0f0;
@@ -993,16 +748,12 @@ h2 .sucesso{
     padding: 10px 5px;
     border-radius: 5px;
 }
-
-/* Corpo da Tabela */
 .grade-body {
-    display: contents; /* Os filhos se tornam itens diretos do grid pai */
+    display: contents;
 }
-
 .linha-horario {
     display: contents;
 }
-
 .horario-celula {
     background-color: #f0f0f0;
     padding: 10px 5px;
@@ -1010,31 +761,80 @@ h2 .sucesso{
     font-size: 0.9rem;
     border-radius: 5px;
 }
-
 .celula-grade {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 5px;
     text-align: center;
-    /* Estilos para a célula de aula */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-
 .celula-grade .detalhes-aula {
     font-size: 0.9rem;
 }
-
 .celula-grade .detalhes-aula p {
     margin: 0;
     line-height: 1.2;
 }
-
-/* Estilos adicionais para as células preenchidas */
 .celula-grade:not(:empty) {
-    background-color: #e6e6e6; /* Cinza claro para células preenchidas */
+    background-color: #e6e6e6;
     cursor: pointer;
+}
+
+
+/* =================================================================== */
+/* --- ESTILOS FINAIS PARA LOGIN E CADASTRO --- */
+/* =================================================================== */
+
+.form-card {
+    max-width: 500px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.login-logo {
+    max-width: 200px;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Define a cor do botão nos formulários de login/cadastro */
+form.login-form .btn-custom-red,
+form.register-form .btn-custom-red {
+    background-color: rgb(120, 4, 4);
+    border-color: rgb(120, 4, 4);
+    color: white; 
+}
+
+form.login-form .btn-custom-red:hover,
+form.register-form .btn-custom-red:hover {
+    background-color: rgb(100, 3, 3); 
+    border-color: rgb(100, 3, 3);
+    color: white;
+}
+
+/* Patch para corrigir conflito de labels flutuantes com a regra "form label" geral */
+.form-floating > label {
+    margin: 0;
+    position: absolute;
+}
+
+/* Posicionamento estável do ícone de senha */
+.password-icon-toggle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1rem;
+    z-index: 10;
+    cursor: pointer;
+}
+
+/* Estilo para o link de "Voltar" fora do card */
+.link-voltar {
+    text-align: center;
+    margin-top: 1rem;
 }

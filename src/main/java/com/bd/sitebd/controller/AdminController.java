@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin")
@@ -36,18 +37,30 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/cadastro")
     public String processarCadastro(@RequestParam String email,
-            @RequestParam String senha,
-            @RequestParam TipoUsuario tipo,
-            Model model) {
-        Usuario novo = new Usuario();
-        novo.setEmail(email);
-        novo.setSenha(passwordEncoder.encode(senha));
-        novo.setTipo(tipo);
+                                    @RequestParam String senha,
+                                    @RequestParam String confirmarSenha, 
+                                    @RequestParam TipoUsuario tipo,
+                                    RedirectAttributes redirectAttributes) { 
 
-        usuarioService.salvar(novo);
+        if (!senha.equals(confirmarSenha)) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não conferem!");
+            return "redirect:/admin/cadastro"; 
+        }
 
-        model.addAttribute("mensagem", "Usuário cadastrado com sucesso!");
-        return "redirect:/";
+        try {
+            Usuario novo = new Usuario();
+            novo.setEmail(email);
+            novo.setSenha(passwordEncoder.encode(senha));
+            novo.setTipo(tipo);
+
+            usuarioService.salvar(novo);
+
+            redirectAttributes.addFlashAttribute("mensagem", "Usuário cadastrado com sucesso!");
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", e.getMessage());
+        }
+        return "redirect:/admin/cadastro";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
