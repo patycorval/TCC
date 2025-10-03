@@ -70,6 +70,14 @@ h3{
     font-weight: 400;
     transition: transform 0.3s;
 }
+
+.filtro-div{
+    padding: 3%;
+    border-radius: 15px;
+    background-color: #2e2d2d;
+    color: white;
+}
+
 /* ----- BUTTONS ----- */
 .btn{
     transition: transform 1s ease;

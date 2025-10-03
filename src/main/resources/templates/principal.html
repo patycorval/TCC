@@ -1,84 +1,219 @@
 <!DOCTYPE html>
-<html lang="pt-br"  xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
     </style>
     <title>Página principal</title>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="container-fluid px-0">
-        <header class="d-flex justify-content-between align-items-center py-3 px-5 mb-4 border-bottom">
+      <header
+        class="d-flex justify-content-between align-items-center py-3 px-5 mb-4 border-bottom"
+      >
+        <a
+          th:href="@{/}"
+          class="d-flex align-items-center mb-3 mb-md-0 me-md-auto"
+        >
+          <img
+            class="logo-fatec"
+            th:src="@{/img/logo-fatec-branco.png}"
+            alt="Logo Fatec"
+          />
+          <img
+            class="logo-cps"
+            th:src="@{/img/Logo_CPS-01.png}"
+            alt="Logo Centro Paula Souza"
+          />
+        </a>
 
-            <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto">
-                <img class="logo-fatec" th:src="@{/img/logo-fatec-branco.png}" alt="Logo Fatec">
-                <img class="logo-cps" th:src="@{/img/Logo_CPS-01.png}" alt="Logo Centro Paula Souza">
-            </a>
-
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                  <a th:href="@{/}" class="nav-link" 
-                    th:classappend="${activePage == 'principal'} ? ' active' : ''">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/listagem}" class="nav-link" 
-                    th:classappend="${activePage == 'listagem'} ? ' active' : ''">Minhas Reservas</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/auditorio}" class="nav-link" 
-                    th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
-                </li>
-                <li class="nav-item">
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-outline-light" title="Sair">
-                            <i class="bi bi-box-arrow-right"></i>
-                        </button>
-                    </form>
-
-                </li>
-            </ul>
-        </header>
+        <ul class="nav nav-pills">
+          <li class="nav-item">
+            <a
+              th:href="@{/}"
+              class="nav-link"
+              th:classappend="${activePage == 'principal'} ? ' active' : ''"
+              >Home</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              th:href="@{/listagem}"
+              class="nav-link"
+              th:classappend="${activePage == 'listagem'} ? ' active' : ''"
+              >Minhas Reservas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              th:href="@{/auditorio}"
+              class="nav-link"
+              th:classappend="${activePage == 'auditorio'} ? ' active' : ''"
+              >Auditório</a
+            >
+          </li>
+          <li class="nav-item">
+            <form th:action="@{/logout}" method="post" class="d-inline">
+              <button type="submit" class="btn btn-outline-light" title="Sair">
+                <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </form>
+          </li>
+        </ul>
+      </header>
     </div>
 
     <main>
-        <h1>Reserva de Salas e Laboratórios - FATEC Rubens Lara</h1>
+      <h1>Reserva de Salas e Laboratórios - FATEC Rubens Lara</h1>
 
-        <h2 class="subtitulo">Salas e Laboratórios - 3º Andar</h2>
-        <section class="andar3">
-            <div class="div-reservar" th:each="sala : ${salasAndar3}">
-                <img th:src="@{/img/sala5.jpeg}" th:alt="'Laboratório ' + ${sala.numero}">
-                <h3 th:text="'Sala ' + ${sala.numero}">Sala</h3>
-                <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">Capacidade</p>
-                <p th:text="'Possui televisão? ' + ${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR) ? 'Sim' : 'Não'}">TV</p>
-                <p th:text="'Possui projetor? ' + ${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR) ? 'Sim' : 'Não'}">Projetor</p>
-                <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">Máquinas</p>
-                <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
-                    <button class="btn">Reservar</button>
-                </a>
-            </div>
-        </section>
+      <div class="container my-4 filtro-div">
+        <h4>Filtros</h4>
+        <form class="row g-3">
+          <div class="col-md-3">
+            <label for="andar" class="form-label">Andar</label>
+            <select class="form-select" id="andar">
+              <option value="">Todos</option>
+              <option value="3">3º Andar</option>
+              <option value="5">5º Andar</option>
+            </select>
+          </div>
 
-        <h2>Salas e Laboratórios - 5º Andar</h2>
-        <section class="andar5">
-            <div class="div-reservar" th:each="sala : ${salasAndar5}">
-                <img th:src="@{/img/sala5.jpeg}" th:alt="'Laboratório ' + ${sala.numero}">
-                <h3 th:text="'Sala ' + ${sala.numero}">Sala</h3>
-                <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">Capacidade</p>
-                <p th:text="'Possui televisão? ' + ${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR) ? 'Sim' : 'Não'}">TV</p>
-                <p th:text="'Possui projetor? ' + ${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR) ? 'Sim' : 'Não'}">Projetor</p>
-                <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">Máquinas</p>
-                <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
-                    <button class="btn">Reservar</button>
-                </a>
-            </div>
-        </section>
+          <div class="col-md-3">
+            <label for="recurso" class="form-label">Recursos</label>
+            <select class="form-select" id="recurso">
+              <option value="">Todos</option>
+              <option value="TV">TV</option>
+              <option value="Projetor">Projetor</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label for="Tipo de sala" class="form-label">Tipo de Sala</label>
+            <select class="form-select" id="tiposala">
+              <option value="">Todos</option>
+              <option value="Lab">Laboratório</option>
+              <option value="Sala">Sala de aula</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 align-self-end">
+            <button
+              type="button"
+              class="btn btn-login w-100"
+              onclick="aplicarFiltros()"
+            >
+              Filtrar
+            </button>
+          </div>
+        </form>
+      </div>
+      <h2 class="subtitulo">Salas e Laboratórios - 3º Andar</h2>
+      <section class="andar3" id="andar3-section">
+        <div
+          class="div-reservar"
+          th:each="sala : ${salasAndar3}"
+          data-andar="3"
+        >
+          <img
+            th:src="@{/img/sala5.jpeg}"
+            th:alt="'Laboratório ' + ${sala.numero}"
+          />
+          <!-- Título dinâmico usando o nome do Enum para exibição -->
+          <h3
+            th:text="${sala.qtdComputadores > 0 ? 'Laboratório ' : 'Sala ' } + ${sala.numero}"
+          >
+            Tipo e Número
+          </h3>
+
+          <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
+            Capacidade
+          </p>
+
+          <!-- Exibe apenas o nome do Enum Recurso (TELEVISOR) se a sala o contiver -->
+          <p
+            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR)}"
+          >
+            TELEVISOR
+          </p>
+
+          <!-- Exibe apenas o nome do Enum Recurso (PROJETOR) se a sala o contiver -->
+          <p
+            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR)}"
+          >
+            PROJETOR
+          </p>
+
+          <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
+            Máquinas
+          </p>
+          <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
+            <button class="btn">Reservar</button>
+          </a>
+        </div>
+      </section>
+
+      <!-- Seção do 5º Andar -->
+      <h2 id="andar5-titulo">Salas e Laboratórios - 5º Andar</h2>
+      <section class="andar5" id="andar5-section">
+        <div
+          class="div-reservar"
+          th:each="sala : ${salasAndar5}"
+          data-andar="5"
+          th:data-tiposala="${sala.qtdComputadores > 0 ? T(com.bd.sitebd.model.enums.TipoSala).LABORATORIO.name() : T(com.bd.sitebd.model.enums.TipoSala).SALA.name()}"
+          th:data-recursos="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR) ? 'TV,' : ''} + ${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR) ? 'Projetor' : ''}"
+        >
+          <img
+            th:src="@{/img/sala5.jpeg}"
+            th:alt="'Laboratório ' + ${sala.numero}"
+          />
+          <!-- Título dinâmico usando o nome do Enum para exibição -->
+          <h3
+            th:text="${sala.qtdComputadores > 0 ? 'Laboratório ' : 'Sala ' } + ${sala.numero}"
+          >
+            Tipo e Número
+          </h3>
+
+          <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
+            Capacidade
+          </p>
+
+          <!-- Exibe apenas o nome do Enum Recurso (TELEVISOR) se a sala o contiver -->
+          <p
+            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR)}"
+          >
+            TELEVISOR
+          </p>
+
+          <!-- Exibe apenas o nome do Enum Recurso (PROJETOR) se a sala o contiver -->
+          <p
+            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR)}"
+          >
+            PROJETOR
+          </p>
+
+          <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
+            Máquinas
+          </p>
+          <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
+            <button class="btn">Reservar</button>
+          </a>
+        </div>
+      </section>
     </main>
-<div th:replace="fragments/footer :: footer"></div>
-</body>
+    <script th:src="@{/js/filtroprincipal.js}"></script>
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
 </html>
