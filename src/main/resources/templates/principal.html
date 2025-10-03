@@ -23,7 +23,7 @@
 
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a th:href="@{/admin/principal}" class="nav-link" 
+                  <a th:href="@{/}" class="nav-link" 
                     th:classappend="${activePage == 'principal'} ? ' active' : ''">Home</a>
                 </li>
                 <li class="nav-item">
@@ -33,10 +33,6 @@
                 <li class="nav-item">
                     <a th:href="@{/auditorio}" class="nav-link" 
                     th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/contato}" class="nav-link" 
-                    th:classappend="${activePage == 'contato'} ? ' active' : ''">Contato</a>
                 </li>
                 <li class="nav-item">
                     <form th:action="@{/logout}" method="post" class="d-inline">
@@ -83,5 +79,6 @@
             </div>
         </section>
     </main>
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

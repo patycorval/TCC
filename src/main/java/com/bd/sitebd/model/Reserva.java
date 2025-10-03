@@ -16,19 +16,14 @@ public class Reserva {
 
     private String numero;
     private String nome;
-
-    // Novo campo para o nome do evento, usado em reservas de auditório
     private String evento;
-
-    // Novo campo para associar a reserva ao e-mail do requisitor
     private String emailRequisitor;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate data;
 
-    private LocalTime hora;
-
-    private int duracao;
+    private LocalTime hora; // Nome do campo corrigido para 'hora'
+    private LocalTime horaFim;
 
     @Enumerated(EnumType.STRING)
     private StatusReserva status;
@@ -62,7 +57,6 @@ public class Reserva {
         this.nome = nome;
     }
 
-    // Novo getter e setter para o campo 'evento'
     public String getEvento() {
         return evento;
     }
@@ -71,7 +65,6 @@ public class Reserva {
         this.evento = evento;
     }
 
-    // Novo getter e setter para o campo 'emailRequisitor'
     public String getEmailRequisitor() {
         return emailRequisitor;
     }
@@ -88,6 +81,7 @@ public class Reserva {
         this.data = data;
     }
 
+    // Getters e Setters corrigidos para o campo 'hora'
     public LocalTime getHora() {
         return hora;
     }
@@ -96,15 +90,14 @@ public class Reserva {
         this.hora = hora;
     }
 
-    public int getDuracao() {
-        return duracao;
+    public LocalTime getHoraFim() {
+        return horaFim;
     }
 
-    public void setDuracao(int duracao) {
-        this.duracao = duracao;
+    public void setHoraFim(LocalTime horaFim) {
+        this.horaFim = horaFim;
     }
 
-    // Getter e Setter para o campo 'status'
     public StatusReserva getStatus() {
         return status;
     }

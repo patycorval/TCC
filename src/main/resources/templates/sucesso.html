@@ -35,10 +35,6 @@
                     th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
                 </li>
                 <li class="nav-item">
-                    <a th:href="@{/contato}" class="nav-link" 
-                    th:classappend="${activePage == 'contato'} ? ' active' : ''">Contato</a>
-                </li>
-                <li class="nav-item">
                     <form th:action="@{/logout}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-outline-light" title="Sair">
                             <i class="bi bi-box-arrow-right"></i>
@@ -61,6 +57,6 @@
     <br>
     <a th:href="@{/listagem}" class="voltar">Ver suas reservas</a>
 
-
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

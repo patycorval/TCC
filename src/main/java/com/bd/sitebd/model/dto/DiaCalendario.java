@@ -1,6 +1,7 @@
 package com.bd.sitebd.model.dto;
 
 public class DiaCalendario {
+
     private int dia;
     private String status;
 
@@ -9,7 +10,6 @@ public class DiaCalendario {
         this.status = status;
     }
 
-    // Getters and Setters
     public int getDia() {
         return dia;
     }

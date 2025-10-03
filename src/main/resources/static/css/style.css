@@ -178,6 +178,10 @@ strong{
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)
 }
+
+.dia.mensal.vazio {
+    visibility: hidden;
+}
 .informacoes-audi h2{
     color: rgb(120, 4, 4);
     font-weight: 500;
@@ -333,7 +337,7 @@ tr:hover {
     background-color: #e0e0e0;
 }
 button#apagar {
-    background-color: #dc3545;
+    background-color: #c30000;
     color: white;
     padding: 8px 10px;
     border: none;
@@ -343,7 +347,7 @@ button#apagar {
     font-size: 16px;
 }
 tbody button#apagar:hover {
-    background-color: #c82333;
+    background-color: #8b0000;
 }
 tbody #atualizar{
     background-color: #3e3b3b;
@@ -593,6 +597,10 @@ h2 .sucesso{
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+}
+.form-modal h3 {
+    padding-top: 15px; 
+    line-height: normal; 
 }
 .modal-content-inner {
    overflow-y: auto;

@@ -35,10 +35,6 @@
                     th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
                 </li>
                 <li class="nav-item">
-                    <a th:href="@{/contato}" class="nav-link" 
-                    th:classappend="${activePage == 'contato'} ? ' active' : ''">Contato</a>
-                </li>
-                <li class="nav-item">
                     <form th:action="@{/logout}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-outline-light" title="Sair">
                             <i class="bi bi-box-arrow-right"></i>
@@ -53,34 +49,28 @@
     <h1>Reserva de salas Fatec RL</h1>
 
     <form th:action="@{/reservar}" method="post" th:object="${reserva}" class="form">
-        <!-- Número da Salaa -->
         <label for="numero">Número da Sala:</label>
         <input type="text" id="numero" name="numero" th:field="*{numero}" readonly />
 
-        <!-- Nome do Reservante -->
         <label for="nome">Seu Nome:</label>
         <input type="text" id="nome" name="nome" th:field="*{nome}" required />
 
-        <!-- Data da Reserva -->
         <label for="data">Data:</label>
         <input type="date" id="data" name="data" th:field="*{data}" required />
 
-        <!-- Hora da Reserva -->
-        <label for="hora">Hora:</label>
+        <label for="hora">Hora Início:</label>
         <input type="time" id="hora" name="hora" th:field="*{hora}" required />
 
-        <!-- Duração -->
-        <label for="duracao">Duração (horas):</label>
-        <input type="number" id="duracao" name="duracao" th:field="*{duracao}" min="1" max="12" required />
+        <label for="horaFim">Hora Fim:</label>
+        <input type="time" th:field="*{horaFim}" id="horaFim" required />
 
         <div th:if="${erro}" style="color: red; font-weight: bold; margin-bottom: 10px;">
             <p th:text="${erro}"></p>
         </div>
 
         <input type="submit" value="Confirmar reserva" name="reservar" id="reservar">
-
-    <a th:href="@{/}">Voltar</a>
+        <a th:href="@{/}">Voltar</a>
     </form>
-
+    <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.bd.sitebd.controller;
 
 import com.bd.sitebd.model.Reserva;
+import com.bd.sitebd.model.enums.StatusReserva;
 import com.bd.sitebd.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +35,8 @@ public class ReservaController {
     public String realizarReserva(@ModelAttribute Reserva reserva, Model model, Authentication authentication) {
         try {
             reserva.setEmailRequisitor(authentication.getName());
-            reserva.setNome(authentication.getName()); // Ou o nome do usuário
+            reserva.setNome(authentication.getName());
+            reserva.setStatus(StatusReserva.APROVADA); // Reservas de sala são aprovadas diretamente
             reservaService.salvar(reserva);
             model.addAttribute("reserva", reserva);
             return "sucesso";
@@ -92,7 +94,7 @@ public class ReservaController {
         reservaExistente.setNome(reservaAtualizada.getNome());
         reservaExistente.setData(reservaAtualizada.getData());
         reservaExistente.setHora(reservaAtualizada.getHora());
-        reservaExistente.setDuracao(reservaAtualizada.getDuracao());
+        reservaExistente.setHoraFim(reservaAtualizada.getHoraFim()); // CORRIGIDO: usa a hora de fim
 
         try {
             reservaService.atualizar(reservaExistente);

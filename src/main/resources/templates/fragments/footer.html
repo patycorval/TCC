@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <footer th:fragment="footer" class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4 mb-3">
+                    <h5>Contato</h5>
+                    <p>Email: contato@fatecrubenslara.com.br</p>
+                    <p>Telefone: (13) 3227-6003</p>
+                </div>
+                <div class="col-sm-4 mb-3">
+                    <h5>Atendimento</h5>
+                    <p>Segunda a Sexta-Feira</p>
+                    <p>Horário: 9h às 22h</p>
+                </div>
+                <div class="col-sm-4 mb-3">
+                    <h5>Endereço</h5>
+                    <p>Av. Senador Feijó, 350</p>
+                    <p>Vila Matias, Santos - SP, 11015-502</p>
+                </div>
+            </div>
+            <hr class="bg-white" />
+            <p>&copy; <span th:text="${#temporals.format(T(java.time.LocalDate).now(), 'yyyy')}">2025</span> Fatec Rubens Lara. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

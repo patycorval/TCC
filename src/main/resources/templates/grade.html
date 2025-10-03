@@ -62,14 +62,7 @@
               >Auditório</a
             >
           </li>
-          <li class="nav-item">
-            <a
-              th:href="@{/contato}"
-              class="nav-link"
-              th:classappend="${activePage == 'contato'} ? ' active' : ''"
-              >Contato</a
-            >
-          </li>
+          
           <li class="nav-item">
             <form th:action="@{/logout}" method="post" class="d-inline">
               <button type="submit" class="btn btn-outline-light" title="Sair">
@@ -197,5 +190,6 @@
       </div>
     </main>
     <script th:src="@{/js/grade.js}"></script>
+    <div th:replace="fragments/footer :: footer"></div>
   </body>
 </html>

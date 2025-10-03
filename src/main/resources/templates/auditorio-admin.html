@@ -32,10 +32,6 @@
                     th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
                 </li>
                 <li class="nav-item">
-                    <a th:href="@{/contato}" class="nav-link" 
-                    th:classappend="${activePage == 'contato'} ? ' active' : ''">Contato</a>
-                </li>
-                <li class="nav-item">
                     <form th:action="@{/logout}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-outline-light" title="Sair">
                             <i class="bi bi-box-arrow-right"></i>
@@ -154,5 +150,6 @@
       integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
       crossorigin="anonymous"
     ></script>
+    <div th:replace="fragments/footer :: footer"></div>
   </body>
 </html>
