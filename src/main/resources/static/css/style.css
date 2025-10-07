@@ -806,8 +806,8 @@ h2 .sucesso{
 /* =================================================================== */
 
 .form-card {
-    max-width: 500px;
-    width: 100%;
+    max-width: 100%;
+    width: 450px;
     border-radius: 15px;
 }
 
@@ -816,6 +816,7 @@ h2 .sucesso{
     height: auto;
     margin-left: auto;
     margin-right: auto;
+    display: block;
 }
 
 /* Define a cor do botão nos formulários de login/cadastro */
@@ -847,10 +848,4 @@ form.register-form .btn-custom-red:hover {
     right: 1rem;
     z-index: 10;
     cursor: pointer;
-}
-
-/* Estilo para o link de "Voltar" fora do card */
-.link-voltar {
-    text-align: center;
-    margin-top: 1rem;
 }
