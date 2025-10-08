@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.bd.sitebd.model.enums.Recurso;
 import com.bd.sitebd.model.enums.TipoSala;
+import java.util.stream.Collectors;
 
 @Entity
 public class Sala {
@@ -99,5 +100,30 @@ public class Sala {
 
     public int getQtdComputadores() {
         return qtdComputadores;
+    }
+
+    @Transient // transient nao existe no banco
+    public TipoSala getTipoSala() {
+        if (this.qtdComputadores > 0) {
+            return TipoSala.LABORATORIO;
+        }
+        return TipoSala.SALA_AULA;
+    }
+
+    @Transient
+    public String getRecursosAsString() {
+        if (this.recursos == null || this.recursos.isEmpty()) {
+            return "";
+        }
+        // Para cada recurso, pega seu nome (ex: "TELEVISOR")
+        // Junta todos os nomes em uma String, separados por ","
+        return this.recursos.stream()
+                            .map(Recurso::name)
+                            .collect(Collectors.joining(","));
+    }
+
+    @Transient
+    public String getTipoSalaDisplayName() {
+    return this.getTipoSala() == TipoSala.LABORATORIO ? "Laboratório" : "Sala de Aula";
     }
 }

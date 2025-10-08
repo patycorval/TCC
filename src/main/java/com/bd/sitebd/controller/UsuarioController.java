@@ -39,17 +39,28 @@ public class UsuarioController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/")
-    public String principal(Model model) {
-        List<Sala> todasSalas = salaService.listarTodas();
-        List<Sala> salasAndar3 = todasSalas.stream()
-                .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().contains("3"))
-                .toList();
-        List<Sala> salasAndar5 = todasSalas.stream()
-                .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().contains("5"))
-                .toList();
+    public String principal(
+            // O método agora aceita os parâmetros de filtro da URL
+            @RequestParam(required = false) String andar,
+            @RequestParam(required = false) String recurso,
+            @RequestParam(required = false) String tiposala,
+            Model model) {
+
+        // busca e filtra as salas com base nos parâmetros recebidos
+        List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala);
+
+        List<Sala> salasAndar3 = salasFiltradas.stream()
+        .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("3"))
+        .toList();
+
+        List<Sala> salasAndar5 = salasFiltradas.stream()
+        .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("5"))
+        .toList();
+
         model.addAttribute("salasAndar3", salasAndar3);
         model.addAttribute("salasAndar5", salasAndar5);
         model.addAttribute("activePage", "principal");
+
         return "principal";
     }
 

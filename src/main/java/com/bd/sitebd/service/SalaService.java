@@ -22,28 +22,38 @@ public class SalaService {
         salaRepository.saveAll(salas);
     }
 
-    // Listar todas as salas
     public List<Sala> listarTodas() {
         return salaRepository.findAll();
     }
 
-    // Buscar por ID
     public Sala buscarPorId(Long id) {
         Optional<Sala> optional = salaRepository.findById(id);
         return optional.orElse(null);
     }
 
-    // Criar ou atualizar sala
     public Sala salvar(Sala sala) {
         return salaRepository.save(sala);
     }
 
-    // Desativar sala
     public void desativarSala(Long id) {
         Sala sala = buscarPorId(id);
         if (sala != null) {
             sala.setAtiva(false);
             salaRepository.save(sala);
         }
+    }
+
+    //  FILTRO  
+
+    public List<Sala> getSalasFiltradas(String andar, String recurso, String tiposala) {
+        // Pega TODAS as salas do banco
+        List<Sala> todasAsSalas = salaRepository.findAll();
+
+        // Aplica os filtros e retorna a lista resultante
+        return todasAsSalas.stream()
+                .filter(sala -> andar == null || andar.isEmpty() || sala.getLocalizacao().equals(andar))
+                .filter(sala -> tiposala == null || tiposala.isEmpty() || sala.getTipoSala().name().equals(tiposala))
+                .filter(sala -> recurso == null || recurso.isEmpty() || sala.getRecursosAsString().contains(recurso))
+                .toList();
     }
 }

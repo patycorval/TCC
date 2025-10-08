@@ -95,17 +95,17 @@
             <label for="recurso" class="form-label">Recursos</label>
             <select class="form-select" id="recurso">
               <option value="">Todos</option>
-              <option value="TV">TV</option>
-              <option value="Projetor">Projetor</option>
+              <option value="TELEVISOR">TV</option>
+              <option value="PROJETOR">Projetor</option>
             </select>
           </div>
 
           <div class="col-md-3">
-            <label for="Tipo de sala" class="form-label">Tipo de Sala</label>
+            <label for="tiposala" class="form-label">Tipo de Sala</label>
             <select class="form-select" id="tiposala">
               <option value="">Todos</option>
-              <option value="Lab">Laboratório</option>
-              <option value="Sala">Sala de aula</option>
+              <option value="LABORATORIO">Laboratório</option>
+              <option value="SALA_AULA">Sala de aula</option>
             </select>
           </div>
 
@@ -126,87 +126,74 @@
           class="div-reservar"
           th:each="sala : ${salasAndar3}"
           data-andar="3"
+          th:data-tiposala="${sala.tipoSala}"
+          th:data-recursos="${sala.recursosAsString}"
         >
           <img
             th:src="@{/img/sala5.jpeg}"
-            th:alt="'Laboratório ' + ${sala.numero}"
+            th:alt="'Imagem da sala ' + ${sala.numero}"
           />
-          <!-- Título dinâmico usando o nome do Enum para exibição -->
-          <h3
-            th:text="${sala.qtdComputadores > 0 ? 'Laboratório ' : 'Sala ' } + ${sala.numero}"
-          >
+          <h3 th:text="${sala.tipoSalaDisplayName} + ' ' + ${sala.numero}">
             Tipo e Número
           </h3>
-
           <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
             Capacidade
           </p>
-
-          <!-- Exibe apenas o nome do Enum Recurso (TELEVISOR) se a sala o contiver -->
-          <p
-            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR)}"
-          >
-            TELEVISOR
-          </p>
-
-          <!-- Exibe apenas o nome do Enum Recurso (PROJETOR) se a sala o contiver -->
-          <p
-            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR)}"
-          >
-            PROJETOR
-          </p>
-
           <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
             Máquinas
           </p>
+
+          <div>
+            <span>Recursos: </span>
+            <span
+              th:each="recurso : ${sala.recursos}"
+              th:text="${recurso}"
+              class="badge bg-secondary me-1"
+            >
+            </span>
+            <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
+          </div>
+
           <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
             <button class="btn">Reservar</button>
           </a>
         </div>
       </section>
 
-      <!-- Seção do 5º Andar -->
       <h2 id="andar5-titulo">Salas e Laboratórios - 5º Andar</h2>
       <section class="andar5" id="andar5-section">
         <div
           class="div-reservar"
           th:each="sala : ${salasAndar5}"
           data-andar="5"
-          th:data-tiposala="${sala.qtdComputadores > 0 ? T(com.bd.sitebd.model.enums.TipoSala).LABORATORIO.name() : T(com.bd.sitebd.model.enums.TipoSala).SALA.name()}"
-          th:data-recursos="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR) ? 'TV,' : ''} + ${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR) ? 'Projetor' : ''}"
+          th:data-tiposala="${sala.tipoSala}"
+          th:data-recursos="${sala.recursosAsString}"
         >
           <img
             th:src="@{/img/sala5.jpeg}"
-            th:alt="'Laboratório ' + ${sala.numero}"
+            th:alt="'Imagem da sala ' + ${sala.numero}"
           />
-          <!-- Título dinâmico usando o nome do Enum para exibição -->
-          <h3
-            th:text="${sala.qtdComputadores > 0 ? 'Laboratório ' : 'Sala ' } + ${sala.numero}"
-          >
+          <h3 th:text="${sala.tipoSalaDisplayName} + ' ' + ${sala.numero}">
             Tipo e Número
           </h3>
-
           <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
             Capacidade
           </p>
-
-          <!-- Exibe apenas o nome do Enum Recurso (TELEVISOR) se a sala o contiver -->
-          <p
-            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).TELEVISOR)}"
-          >
-            TELEVISOR
-          </p>
-
-          <!-- Exibe apenas o nome do Enum Recurso (PROJETOR) se a sala o contiver -->
-          <p
-            th:if="${sala.recursos.contains(T(com.bd.sitebd.model.enums.Recurso).PROJETOR)}"
-          >
-            PROJETOR
-          </p>
-
           <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
             Máquinas
           </p>
+
+          <div>
+            <span>Recursos: </span>
+            <span
+              th:each="recurso : ${sala.recursos}"
+              th:text="${recurso}"
+              class="badge bg-secondary me-1"
+            >
+            </span>
+            <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
+          </div>
+
           <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
             <button class="btn">Reservar</button>
           </a>
