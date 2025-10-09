@@ -51,7 +51,7 @@ public class SalaService {
 
         // Aplica os filtros e retorna a lista resultante
         return todasAsSalas.stream()
-                .filter(sala -> andar == null || andar.isEmpty() || sala.getLocalizacao().equals(andar))
+                .filter(sala -> andar == null || andar.isEmpty() || (sala.getLocalizacao() != null && sala.getLocalizacao().startsWith(andar)))
                 .filter(sala -> tiposala == null || tiposala.isEmpty() || sala.getTipoSala().name().equals(tiposala))
                 .filter(sala -> recurso == null || recurso.isEmpty() || sala.getRecursosAsString().contains(recurso))
                 .toList();

@@ -61,6 +61,10 @@ public class UsuarioController {
         model.addAttribute("salasAndar5", salasAndar5);
         model.addAttribute("activePage", "principal");
 
+        model.addAttribute("andarSelecionado", andar);
+        model.addAttribute("recursoSelecionado", recurso);
+        model.addAttribute("tipoSalaSelecionado", tiposala);
+
         return "principal";
     }
 

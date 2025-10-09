@@ -86,8 +86,12 @@
             <label for="andar" class="form-label">Andar</label>
             <select class="form-select" id="andar">
               <option value="">Todos</option>
-              <option value="3">3º Andar</option>
-              <option value="5">5º Andar</option>
+              <option value="3" th:selected="${andarSelecionado == '3'}">
+                3º Andar
+              </option>
+              <option value="5" th:selected="${andarSeleciona == '5'}">
+                5º Andar
+              </option>
             </select>
           </div>
 
@@ -95,8 +99,18 @@
             <label for="recurso" class="form-label">Recursos</label>
             <select class="form-select" id="recurso">
               <option value="">Todos</option>
-              <option value="TELEVISOR">TV</option>
-              <option value="PROJETOR">Projetor</option>
+              <option
+                value="TELEVISOR"
+                th:selected="${recursoSelecionado == 'TELEVISOR'}"
+              >
+                TV
+              </option>
+              <option
+                value="PROJETOR"
+                th:selected="${recursoSelecionad == 'PROJETOR'}"
+              >
+                Projetor
+              </option>
             </select>
           </div>
 
@@ -104,8 +118,18 @@
             <label for="tiposala" class="form-label">Tipo de Sala</label>
             <select class="form-select" id="tiposala">
               <option value="">Todos</option>
-              <option value="LABORATORIO">Laboratório</option>
-              <option value="SALA_AULA">Sala de aula</option>
+              <option
+                value="LABORATORIO"
+                th:selected="${tipoSalaSelecionado == 'LABORATORIO'}"
+              >
+                Laboratório
+              </option>
+              <option
+                value="SALA_AULA"
+                th:selected="${tipoSalaSelecionado == 'SALA_AULA'}"
+              >
+                Sala de aula
+              </option>
             </select>
           </div>
 
@@ -120,7 +144,7 @@
           </div>
         </form>
       </div>
-      <h2 class="subtitulo">Salas e Laboratórios - 3º Andar</h2>
+      <h2 id="andar3-titulo">Salas e Laboratórios - 3º Andar</h2>
       <section class="andar3" id="andar3-section">
         <div
           class="div-reservar"
