@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <header th:fragment="header" class="d-flex justify-content-between align-items-center py-3 px-5 mb-4 border-bottom">
+        
+        <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto">
+            <img class="logo-fatec" th:src="@{/img/logo-fatec-branco.png}" alt="Logo Fatec">
+            <img class="logo-cps" th:src="@{/img/Logo_CPS-01.png}" alt="Logo Centro Paula Souza">
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a th:href="@{/}" class="nav-link" 
+                   th:classappend="${activePage == 'principal'} ? ' active' : ''">Home</a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/listagem}" class="nav-link" 
+                   th:classappend="${activePage == 'listagem'} ? ' active' : ''">Minhas Reservas</a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/auditorio}" class="nav-link" 
+                   th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
+            </li>
+            
+            <li class="nav-item dropdown" th:if="${usuarioEmail != null}">
+                <a class="nav-link dropdown-toggle" href="#" id="perfil" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><h6 class="dropdown-header">CONECTADO COMO</h6></li>
+                    <li><span class="dropdown-item-text" th:text="${usuarioEmail}"></span></li>
+                    <li><span class="dropdown-item-text"><small class="badge bg-secondary" th:text="${usuarioTipo}"></small></span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                            <button type="submit" class="dropdown-item">
+                                <i class="bi bi-box-arrow-right me-2"></i>Sair
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </header>
+
+</body>
+</html>

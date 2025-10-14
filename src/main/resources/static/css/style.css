@@ -72,7 +72,7 @@ h3{
 }
 
 .filtro-div{
-    padding: 3%;
+    padding: 1.5rem 2rem;
     border-radius: 15px;
     background-color: #2e2d2d;
     color: white;
@@ -160,6 +160,23 @@ header {
         gap: 10px;
     }
 }
+/* --- AJUSTES MENU DE PERFIL --- */
+
+#perfil {
+    color: white;      
+    font-size: 1.5rem;  
+    line-height: 1;    
+}
+.dropdown-menu .dropdown-item:hover {
+    color: white; /* Cor do texto no hover (branco) */
+    background-color: #c30000; /* Fundo vermelho, igual aos botões do sistema */
+}
+.dropdown-menu .dropdown-item:active,
+.dropdown-menu .dropdown-item:focus {
+    color: white; /* Garante o texto branco ao clicar */
+    background-color: #8d0000; /* Um vermelho mais escuro para dar feedback de clique */
+}
+
 /*PAGINA CONTATO*/
 .contato {
     max-width: 600px;
@@ -320,7 +337,7 @@ form input[readonly] {
     user-select: none;
 }
 /****** PAGINA LISTAGEM *********/
-table {
+/* table {
     width: 75%;
     border-collapse: collapse;
     margin: 20px auto;
@@ -343,7 +360,7 @@ table, th, td {
 }
 tr:hover {
     background-color: #e0e0e0;
-}
+} */
 button#apagar {
     background-color: #c30000;
     color: white;

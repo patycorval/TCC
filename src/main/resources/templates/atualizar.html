@@ -13,38 +13,7 @@
     <title>Atualizar</title>
 </head>
 <body>
-       <div class="container-fluid px-0">
-        <header class="d-flex justify-content-between align-items-center py-3 px-5 mb-4 border-bottom">
-
-            <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto">
-                <img class="logo-fatec" th:src="@{/img/logo-fatec-branco.png}" alt="Logo Fatec">
-                <img class="logo-cps" th:src="@{/img/Logo_CPS-01.png}" alt="Logo Centro Paula Souza">
-            </a>
-
-            <ul class="nav nav-pills">
-                <li class="nav-item">
-                    <a th:href="@{/}" class="nav-link" 
-                    th:classappend="${activePage == 'principal'} ? ' active' : ''">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/listagem}" class="nav-link" 
-                    th:classappend="${activePage == 'listagem'} ? ' active' : ''">Minhas Reservas</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/auditorio}" class="nav-link" 
-                    th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
-                </li>
-                <li class="nav-item">
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-outline-light" title="Sair">
-                            <i class="bi bi-box-arrow-right"></i>
-                        </button>
-                    </form>
-
-                </li>
-            </ul>
-        </header>
-    </div>
+    <div th:replace="~{fragments/header :: header}"></div>
 
     <h1>Sistema de Reserva</h1>
 
@@ -82,7 +51,7 @@
     
         <a th:href="@{/listagem}">Voltar</a>
     </form>
-       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
 <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

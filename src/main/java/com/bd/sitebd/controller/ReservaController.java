@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -54,8 +55,23 @@ public class ReservaController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String emailUsuario = authentication.getName();
 
-        model.addAttribute("reservas", reservaService.listarPorUsuario(emailUsuario));
+        // Busca todas as reservas do usuário
+        List<Reserva> todasAsReservas = reservaService.listarPorUsuario(emailUsuario);
+
+        // Separa as reservas em duas listas
+        List<Reserva> reservasSalas = todasAsReservas.stream()
+                .filter(r -> !"Auditorio".equalsIgnoreCase(r.getNumero()))
+                .toList();
+
+        List<Reserva> reservasAuditorio = todasAsReservas.stream()
+                .filter(r -> "Auditorio".equalsIgnoreCase(r.getNumero()))
+                .toList();
+
+        // Adiciona as duas listas ao modelo
+        model.addAttribute("reservasSalas", reservasSalas);
+        model.addAttribute("reservasAuditorio", reservasAuditorio);
         model.addAttribute("activePage", "listagem");
+
         return "listagem";
     }
 
