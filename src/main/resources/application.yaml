@@ -29,7 +29,7 @@ spring:
     datasource:
         url: jdbc:postgresql://localhost:5432/dbzinho
         username: postgres
-        password: root
+        password: 1234
         driver-class-name: org.postgresql.Driver
         initialize: true
     
