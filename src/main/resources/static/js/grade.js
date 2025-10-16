@@ -1,70 +1,92 @@
-document.addEventListener('DOMContentLoaded', () => {
-    
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Mapeamento dos horários para cada período
+    const horarios = {
+        matutino: [
+            '07:40 às 08:30', '08:30 às 09:20', '09:30 às 10:20',
+            '10:20 às 11:10', '11:10 às 12:00', '12:00 às 12:50'
+        ],
+        noturno: [
+            '18:40 às 19:30', '19:30 às 20:20', '20:30 às 21:20',
+            '21:20 às 22:10', '22:10 às 23:00'
+        ]
+    };
+
+    // Selecionando os elementos do DOM
+    const periodoSelect = document.getElementById('periodo');
+    const gradeBody = document.getElementById('gradeBody');
     const btnAplicar = document.getElementById('btnAplicar');
-    const selectProfessor = document.getElementById('professor');
-    const selectCurso = document.getElementById('curso');
-    const selectPeriodo = document.getElementById('periodo');
-    const selectSemestre = document.getElementById('semestre');
+    
+    // Função para gerar a estrutura da grade de horários vazia
+    function gerarGradeVazia(periodo) {
+        // Limpa a tabela atual
+        gradeBody.innerHTML = '';
 
-    btnAplicar.addEventListener('click', () => {
-        const professorSelecionado = selectProfessor.value;
-        const cursoSelecionado = selectCurso.value;
-        const periodoSelecionado = selectPeriodo.value;
-        const semestreSelecionado = selectSemestre.value;
+        const horariosDoPeriodo = horarios[periodo];
+        if (!horariosDoPeriodo) return; // Segurança
 
-        // Log para verificação
-        console.log('Filtros Aplicados:');
-        console.log(`Professor: ${professorSelecionado}`);
-        console.log(`Curso: ${cursoSelecionado}`);
-        console.log(`Período: ${periodoSelecionado}`);
-        console.log(`Semestre: ${semestreSelecionado}`);
+        // Cria uma linha para cada horário
+        horariosDoPeriodo.forEach(horario => {
+            const linhaHorario = document.createElement('div');
+            linhaHorario.className = 'linha-horario';
 
-        alert(`Filtros aplicados!\nProfessor: ${professorSelecionado}\nCurso: ${cursoSelecionado}\nPeríodo: ${periodoSelecionado}\nSemestre: ${semestreSelecionado}`);
-    });
+            // Adiciona a célula do horário
+            linhaHorario.innerHTML = `<div class="horario-celula">${horario}</div>`;
 
-    const modal = document.getElementById('modal-edicao');
-    const fecharModal = document.querySelector('.fechar-modal');
-    const celulasGrade = document.querySelectorAll('.celula-grade');
-    const modalDia = document.getElementById('modal-dia');
-    const modalHorario = document.getElementById('modal-horario');
-    const selectProfessorModal = document.getElementById('select-professor-modal');
-
-    celulasGrade.forEach(celula => {
-        celula.addEventListener('click', () => {
-            // Pega os dados da célula clicada
-            const dia = celula.getAttribute('data-dia');
-            const horario = celula.getAttribute('data-horario');
-
-            // Preenche as informações no modal
-            modalDia.textContent = dia.charAt(0).toUpperCase() + dia.slice(1);
-            modalHorario.textContent = horario;
-
-            // Preenche o dropdown de professores
-            selectProfessorModal.innerHTML = `
-                <option value="">Nenhum</option>
-                <option value="felipe">Felipe</option>
-                <option value="garcia">Garcia</option>
-            `;
-
-            modal.style.display = 'flex';
+            // Cria as células para os dias da semana
+            for (let i = 0; i < 6; i++) { 
+                const celulaGrade = document.createElement('div');
+                celulaGrade.className = 'celula-grade';
+                celulaGrade.innerHTML = `<button class="btn btn-sm btn-outline-primary btn-add">+</button>`;
+                linhaHorario.appendChild(celulaGrade);
+            }
+            gradeBody.appendChild(linhaHorario);
         });
-    });
+    }
+    
+    async function carregarDadosDaGrade() {
+        const curso = document.getElementById('curso').value;
+        const periodo = periodoSelect.value;
+        const semestre = document.getElementById('semestre').value;
+        
+        // Por enquanto, vamos usar dados de exemplo.
+        // Ex: const response = await fetch(`/api/grade?curso=${curso}&periodo=${periodo}&semestre=${semestre}`);
+        // const dados = await response.json();
+        
+        const dadosMock = [
+            { dia: 'Segunda', horario: '08:30 às 09:20', professor: 'Garcia', sala: 'Lab 3.3'},
+            { dia: 'Terça', horario: '08:30 às 09:20', professor: 'Felipe', sala: 'Lab 5.2'},
+            { dia: 'Terça', horario: '09:30 às 10:20', professor: 'Vanina', sala: 'Sala 511'}
+        ];
 
-    // Ação para fechar o modal
-    fecharModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+        // Primeiro, gera a grade vazia correspondente ao período selecionado
+        gerarGradeVazia(periodo);
 
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
+        // Agora, preenche a grade com os dados recebidos
+        const diasDaSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+        const linhas = gradeBody.querySelectorAll('.linha-horario');
 
-    // Ação para salvar a edição (lógica de backend virá aqui)
-    document.getElementById('salvar-edicao').addEventListener('click', () => {
-        const professorSelecionado = selectProfessorModal.value;
-        alert(`Professor ${professorSelecionado} atribuído para a célula!`);
-        modal.style.display = 'none';
-    });
+        linhas.forEach(linha => {
+            const horarioDaLinha = linha.querySelector('.horario-celula').textContent;
+            
+            dadosMock.forEach(aula => {
+                if (aula.horario === horarioDaLinha) {
+                    const indiceDoDia = diasDaSemana.indexOf(aula.dia);
+                    if (indiceDoDia !== -1) {
+                        const celula = linha.children[indiceDoDia + 1]; 
+                        celula.innerHTML = `
+                            <div class="detalhes-aula">
+                                <p>${aula.professor}</p>
+                                <p>${aula.sala}</p>
+                            </div>
+                        `;
+                    }
+                }
+            });
+        });
+    }
+
+    periodoSelect.addEventListener('change', () => gerarGradeVazia(periodoSelect.value));
+    btnAplicar.addEventListener('click', carregarDadosDaGrade);
+    gerarGradeVazia(periodoSelect.value);
 });

@@ -63,7 +63,7 @@
     <main class="container my-5">
       <h2 class="mb-4">Grade de Horários</h2>
 
-      <div class="filtros-grade">
+      <div id="filtrosGrade" class="filtros-grade">
         <div class="form-group">
           <label for="professor">Professor:</label>
           <select id="professor" class="form-select"></select>
@@ -71,20 +71,20 @@
 
         <div class="form-group">
           <label for="curso">Curso:</label>
-          <select id="curso" class="form-select"></select>
-          <option value="ADS">ADS</option>
-          <option value="CD">CD</option>
-          <option value="GE">GE</option>
-          <option value="GP">GP</option>
-          <option value="GRH">GRH</option>
-          <option value="LOG">LOG</option>
-          <option value="SI">SI</option>
+          <select id="curso" class="form-select">
+            <option value="ADS">ADS</option>
+            <option value="CD">CD</option>
+            <option value="GE">GE</option>
+            <option value="GP">GP</option>
+            <option value="GRH">GRH</option>
+            <option value="LOG">LOG</option>
+            <option value="SI">SI</option>
+          </select>
         </div>
 
         <div class="form-group">
           <label for="periodo">Período:</label>
           <select id="periodo" class="form-select">
-            <option value="todos">Todos</option>
             <option value="matutino">Matutino</option>
             <option value="noturno">Noturno</option>
           </select>
@@ -93,7 +93,6 @@
         <div class="form-group">
           <label for="semestre">Semestre:</label>
           <select id="semestre" class="form-select">
-            <option value="todos">Todos</option>
             <option value="1">1º</option>
             <option value="2">2º</option>
             <option value="3">3º</option>
@@ -103,7 +102,7 @@
           </select>
         </div>
 
-        <button class="btn btn-primary">Aplicar</button>
+        <button id="btnAplicar" class="btn btn-primary">Aplicar</button>
       </div>
 
       <div class="grade-tabela my-5">
@@ -117,98 +116,10 @@
           <div class="dia-label">Sábado</div>
         </div>
 
-        <div class="grade-body">
-          <div class="linha-horario">
-            <div class="horario-celula">7:40 às 8:30</div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-          </div>
-
-          <div class="linha-horario">
-            <div class="horario-celula">8:30 às 9:20</div>
-            <div class="celula-grade">
-              <div class="detalhes-aula">
-                <p>Garcia</p>
-                <p>Lab 3.3</p>
-              </div>
-            </div>
-            <div class="celula-grade">
-              <div class="detalhes-aula">
-                <p>Felipe</p>
-                <p>Lab 5.2</p>
-              </div>
-            </div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-          </div>
-
-          <div class="linha-horario">
-            <div class="horario-celula">9:30 às 10:20</div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade">
-              <div class="detalhes-aula">
-                <p>Vanina</p>
-                <p>Sala 511</p>
-              </div>
-            </div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-          </div>
-
-          <div class="linha-horario">
-            <div class="horario-celula">10:20 às 11:10</div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade">
-              <div class="detalhes-aula">
-                <p>Vanina</p>
-                <p>Sala 511</p>
-              </div>
-            </div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-          </div>
-
-          <div class="linha-horario">
-            <div class="horario-celula">11:10 às 12:00</div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade">
-              <div class="detalhes-aula">
-                <p>Vanina</p>
-                <p>Sala 511</p>
-              </div>
-            </div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-          </div>
-
-          <div class="linha-horario">
-            <div class="horario-celula">12:00 às 12:50</div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade">
-              <div class="detalhes-aula">
-                <p>Vanina</p>
-                <p>Sala 511</p>
-              </div>
-            </div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-            <div class="celula-grade"></div>
-          </div>
-        </div>
+        <div id="gradeBody" class="grade-body"></div>
       </div>
     </main>
+
+    <script th:src="@{/js/grade.js}"></script>
   </body>
 </html>
