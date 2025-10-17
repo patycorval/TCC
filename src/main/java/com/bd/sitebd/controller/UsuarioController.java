@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -50,12 +51,12 @@ public class UsuarioController {
         List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala);
 
         List<Sala> salasAndar3 = salasFiltradas.stream()
-        .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("3"))
-        .toList();
+                .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("3"))
+                .toList();
 
         List<Sala> salasAndar5 = salasFiltradas.stream()
-        .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("5"))
-        .toList();
+                .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("5"))
+                .toList();
 
         model.addAttribute("salasAndar3", salasAndar3);
         model.addAttribute("salasAndar5", salasAndar5);
@@ -73,14 +74,20 @@ public class UsuarioController {
     public String auditorio(@RequestParam(value = "mes", required = false) Integer mes,
             @RequestParam(value = "ano", required = false) Integer ano,
             Model model) {
+
+        // Pega o email do usuário logado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String emailUsuario = authentication.getName();
+
         YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
-        List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorio(ym);
+
+        // Chama o novo método do serviço, passando o email do usuário
+        List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaUsuario(ym, emailUsuario);
 
         List<DiaCalendario> diasDoMes = new ArrayList<>();
         LocalDate primeiroDiaDoMes = ym.atDay(1);
         int diaDaSemanaDoPrimeiroDia = primeiroDiaDoMes.getDayOfWeek().getValue();
-        System.out
-                .println("!!!!!!!!!!!!O valor do dia da semana do primeiro dia do mes é: " + diaDaSemanaDoPrimeiroDia);
+
         for (int i = 1; i < diaDaSemanaDoPrimeiroDia; i++) {
             diasDoMes.add(new DiaCalendario(0, "vazio"));
         }
@@ -88,17 +95,23 @@ public class UsuarioController {
         for (int i = 1; i <= ym.lengthOfMonth(); i++) {
             LocalDate dataDoDia = ym.atDay(i);
 
+            List<Reserva> eventosDoDia = reservasAuditorio.stream()
+                    .filter(r -> r.getData().isEqual(dataDoDia))
+                    .sorted(Comparator.comparing(Reserva::getHora))
+                    .toList();
+
+            DiaCalendario diaObj;
+            // A única coisa que importa agora é se o dia é indisponível ou não.
             if (dataDoDia.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                diasDoMes.add(new DiaCalendario(i, "indisponivel"));
+                diaObj = new DiaCalendario(i, "indisponivel");
             } else {
-                boolean temEvento = reservasAuditorio.stream().anyMatch(r -> r.getData().isEqual(dataDoDia));
-                String status = temEvento ? "evento" : "disponivel";
-                diasDoMes.add(new DiaCalendario(i, status));
+                diaObj = new DiaCalendario(i, "disponivel"); // Todo dia que não é domingo é 'disponivel'
+                diaObj.setEventos(eventosDoDia);
             }
+            diasDoMes.add(diaObj);
         }
 
         model.addAttribute("diasDoMes", diasDoMes);
-        model.addAttribute("reservasAuditorio", reservasAuditorio);
         model.addAttribute("ym", ym);
         model.addAttribute("proximoMes", ym.plusMonths(1).getMonthValue());
         model.addAttribute("proximoAno", ym.plusMonths(1).getYear());

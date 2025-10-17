@@ -85,11 +85,11 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
-    public List<Reserva> buscarReservasAuditorio(YearMonth ym) {
+       // MÉTODO ATUALIZADO
+    public List<Reserva> buscarReservasAuditorioParaUsuario(YearMonth ym, String emailUsuario) {
         LocalDate startOfMonth = ym.atDay(1);
         LocalDate endOfMonth = ym.atEndOfMonth();
-        return reservaRepository.findByNumeroAndStatusAndDataBetweenOrderByDataAscHoraAsc("Auditorio",
-                StatusReserva.APROVADA, startOfMonth, endOfMonth);
+        return reservaRepository.findReservasAuditorioParaUsuario("Auditorio", startOfMonth, endOfMonth, emailUsuario);
     }
 
     public List<Reserva> buscarPorStatus(StatusReserva status) {

@@ -1,57 +1,95 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const overlayReserva = document.getElementById('overlay-reserva');
-    const formReserva = document.querySelector('.solicitacao-form');
-    const campoDataEvento = document.getElementById('dataEvento');
-    const modalEvento = new bootstrap.Modal(document.getElementById('evento-detalhes-modal'));
-    const listaEventosModal = document.getElementById('lista-eventos-modal');
-    const dataEventoModalSpan = document.getElementById('data-evento-modal');
+    // Referências aos elementos dos modais
+    const modalDiaView = document.getElementById('modal-dia-view');
+    const modalReservaForm = document.getElementById('overlay-reserva');
+    const modalDiaTitulo = document.getElementById('modal-dia-titulo');
+    const listaEventosContainer = document.getElementById('lista-eventos-modal');
+    const semEventosAviso = document.getElementById('sem-eventos-aviso');
+    const btnAbrirFormReserva = document.getElementById('btn-abrir-form-reserva');
+    const campoDataForm = document.getElementById('dataEvento');
 
-    // Mapeia os dados de reservas do servidor para uma estrutura fácil de usar
-    const reservasDoMes = JSON.parse(document.getElementById('reservas-data').textContent);
-console.log("jsss")
-    // Evento de clique para os dias do calendário
-    document.querySelectorAll('.dia.mensal').forEach(diaElemento => {
-        diaElemento.addEventListener('click', (event) => {
-            const diaNumero = diaElemento.querySelector('span').textContent;
-            if (!diaNumero || diaNumero === '0') return; // Ignora dias vazios
+    // Botões para fechar os modais
+    const btnFecharView = document.getElementById('fechar-modal-view');
+    const btnFecharForm = document.getElementById('fechar-modal-view');
 
-            const dataSelecionada = `${anoAtual}-${mesAtual.toString().padStart(2, '0')}-${diaNumero.padStart(2, '0')}`;
+    // --- NOVA FUNÇÃO PARA FORMATAR HORA ---
+    const formatarHora = (horaArray) => {
+        if (!Array.isArray(horaArray) || horaArray.length < 2) {
+            return horaArray; // Retorna o valor original se não for um array de hora
+        }
+        const horas = horaArray[0].toString().padStart(2, '0');
+        const minutos = horaArray[1].toString().padStart(2, '0');
+        return `${horas}:${minutos}`;
+    };
 
-            // Filtra as reservas para a data selecionada
-            const eventosDoDia = reservasDoMes.filter(reserva => reserva.data === dataSelecionada);
+    const formatarData = (dia, mes, ano) => {
+        const data = new Date(ano, mes - 1, dia);
+        return data.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+    };
 
-            if (eventosDoDia.length > 0) {
-                // Se houver eventos, mostra o modal de detalhes
-                listaEventosModal.innerHTML = '';
-                eventosDoDia.forEach(evento => {
-                    const li = document.createElement('li');
-                    li.classList.add('list-group-item');
-                    li.innerHTML = `<strong>${evento.evento}</strong><br/>Horário: ${evento.hora} - ${evento.horaFim}`;
-                    listaEventosModal.appendChild(li);
+    document.querySelectorAll('.dia.mensal:not(.vazio)').forEach(diaElemento => {
+        diaElemento.addEventListener('click', () => {
+            const dia = diaElemento.getAttribute('data-dia');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const ano = urlParams.get('ano') || new Date().getFullYear();
+            const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
+            
+            modalDiaTitulo.textContent = `Eventos para ${formatarData(dia, mes, ano)}`;
+            btnAbrirFormReserva.setAttribute('data-dia-selecionado', `${ano}-${mes.toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`);
+
+            listaEventosContainer.innerHTML = '';
+            
+            const eventos = JSON.parse(diaElemento.getAttribute('data-eventos'));
+
+            if (eventos && eventos.length > 0) {
+                semEventosAviso.style.display = 'none';
+                listaEventosContainer.style.display = 'block';
+
+                eventos.forEach(evento => {
+                    // --- APLICA A FORMATAÇÃO DE HORA AQUI ---
+                    const horaInicioFormatada = formatarHora(evento.hora);
+                    const horaFimFormatada = formatarHora(evento.horaFim);
+
+                    const statusClass = `status-${evento.status.toLowerCase()}`;
+                    const itemHTML = `
+                        <li class="list-group-item evento-modal-item">
+                            <div class="evento-info">
+                                <span class="evento-nome-modal">${evento.evento}</span>
+                                <span class="evento-solicitante-modal">Solicitado por: ${evento.nome}</span>
+                            </div>
+                            <div class="evento-horario">
+                                <span class="evento-hora-modal">${horaInicioFormatada} - ${horaFimFormatada}</span>
+                                <span class="badge ${statusClass}">${evento.status}</span>
+                            </div>
+                        </li>
+                    `;
+                    listaEventosContainer.innerHTML += itemHTML;
                 });
-                dataEventoModalSpan.textContent = eventosDoDia[0].data.split('-').reverse().join('/');
-                modalEvento.show();
             } else {
-                // Se o dia estiver disponível, mostra o formulário de solicitação
-                campoDataEvento.value = dataSelecionada;
-                overlayReserva.style.display = 'flex';
+                semEventosAviso.style.display = 'block';
+                listaEventosContainer.style.display = 'none';
             }
+            
+            btnAbrirFormReserva.disabled = diaElemento.classList.contains('indisponivel');
+            modalDiaView.style.display = 'flex';
         });
     });
 
-    // Evento para fechar a modal de reserva
-    document.getElementById('fechar-form').addEventListener('click', () => {
-        overlayReserva.style.display = 'none';
+    btnAbrirFormReserva.addEventListener('click', () => {
+        const dataSelecionada = btnAbrirFormReserva.getAttribute('data-dia-selecionado');
+        campoDataForm.value = dataSelecionada;
+        modalDiaView.style.display = 'none';
+        modalReservaForm.style.display = 'flex';
     });
 
-    overlayReserva.addEventListener('click', (event) => {
-        if (event.target.id === 'overlay-reserva') {
-            overlayReserva.style.display = 'none';
-        }
-    });
+    const fecharTodosModais = () => {
+        modalDiaView.style.display = 'none';
+        modalReservaForm.style.display = 'none';
+    };
 
-    // Evento para a modal de detalhes de evento
-    document.getElementById('evento-detalhes-modal').addEventListener('hidden.bs.modal', function () {
-        listaEventosModal.innerHTML = '';
-    });
+    btnFecharView.addEventListener('click', fecharTodosModais);
+    btnFecharForm.addEventListener('click', fecharTodosModais);
+    modalDiaView.addEventListener('click', (e) => { if (e.target.id === 'modal-dia-view') fecharTodosModais(); });
+    modalReservaForm.addEventListener('click', (e) => { if (e.target.id === 'overlay-reserva') fecharTodosModais(); });
 });
