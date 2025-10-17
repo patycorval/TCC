@@ -27,6 +27,9 @@ public class ReservaController {
         Reserva reserva = new Reserva();
         reserva.setNumero(numero);
         model.addAttribute("reserva", reserva);
+        // Adiciona o atributo com valor 'false' para que a página sempre o encontre.
+        model.addAttribute("reservaEfetuada", false);
+
         return "reservar";
     }
 
@@ -39,15 +42,22 @@ public class ReservaController {
             reserva.setNome(authentication.getName());
             reserva.setStatus(StatusReserva.APROVADA); // Reservas de sala são aprovadas diretamente
             reservaService.salvar(reserva);
-            model.addAttribute("reserva", reserva);
-            return "sucesso";
+
+            model.addAttribute("reservaEfetuada", true);
+            
+            Reserva novaReserva = new Reserva();
+            novaReserva.setNumero(reserva.getNumero());
+            model.addAttribute("reserva", novaReserva);
+
+            return "reservar";
+
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
             model.addAttribute("reserva", reserva);
             return "reservar";
         }
     }
-
+    
     // Listar as reservas do usuário logado
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")
@@ -55,10 +65,8 @@ public class ReservaController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String emailUsuario = authentication.getName();
 
-        // Busca todas as reservas do usuário
         List<Reserva> todasAsReservas = reservaService.listarPorUsuario(emailUsuario);
 
-        // Separa as reservas em duas listas
         List<Reserva> reservasSalas = todasAsReservas.stream()
                 .filter(r -> !"Auditorio".equalsIgnoreCase(r.getNumero()))
                 .toList();
@@ -67,7 +75,6 @@ public class ReservaController {
                 .filter(r -> "Auditorio".equalsIgnoreCase(r.getNumero()))
                 .toList();
 
-        // Adiciona as duas listas ao modelo
         model.addAttribute("reservasSalas", reservasSalas);
         model.addAttribute("reservasAuditorio", reservasAuditorio);
         model.addAttribute("activePage", "listagem");
@@ -110,7 +117,7 @@ public class ReservaController {
         reservaExistente.setNome(reservaAtualizada.getNome());
         reservaExistente.setData(reservaAtualizada.getData());
         reservaExistente.setHora(reservaAtualizada.getHora());
-        reservaExistente.setHoraFim(reservaAtualizada.getHoraFim()); // CORRIGIDO: usa a hora de fim
+        reservaExistente.setHoraFim(reservaAtualizada.getHoraFim());
 
         try {
             reservaService.atualizar(reservaExistente);
