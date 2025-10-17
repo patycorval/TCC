@@ -82,11 +82,7 @@
           </div>
 
           <div class="col-md-2 align-self-end">
-            <button
-              type="button"
-              class="btn btn-login w-100"
-              onclick="aplicarFiltros()"
-            >
+            <button type="button" class="btn w-100" onclick="aplicarFiltros()">
               Filtrar
             </button>
           </div>
@@ -126,8 +122,8 @@
             <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
           </div>
 
-          <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
-            <button class="btn">Reservar</button>
+          <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
+            Reservar
           </a>
         </div>
       </section>
@@ -160,14 +156,14 @@
             <span
               th:each="recurso : ${sala.recursos}"
               th:text="${recurso}"
-              class="badge bg-secondary me-1"
+              class="badge bg-secondary me-1 mb-3"
             >
             </span>
             <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
           </div>
 
-          <a th:href="@{'/reservar?numero=' + ${sala.numero}}">
-            <button class="btn">Reservar</button>
+          <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
+            Reservar
           </a>
         </div>
       </section>
