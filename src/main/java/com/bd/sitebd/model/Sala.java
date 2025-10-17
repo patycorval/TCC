@@ -104,7 +104,7 @@ public class Sala {
 
     @Transient // transient nao existe no banco
     public TipoSala getTipoSala() {
-        if (this.qtdComputadores > 0) {
+        if (this.qtdComputadores > 1) {
             return TipoSala.LABORATORIO;
         }
         return TipoSala.SALA_AULA;
