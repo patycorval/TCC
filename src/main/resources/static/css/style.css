@@ -82,10 +82,7 @@ h3{
 .btn{
     transition: transform 1s ease;
 }
-.btn:hover{
-    transform: scale(1.10); 
-    color: black;
-}
+
 div p{
     line-height: 1.0;
 }
@@ -98,16 +95,16 @@ div p{
     background-color: #8d0000;
 }
 a .btn {
-  color: black !important;
+    color: black !important;
     font-weight: bold;          /* cor normal */
-  text-decoration: none !important; /* remove sublinhado */
+    text-decoration: none !important; /* remove sublinhado */
 }
 a .btn:hover {
-  color: black !important; /* cor no hover */
+    color: black !important; /* cor no hover */
 }
 a .btn:active {
-  background-color: #e0e0e0; /* corzinha de clique */
-  transform: scale(0.98);    /* dá sensação de "pressionado" */
+  background-color: #e0e0e0; 
+  transform: scale(0.98);   
 }
 /************* HEADER ****************/
 header {
@@ -177,23 +174,6 @@ header {
     background-color: #8d0000; /* Um vermelho mais escuro para dar feedback de clique */
 }
 
-/*PAGINA CONTATO*/
-.contato {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 8px  rgb(120, 4, 4);
-}
-.contato h2{
-    color: rgb(120, 4, 4);
-    font-weight: 400;
-    padding-bottom: 2px;
-}
-strong{
-    font-weight: 500;
-}
 /* PÁGINA RESERVA DO AUDITÓRIO*/
 .informacoes-audi, .reserva-audi {
     max-width: 800px;
@@ -257,6 +237,125 @@ strong{
 .reserva-audi button:hover {
     transform: scale(1.10);
 }
+
+/* --- ESTILOS CALENDÁRIO DE EVENTOS DO AUDITÓRIO  ---- */
+
+#modal-dia-view .modal-dialog {
+    max-width: 600px; 
+    min-width: 500px; 
+}
+#modal-dia-view .modal-content {
+    display: flex;
+    flex-direction: column; 
+    max-height: 90vh; 
+    overflow: hidden; 
+}
+
+#modal-dia-view .modal-header,
+#modal-dia-view .modal-footer {
+    flex-shrink: 0; 
+}
+
+#modal-dia-view .modal-body {
+    flex-grow: 1;
+    overflow-y: auto; 
+}
+#btn-abrir-form-reserva {
+    color: white !important;
+    background-color: #c30000;  
+    transform: none;   
+}
+#btn-abrir-form-reserva:hover {
+    color: white !important;
+    background-color: #8d0000;  
+    transform: none;   
+}
+
+.grid-mensal .dia.mensal {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    min-height: 100px;
+    height: auto;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 8px; /* Adiciona bordas arredondadas aos dias */
+}
+
+.grid-mensal .dia.mensal:not(.indisponivel):hover {
+    background-color: #e9ecef;
+}
+
+.conteudo-dia .numero-dia {
+    font-weight: 600;
+}
+
+.indicadores-evento {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.indicador {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.indicador.status-aprovada { background-color: #198754; }
+.indicador.status-pendente { background-color: #ffc107; }
+.indicador.status-rejeitada { background-color: #6c757d; }
+
+.evento-modal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0.5rem !important;
+    gap: 1rem; /* ADICIONADO: Cria um espaçamento entre a info e o horário */
+}
+
+.evento-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1; 
+    min-width: 0; 
+    text-align: left
+}
+
+.evento-nome-modal {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.evento-solicitante-modal {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.evento-horario {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.evento-hora-modal {
+    font-weight: 500;
+    color: #333;
+}
+
+#lista-eventos-modal .badge {
+    font-size: 0.8em;
+    padding: 0.4em 0.7em;
+}
+
+#lista-eventos-modal .status-aprovada { background-color: #198754; }
+#lista-eventos-modal .status-pendente { background-color: #ffc107; color: #333 !important; }
+#lista-eventos-modal .status-rejeitada { background-color: #6c757d; }
+
+
 /******* FORMULÁRIOS **********/
 form.form {
     max-width: 600px;
@@ -337,30 +436,7 @@ form input[readonly] {
     user-select: none;
 }
 /****** PAGINA LISTAGEM *********/
-/* table {
-    width: 75%;
-    border-collapse: collapse;
-    margin: 20px auto;
-}
-th {
-    background-color: rgb(120, 4, 4);
-    color: white;
-    font-size: 16px;
-    padding: 8px;
-    text-align: center;
-}
-td {
-    background-color: #f4f4f4;
-    padding: 8px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
-table, th, td {
-    border: 1px solid #555;
-}
-tr:hover {
-    background-color: #e0e0e0;
-} */
+
 button#apagar {
     background-color: #c30000;
     color: white;
@@ -373,6 +449,8 @@ button#apagar {
 }
 tbody button#apagar:hover {
     background-color: #8b0000;
+    color: white !important;       
+    font-weight: 700;  
 }
 tbody #atualizar{
     background-color: #3e3b3b;
@@ -387,6 +465,8 @@ tbody #atualizar{
 }
 tbody #atualizar:hover{
     background-color: #2e2d2d;
+    color: white !important;       
+    font-weight: 700;  
 }
 a.voltar {
     margin: 10px 20px 20px 30px;
@@ -397,6 +477,69 @@ a.voltar {
 }
 a.voltar:hover {
     text-decoration: underline;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #00000055;
+}
+#confirmModal .modal-content {
+    width: 90%; /* Ocupa 90% da largura do container */
+    max-width: 400px; /* Mas não passa de 400px, para não ficar muito grande */
+    text-align: center;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#confirmModal p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1.5rem; /* Aumenta o espaço abaixo do texto */
+}
+
+/* 3. Estiliza os botões "Sim" e "Não" dentro do modal */
+#confirmModal .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Espaçamento entre os botões */
+}
+
+#confirmModal .btn {
+    padding: 0.6rem 1.5rem; /* Tamanho dos botões */
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+#btnConfirm {
+  background-color: #c82333;
+  color:white
+}
+#btnConfirm:hover {
+  background-color: rgb(163, 8, 24);
+}
+#btnCancel {
+  background-color: #a0a0a0;
+}
+#btnCancel:hover {
+  background-color: #838383;
+}
+#confirmModal .btn-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    font-size: 1rem;
+    padding: 0.5rem;
 }
 /****** PAGINA SUCESSO ******/
 h2 .sucesso{
@@ -612,39 +755,40 @@ h2 .sucesso{
 }
 .form-modal {
     background-color: #fff;
-    padding: 2.5rem;
+    padding: 1rem;
     border-radius: 10px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
     position: relative;
     width: 90%;
     max-width: 500px;
     max-height: 95vh;    
-    overflow-y: auto;
+    overflow: hidden; 
     display: flex;
     flex-direction: column;
 }
 .form-modal h3 {
-    padding-top: 15px; 
     line-height: normal; 
 }
 .modal-content-inner {
    overflow-y: auto;
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;  
+    padding: 0 1rem  
 }
 .solicitacao-form h3 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 0.5rem;
+  padding-top: 1rem;
 }
 .solicitacao-form p {
-    text-align: center;
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
+    top: 60px;
+   padding-top: 1rem;
 }
+.solicitacao-form .btn-submit {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    margin-top: 1rem; 
+    width: 100%;
+}
+
 .form-group {
     margin-bottom: 1rem;
 }
@@ -674,7 +818,7 @@ h2 .sucesso{
 .btn-submit {
     width: 100%;
     padding: 0.75rem;
-    background-color: #e74c3c;
+    background-color: #c30000;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -683,7 +827,7 @@ h2 .sucesso{
     transition: background-color 0.3s ease;
 }
 .btn-submit:hover {
-    background-color: #c0392b;
+    background-color: #8d0000;
 }
 .modal {
   display: none;
@@ -691,40 +835,13 @@ h2 .sucesso{
   z-index: 999;
   left: 0;
   top: 0;
-  width: 100vw;
   height: 100vh;
   background-color: rgba(0,0,0,0.5);
   justify-content: center;
   align-items: center;
   gap:20px
 }
-.modal-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-}
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 320px;
-  text-align: center;
-  box-shadow: 0 0 10px #00000055;
-}
-#btnConfirm {
-  background-color: #c82333;
-  color:white
-}
-#btnConfirm:hover {
-  background-color: rgb(180, 19, 36);
-}
-#btnCancel {
-  background-color: #a0a0a0;
-}
-#btnCancel:hover {
-  background-color: #95a5a6;
-}
+
 .modal-grade {
     display: none;
     position: fixed;
