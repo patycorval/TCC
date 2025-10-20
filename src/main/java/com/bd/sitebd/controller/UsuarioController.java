@@ -80,7 +80,14 @@ public class UsuarioController {
         String emailUsuario = authentication.getName();
 
         YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
-
+      
+        // Pega o mês e ano atuais
+        YearMonth mesCorrente = YearMonth.now();
+        // Adiciona uma variável ao modelo que será true se o mês exibido for o atual ou
+        // um passado
+        model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
+       
+        
         // Chama o novo método do serviço, passando o email do usuário
         List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaUsuario(ym, emailUsuario);
 
