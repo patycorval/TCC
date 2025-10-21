@@ -85,11 +85,23 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
-       // MÉTODO ATUALIZADO
     public List<Reserva> buscarReservasAuditorioParaUsuario(YearMonth ym, String emailUsuario) {
         LocalDate startOfMonth = ym.atDay(1);
         LocalDate endOfMonth = ym.atEndOfMonth();
-        return reservaRepository.findReservasAuditorioParaUsuario("Auditorio", startOfMonth, endOfMonth, emailUsuario);
+
+        // 1. Busca TODAS as reservas do auditório para o mês, independentemente do
+        // status
+        List<Reserva> todasAsReservas = reservaRepository.findByNumeroAndDataBetween("Auditorio", startOfMonth,
+                endOfMonth);
+
+        // 2. Itera sobre a lista para definir o campo 'owner'
+        todasAsReservas.forEach(reserva -> {
+            if (reserva.getEmailRequisitor() != null && reserva.getEmailRequisitor().equals(emailUsuario)) {
+                reserva.setOwner(true);
+            }
+        });
+
+        return todasAsReservas;
     }
 
     public List<Reserva> buscarPorStatus(StatusReserva status) {

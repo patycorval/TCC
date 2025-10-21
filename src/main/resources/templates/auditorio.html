@@ -39,7 +39,9 @@
 
             <div th:each="dia : ${diasDoMes}"
                 class="dia mensal"
-                th:classappend="${dia.dia == 0} ? 'vazio' : (${dia.status == 'evento'} ? 'evento' : (${dia.status == 'disponivel'} ? 'disponivel' : 'indisponivel'))"
+               th:classappend="${dia.dia == 0 ? 'vazio' : 
+                   dia.status == 'passado' ? 'passado' : 
+                   dia.status == 'indisponivel' ? 'indisponivel' : 'disponivel'}"
                 th:attr="data-dia=${dia.dia}, data-eventos=${dia.getEventosAsJson()}">
                 
                 <div class="conteudo-dia">

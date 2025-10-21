@@ -105,4 +105,16 @@ public class Reserva {
     public void setStatus(StatusReserva status) {
         this.status = status;
     }
+
+    @Transient
+    private boolean isOwner;
+
+    // Adicione os Getters e Setters para o novo campo
+    public boolean isOwner() {
+        return isOwner;
+    }
+
+    public void setOwner(boolean owner) {
+        isOwner = owner;
+    }
 }

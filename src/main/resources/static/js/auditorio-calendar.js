@@ -61,21 +61,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 semEventosAviso.style.display = 'none';
                 listaEventosContainer.style.display = 'block';
                 eventos.forEach(evento => {
-                    const horaInicioFormatada = formatarHora(evento.hora);
-                    const horaFimFormatada = formatarHora(evento.horaFim);
-                    const statusClass = `status-${evento.status.toLowerCase()}`;
-                    listaEventosContainer.innerHTML += `
-                        <li class="list-group-item evento-modal-item">
-                            <div class="evento-info">
-                                <span class="evento-nome-modal">${evento.evento}</span>
-                                <span class="evento-solicitante-modal">Solicitado por: ${evento.nome}</span>
-                            </div>
-                            <div class="evento-horario">
-                                <span class="evento-hora-modal">${horaInicioFormatada} - ${horaFimFormatada}</span>
-                                <span class="badge ${statusClass}">${evento.status}</span>
-                            </div>
-                        </li>`;
-                });
+                const horaInicioFormatada = formatarHora(evento.hora);
+                const horaFimFormatada = formatarHora(evento.horaFim);
+                const statusClass = `status-${evento.status.toLowerCase()}`;
+
+                // 1. Monta o conteúdo interno do item da lista
+                const conteudoItem = `
+                    <div class="evento-info">
+                        <span class="evento-nome-modal">${evento.evento}</span>
+                        <span class="evento-solicitante-modal">Solicitado por: ${evento.nome}</span>
+                    </div>
+                    <div class="evento-horario">
+                        <span class="evento-hora-modal">${horaInicioFormatada} - ${horaFimFormatada}</span>
+                        <span class="badge ${statusClass}">${evento.status}</span>
+                    </div>
+                `;
+
+                let itemHTML;
+                // 2. Verifica se o evento pertence ao usuário logado (o backend envia 'owner: true')
+                if (evento.owner) {
+                    // Se for o dono, cria um link <a> que leva para a listagem com o ID da reserva
+                    itemHTML = `<a href="/listagem?destaque=${evento.id}" class="list-group-item evento-modal-item link-reserva">${conteudoItem}</a>`;
+                } else {
+                    // Se não for, cria um <li> normal, sem link
+                    itemHTML = `<li class="list-group-item evento-modal-item">${conteudoItem}</li>`;
+                }
+
+                // 3. Adiciona o HTML gerado (seja <a> ou <li>) ao container
+                listaEventosContainer.innerHTML += itemHTML;
+            });
             } else {
                 semEventosAviso.style.display = 'block';
                 listaEventosContainer.style.display = 'none';

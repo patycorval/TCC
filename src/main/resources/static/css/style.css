@@ -278,6 +278,15 @@ header {
     background-color: #e9ecef;
 }
 
+/* Estilo para dias que já passaram no calendário */
+.grid-mensal .dia.mensal.passado {
+    background-color: #f8f9fa; /* Um cinza bem claro */
+    color: #ced4da;           /* Texto acinzentado */
+    cursor: default;           /* Cursor padrão, não o de link */
+    pointer-events: none;      /* Desabilita todos os cliques e hovers */
+    opacity: 1.5;              /* Deixa o elemento um pouco transparente */
+}
+
 .conteudo-dia .numero-dia {
     font-weight: 600;
 }
@@ -564,6 +573,17 @@ header {
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+
+/************* LINK NO MODAL ****************/
+/* Estilo para o item de reserva que é um link no modal */
+.link-reserva {
+    color: #212529; /* Cor de texto padrão */
+    text-decoration: none;
+}
+.link-reserva:hover {
+    background-color: #f8f9fa; /* Cor de fundo suave ao passar o mouse */
+    color: #000;
 }
 
 /******* FORMULÁRIOS **********/
