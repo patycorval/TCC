@@ -1055,3 +1055,11 @@ button#reservar{
 .back-icon-link:hover {
     color: #c30000;
 }
+
+/* ======================================================= */
+/* ESTILOS PARA O MODAL DE CONFIRMAÇÃO DE AÇÕES (SOLICITAÇÕES) */
+/* ======================================================= */
+
+.action-modal #btnConfirmarSolicitacao:hover, #btnCancelarSolicitacao:hover{
+    filter: brightness(90%); 
+}

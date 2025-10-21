@@ -174,7 +174,7 @@ public class UsuarioController {
     @PreAuthorize("hasAnyRole('ADMIN','PROFESSOR')")
     @GetMapping("/grade")
     public String grade(Model model) {
-        model.addAttribute("activepage", "grade");
+        model.addAttribute("activePage", "grade");
         return "grade";
     }
 }

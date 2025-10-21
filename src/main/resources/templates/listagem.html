@@ -174,20 +174,16 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. Pega os parâmetros da URL
         const params = new URLSearchParams(window.location.search);
         const destaqueId = params.get('destaque');
 
-        // 2. Se o parâmetro 'destaque' existir...
         if (destaqueId) {
-            // 3. Encontra o elemento da tabela pelo ID que criamos (ex: "reserva-123")
             const elementoDestaque = document.getElementById('reserva-' + destaqueId);
-            
-            // 4. Se o elemento for encontrado, rola a tela até ele
+
             if (elementoDestaque) {
                 elementoDestaque.scrollIntoView({
-                    behavior: 'smooth', // Animação de rolagem suave
-                    block: 'center'     // Tenta centralizar o elemento na tela
+                    behavior: 'smooth', 
+                    block: 'center'     
                 });
             }
         }
