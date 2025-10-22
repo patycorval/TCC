@@ -85,11 +85,11 @@ public class ReservaService {
         return reservaRepository.save(reserva);
     }
 
-       // MÉTODO ATUALIZADO
-    public List<Reserva> buscarReservasAuditorioParaUsuario(YearMonth ym, String emailUsuario) {
+    public List<Reserva> buscarReservasAuditorio(YearMonth ym) {
         LocalDate startOfMonth = ym.atDay(1);
         LocalDate endOfMonth = ym.atEndOfMonth();
-        return reservaRepository.findReservasAuditorioParaUsuario("Auditorio", startOfMonth, endOfMonth, emailUsuario);
+        return reservaRepository.findByNumeroAndStatusAndDataBetweenOrderByDataAscHoraAsc("Auditorio",
+                StatusReserva.APROVADA, startOfMonth, endOfMonth);
     }
 
     public List<Reserva> buscarPorStatus(StatusReserva status) {
@@ -119,5 +119,13 @@ public class ReservaService {
 
     public void deletar(Long id) {
         reservaRepository.deleteById(id);
+    }
+
+    // Novo método adicionado
+    public List<Reserva> buscarReservasAuditorioParaUsuario(YearMonth ym, String email) {
+        LocalDate startOfMonth = ym.atDay(1);
+        LocalDate endOfMonth = ym.atEndOfMonth();
+        return reservaRepository.findByNumeroAndStatusAndDataBetweenAndEmailRequisitorOrderByDataAscHoraAsc("Auditorio",
+                StatusReserva.APROVADA, startOfMonth, endOfMonth, email);
     }
 }

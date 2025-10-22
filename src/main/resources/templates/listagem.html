@@ -39,7 +39,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="reserva : ${reservasSalas}">
+                          <tr th:each="reserva : ${reservasSalas}"
+    th:id="'reserva-' + ${reserva.id}"
+    th:classappend="${param.destaque != null and param.destaque[0] == reserva.id.toString()} ? 'table-warning' : ''">
                                 <td th:text="${reserva.numero}"></td>
                                 <td th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"></td>
                                 <td th:text="${reserva.hora}"></td>
@@ -79,7 +81,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="reserva : ${reservasAuditorio}">
+                      <tr th:each="reserva : ${reservasAuditorio}"
+    th:id="'reserva-' + ${reserva.id}"
+    th:classappend="${param.destaque != null and param.destaque[0] == reserva.id.toString()} ? 'table-warning' : ''">
                                 <td th:text="${reserva.evento}"></td>
                                 <td th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"></td>
                                 <td th:text="${reserva.hora}"></td>
@@ -166,6 +170,22 @@
 
             document.body.appendChild(form);
             form.submit();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const destaqueId = params.get('destaque');
+
+        if (destaqueId) {
+            const elementoDestaque = document.getElementById('reserva-' + destaqueId);
+
+            if (elementoDestaque) {
+                elementoDestaque.scrollIntoView({
+                    behavior: 'smooth', 
+                    block: 'center'     
+                });
+            }
         }
     });
 </script>

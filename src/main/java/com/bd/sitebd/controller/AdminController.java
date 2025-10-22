@@ -1,12 +1,18 @@
 package com.bd.sitebd.controller;
 
+import com.bd.sitebd.model.Reserva;
 import com.bd.sitebd.model.Usuario;
 import com.bd.sitebd.model.dto.DiaCalendario;
+import com.bd.sitebd.model.enums.StatusReserva;
 import com.bd.sitebd.model.enums.TipoUsuario;
+import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.service.UsuarioService;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +33,9 @@ public class AdminController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ReservaService reservaService;
+
     // Tela de cadastro de usuários (apenas ADMIN)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cadastro")
@@ -37,14 +46,14 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/cadastro")
     public String processarCadastro(@RequestParam String email,
-                                    @RequestParam String senha,
-                                    @RequestParam String confirmarSenha, 
-                                    @RequestParam TipoUsuario tipo,
-                                    RedirectAttributes redirectAttributes) { 
+            @RequestParam String senha,
+            @RequestParam String confirmarSenha,
+            @RequestParam TipoUsuario tipo,
+            RedirectAttributes redirectAttributes) {
 
         if (!senha.equals(confirmarSenha)) {
             redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não conferem!");
-            return "redirect:/admin/cadastro"; 
+            return "redirect:/admin/cadastro";
         }
 
         try {
@@ -65,29 +74,80 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/auditorio-admin")
-    public String auditorioAdmin(Model model) {
-        YearMonth yearMonth = YearMonth.now();
-        int diasNoMes = yearMonth.lengthOfMonth();
+    public String auditorioAdmin(@RequestParam(value = "mes", required = false) Integer mes,
+            @RequestParam(value = "ano", required = false) Integer ano,
+            Model model) {
 
-        // Lista para simular os dias do calendário
+        // Lógica completa copiada do UsuarioController para manter a consistência
+        YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
+
+        YearMonth mesCorrente = YearMonth.now();
+        model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
+
+        // Para o admin, buscamos TODAS as reservas do auditório, não apenas as de um
+        // usuário
+        List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorio(ym);
+
         List<DiaCalendario> diasDoMes = new ArrayList<>();
+        LocalDate primeiroDiaDoMes = ym.atDay(1);
+        int diaDaSemanaDoPrimeiroDia = primeiroDiaDoMes.getDayOfWeek().getValue();
 
-        // Lógica para simular o status de cada dia
-        for (int i = 1; i <= diasNoMes; i++) {
-            String status = "disponivel"; // Status padrão: disponível
+        for (int i = 1; i < diaDaSemanaDoPrimeiroDia; i++) {
+            diasDoMes.add(new DiaCalendario(0, "vazio"));
+        }
 
-            // Simulação de eventos em dias específicos
-            if (i == 5 || i == 12 || i == 20) {
-                status = "evento"; // Marquei os dias 5, 12 e 20 como evento
-            } else if (i == 8 || i == 15) {
-                status = "indisponivel"; // Marquei os dias 8 e 15 como indisponíveis
+        LocalDate hoje = LocalDate.now();
+
+        for (int i = 1; i <= ym.lengthOfMonth(); i++) {
+            LocalDate dataDoDia = ym.atDay(i);
+            DiaCalendario diaObj;
+
+            if (dataDoDia.isBefore(hoje)) {
+                diaObj = new DiaCalendario(i, "passado");
+            } else if (dataDoDia.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                diaObj = new DiaCalendario(i, "indisponivel");
+            } else {
+                diaObj = new DiaCalendario(i, "disponivel");
+                List<Reserva> eventosDoDia = reservasAuditorio.stream()
+                        .filter(r -> r.getData().isEqual(dataDoDia))
+                        .sorted(Comparator.comparing(Reserva::getHora))
+                        .toList();
+                diaObj.setEventos(eventosDoDia);
             }
-
-            diasDoMes.add(new DiaCalendario(i, status));
+            diasDoMes.add(diaObj);
         }
 
         model.addAttribute("diasDoMes", diasDoMes);
+        model.addAttribute("ym", ym);
+        model.addAttribute("proximoMes", ym.plusMonths(1).getMonthValue());
+        model.addAttribute("proximoAno", ym.plusMonths(1).getYear());
+        model.addAttribute("anteriorMes", ym.minusMonths(1).getMonthValue());
+        model.addAttribute("anteriorAno", ym.minusMonths(1).getYear());
         model.addAttribute("activePage", "auditorio");
+
         return "auditorio-admin";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/solicitacoes")
+    public String exibirSolicitacoes(Model model) {
+        model.addAttribute("solicitacoes", reservaService.buscarPorStatus(StatusReserva.PENDENTE));
+        model.addAttribute("activePage", "solicitacoes");
+        return "solicitacoes-admin";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/solicitacoes/atualizar")
+    public String atualizarSolicitacao(@RequestParam("id") Long id,
+            @RequestParam("status") String status,
+            RedirectAttributes redirectAttributes) {
+        try {
+            StatusReserva novoStatus = StatusReserva.valueOf(status);
+            reservaService.atualizarStatus(id, novoStatus);
+            redirectAttributes.addFlashAttribute("mensagemSucesso", "Status da reserva atualizado com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao atualizar o status da reserva.");
+        }
+        return "redirect:/admin/solicitacoes";
     }
 }

@@ -210,21 +210,8 @@ header {
 }
 
 /* PÁGINA RESERVA DO AUDITÓRIO*/
-.informacoes-audi, .reserva-audi {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)
-}
-
 .dia.mensal.vazio {
     visibility: hidden;
-}
-.informacoes-audi h2{
-    color: rgb(120, 4, 4);
-    font-weight: 500;
 }
 .informacoes-audi p{
    margin-left: 1rem;
@@ -236,50 +223,14 @@ header {
     border-radius: 8px;
     margin-bottom: 1rem;
 }
-.fotos{
-    display: flex;
-    justify-content: center;
-    gap:10px
-}
-.reserva-audi h2{
-    color: rgb(120, 4, 4);
-    font-weight: 500;
-}
-.reserva-audi label {
-    display: block;
-    margin: 0.5rem;
-    font-weight: 500;
-}
-.reserva-audi input, .reserva-audi textarea {
-    width: 90%;
-    padding: 0.5rem;
-    margin: auto 1rem 1rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-.reserva-audi button {
-    display: inline-block;
-    margin: 1rem;
-    padding: 0.7rem 1.5rem;
-    background-color: rgb(120, 4, 4);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: transform 0.2s;
-    font-weight: 400;
-}
-.reserva-audi button:hover {
-    transform: scale(1.10);
-}
 
 /* --- ESTILOS CALENDÁRIO DE EVENTOS DO AUDITÓRIO  ---- */
 
-#modal-dia-view .modal-dialog {
+#modal-dia-view .modal-dialog, #overlay-reserva .modal-dialog{
     max-width: 600px; 
     min-width: 500px; 
 }
-#modal-dia-view .modal-content {
+#modal-dia-view .modal-content, #overlay-reserva .modal-content {
     display: flex;
     flex-direction: column; 
     max-height: 90vh; 
@@ -287,15 +238,23 @@ header {
 }
 
 #modal-dia-view .modal-header,
-#modal-dia-view .modal-footer {
+#modal-dia-view .modal-footer, 
+#overlay-reserva .modal-header,
+#overlay-reserva .modal-footer{
     flex-shrink: 0; 
 }
 
-#modal-dia-view .modal-body {
+#modal-dia-view .modal-body,#overlay-reserva .modal-body{
     flex-grow: 1;
     overflow-y: auto; 
 }
-#btn-abrir-form-reserva {
+
+#overlay-reserva .modal-body p {
+    padding-top: 1rem; 
+    margin-bottom: 1.5rem; 
+}
+
+#btn-abrir-form-reserva, #solicitacao-reserva {
     color: white !important;
     background-color: #c30000;  
     transform: none;   
@@ -304,6 +263,10 @@ header {
     color: white !important;
     background-color: #8d0000;  
     transform: none;   
+}
+.btn-close:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 .grid-mensal .dia.mensal {
@@ -319,6 +282,15 @@ header {
 
 .grid-mensal .dia.mensal:not(.indisponivel):hover {
     background-color: #e9ecef;
+}
+
+/* Estilo para dias que já passaram no calendário */
+.grid-mensal .dia.mensal.passado {
+    background-color: #f8f9fa; /* Um cinza bem claro */
+    color: #ced4da;           /* Texto acinzentado */
+    cursor: default;           /* Cursor padrão, não o de link */
+    pointer-events: none;      /* Desabilita todos os cliques e hovers */
+    opacity: 1.5;              /* Deixa o elemento um pouco transparente */
 }
 
 .conteudo-dia .numero-dia {
@@ -390,228 +362,14 @@ header {
 #lista-eventos-modal .status-pendente { background-color: #ffc107; color: #333 !important; }
 #lista-eventos-modal .status-rejeitada { background-color: #6c757d; }
 
-
-/******* FORMULÁRIOS **********/
-form.form {
-    max-width: 600px;
-    display: flex;
-    width: 850px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    justify-content: center;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-content: center;
-}
-form label {
-    font-weight: 400;
-    margin: 10px 0 5px;
-    display: block;
-    font-size: 1.1em;
-}
-form:not(.login-form):not(.register-form) input[type="text"],
-form:not(.login-form):not(.register-form) input[type="password"],
-form:not(.login-form):not(.register-form) input[type="email"],
-form:not(.login-form):not(.register-form) input[type="date"],
-form:not(.login-form):not(.register-form) input[type="time"],
-form:not(.login-form):not(.register-form) input[type="number"],
-form:not(.login-form):not(.register-form) input[type="submit"] {
-    width: 90%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    align-items: center;
-    display: flex;
-}
-#reservar, #atualiza {
-    background-color: rgb(120, 4, 4);
-    color: white;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.3s ease;
-    width: 40%;
-}
-#reservar:hover, #atualiza:hover {
-    background-color:rgb(87, 1, 1);
-}
-form a {
-    display: block;
-    margin-top: 10px;
-    color: #007BFF;
-    text-decoration: none;
-    font-size: 1em;
-    font-weight: bold;
-}
-form a:hover {
-    text-decoration: underline;
-}
-form input[readonly] {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-}
-.titulo-reserva {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    color: rgb(120, 4, 4);
-}
-.titulo-reserva h2 {
-    font-weight: 500;
-    font-size: 1.5rem;
-    margin: 0;
-}
-.titulo-reserva .numero-sala {
-    font-weight: 700;
-    font-size: 1rem;
-    background-color: rgb(120, 4, 4);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 6px;
-    user-select: none;
-}
-/****** PAGINA LISTAGEM *********/
-
-button#apagar {
-    background-color: #c30000;
-    color: white;
-    padding: 8px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-}
-tbody button#apagar:hover {
-    background-color: #8b0000;
-    color: white !important;       
-    font-weight: 700;  
-}
-tbody #atualizar{
-    background-color: #3e3b3b;
-    color: white;
-    padding: 8px 10px 8px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-tbody #atualizar:hover{
-    background-color: #2e2d2d;
-    color: white !important;       
-    font-weight: 700;  
-}
-a.voltar {
-    margin: 10px 20px 20px 30px;
-    color: #007BFF;
-    text-decoration: none;
-    font-size: 1em;
-    font-weight: bold;
-}
-a.voltar:hover {
-    text-decoration: underline;
+.modal-footer {
+    margin-top: 1rem !important; 
 }
 
-.modal-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-}
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 0 10px #00000055;
-}
-#confirmModal .modal-content {
-    width: 90%; /* Ocupa 90% da largura do container */
-    max-width: 400px; /* Mas não passa de 400px, para não ficar muito grande */
-    text-align: center;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-#confirmModal p {
-    font-size: 1.1rem;
-    color: #333;
-    margin-bottom: 1.5rem; /* Aumenta o espaço abaixo do texto */
-}
-
-/* 3. Estiliza os botões "Sim" e "Não" dentro do modal */
-#confirmModal .modal-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem; /* Espaçamento entre os botões */
-}
-
-#confirmModal .btn {
-    padding: 0.6rem 1.5rem; /* Tamanho dos botões */
-    font-weight: 500;
-    border: none;
-    transition: background-color 0.2s ease;
-}
-
-#btnConfirm {
-  background-color: #c82333;
-  color:white
-}
-#btnConfirm:hover {
-  background-color: rgb(163, 8, 24);
-}
-#btnCancel {
-  background-color: #a0a0a0;
-}
-#btnCancel:hover {
-  background-color: #838383;
-}
-#confirmModal .btn-close {
-    position: absolute;
-    top: 0.8rem;
-    right: 0.8rem;
-    font-size: 1rem;
-    padding: 0.5rem;
-}
-/****** PAGINA SUCESSO ******/
-h2 .sucesso{
-    margin-top: 0;
-    margin-bottom: 10px ; 
-}
-.sucesso{
-    color: #015b0e;
-    text-align: center;
-    font-weight: 400;
-    margin-bottom: 5px;
-}
-.sucessop{
-    text-align:left;
-    font-weight: 500;
-}
-.divp{
-    display: flex;
-    flex-direction: column; 
-    justify-content: center; 
-    margin: 20px auto; 
-    width: 300px; 
-    padding: 10px;
-    background-color: #f0f0f0; 
-    border-radius: 10px;
-}
 /* AUDITORIO */
 .dia {
     border-radius: 8px;
-    height: 100px;
-    width: 150px;
+   aspect-ratio: 1 / 0.9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -622,64 +380,57 @@ h2 .sucesso{
     z-index: 1;
     transition: transform 0.2s; 
 }
+/* Para melhorar ainda mais em telas muito pequenas (celulares) */
+@media (max-width: 576px) {
+    .grid-mensal {
+        gap: 5px; /* Diminui o espaçamento */
+    }
+    .dia-semana-header, .dia {
+        font-size: 0.9rem; /* Diminui a fonte */
+    }
+}
 .dia.disponivel {
     background-color: #f0f0f0; 
     color: #333; 
 }
-.dia.indisponivel {
+.grid-mensal .dia.mensal.indisponivel {
     background-color: #333; 
-    cursor: not-allowed;
+    cursor: not-allowed; /* Agora esta regra terá prioridade */
+}
+
+.grid-mensal .dia.mensal:not(.indisponivel):hover {
+    background-color: #e9ecef;
 }
 .dia.evento {
     background-color: #e74c3c; 
     cursor: pointer;
 }
 .dia:hover {
-    transform: translateY(-5px) scale(1.05); 
+    transform: translateY(-5px) scale(1.03); 
     font-weight: 700;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
     z-index: 2;
 }
 .grid-mensal {
     display: grid;
-    grid-template-columns: repeat(7, 150px);
-    gap: 15px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
 }
-.pop-up-evento {
-    display: none;
-    position: absolute;
-    top: 105%; 
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #fff;
-    color: #333;
-    padding: 15px;
+
+.dia-semana-header {
+    text-align: center;
+    font-weight: 600;
+    padding: 10px;
+    background-color: #a0a0a0; /* Mesma cor dos seus dias da semana antigos */
+    color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 400px;
-    height: 200px;
-    z-index: 10;
-    white-space: nowrap;
+    font-size: 1rem;
 }
-.dia.evento:hover .pop-up-evento {
-    display: block;
-}
+
 .h2-aud{
     margin-left: 0;
 }
-.pop-up-evento h4{
-    font-size: 2rem;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    color: #e74c3c;
-}   
-.pop-up-evento p {
-    font-size: 1rem;
-    margin: 0;
-    padding: 0.2rem 0; 
-    line-height: 1.4; 
-}
+
 .dia .conteudo-dia {
   display: flex;
   flex-direction: column;
@@ -692,62 +443,14 @@ h2 .sucesso{
 .dia .conteudo-dia span {
     transition: transform 0.3s ease;
 }
-.btn-solicitar-reserva {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  position: absolute; 
-  bottom: 10px; 
-  opacity: 0; 
-  transition: opacity 0.3s ease, transform 0.3s ease; 
-}
-.dia.disponivel:hover .btn-solicitar-reserva {
-  opacity: 1;
-  transform: translateY(0);
-}
-.icone-solicitar {
-  width: 40px; 
-  height: 40px;
-}
+
 .dia.disponivel span {
     color: #333; 
 }
 .dia.disponivel:hover .conteudo-dia span {
     transform: translateY(-20px);
 }
-.icones-evento {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    display: flex;
-    justify-content: space-between;
-    width: calc(100% - 10px);
-    z-index: 3;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.dia.evento:hover .icones-evento {
-    opacity: 1;
-}
-.btn-acao {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-}
-.btn-acao img {
-    width: 20px;
-    height: 20px;
-    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(100%) contrast(100%);
-}
-.btn-acao:hover img {
-    transform: scale(1.1);
-}
-.dia.evento:hover .pop-up-evento {
-    display: none;
-}
+
 .legenda-cores {
     display: flex;
     align-items: center;
@@ -846,16 +549,7 @@ h2 .sucesso{
     border-radius: 5px;
     font-size: 1rem;
 }
-.btn-fechar {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #888;
-    cursor: pointer;
-}
+
 .btn-submit {
     width: 100%;
     padding: 0.75rem;
@@ -870,31 +564,7 @@ h2 .sucesso{
 .btn-submit:hover {
     background-color: #8d0000;
 }
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.5);
-  justify-content: center;
-  align-items: center;
-  gap:20px
-}
 
-.modal-grade {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
-}
 .fechar-modal {
     position: absolute;
     top: 10px;
@@ -910,6 +580,289 @@ h2 .sucesso{
     text-decoration: none;
     cursor: pointer;
 }
+
+/************* LINK NO MODAL ****************/
+/* Estilo para o item de reserva que é um link no modal */
+.link-reserva {
+    color: #212529; /* Cor de texto padrão */
+    text-decoration: none;
+}
+.link-reserva:hover {
+    background-color: #f8f9fa; /* Cor de fundo suave ao passar o mouse */
+    color: #000;
+}
+
+/******* FORMULÁRIOS **********/
+form.form {
+    max-width: 600px;
+    display: flex;
+    width: 850px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: center;
+}
+form label {
+    font-weight: 400;
+    margin: 10px 0 5px;
+    display: block;
+    font-size: 1.1em;
+}
+form:not(.login-form):not(.register-form) input[type="text"],
+form:not(.login-form):not(.register-form) input[type="password"],
+form:not(.login-form):not(.register-form) input[type="email"],
+form:not(.login-form):not(.register-form) input[type="date"],
+form:not(.login-form):not(.register-form) input[type="time"],
+form:not(.login-form):not(.register-form) input[type="number"],
+form:not(.login-form):not(.register-form) input[type="submit"] {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    align-items: center;
+    display: flex;
+}
+#reservar, #atualiza {
+    background-color: rgb(120, 4, 4);
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+    width: 40%;
+}
+#reservar:hover, #atualiza:hover {
+    background-color:rgb(87, 1, 1);
+}
+form a {
+    display: block;
+    margin-top: 10px;
+    color: #007BFF;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: bold;
+}
+form a:hover {
+    text-decoration: underline;
+}
+form input[readonly] {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+}
+.titulo-reserva {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    color: rgb(120, 4, 4);
+}
+.titulo-reserva h2 {
+    font-weight: 500;
+    font-size: 1.5rem;
+    margin: 0;
+}
+.titulo-reserva .numero-sala {
+    font-weight: 700;
+    font-size: 1rem;
+    background-color: rgb(120, 4, 4);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    user-select: none;
+}
+/* =================================================================== */
+/* --- BOTÕES DE NAVEGAÇÃO DO CALENDÁRIO --- */
+/* =================================================================== */
+
+.navegacao-calendario {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navegacao-calendario h2 {
+    flex-grow: 1;
+    text-align: center;
+    margin: 0 15px; /* Adiciona um respiro nas laterais */
+}
+
+/* Novo estilo customizado para os botões */
+.btn-nav-calendario {
+    /* Estado Padrão */
+    background-color: #fff;
+    color: rgb(120, 4, 4);
+    border: 2px solid rgb(120, 4, 4);
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    flex-shrink: 0; /* Impede que o botão encolha */
+}
+
+/* Efeito Hover */
+.btn-nav-calendario:hover {
+    background-color: rgb(120, 4, 4);
+    color: #fff;
+}
+
+/* Placeholder invisível para manter o alinhamento */
+.nav-placeholder {
+    min-width: 105px; /* Largura similar ao botão "Anterior" */
+    visibility: hidden;
+}
+
+
+/****** PAGINA LISTAGEM *********/
+
+button#apagar {
+    background-color: #c30000;
+    color: white;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+tbody button#apagar:hover {
+    background-color: #8b0000;
+    color: white !important;       
+    font-weight: 700;  
+}
+tbody #atualizar{
+    background-color: #3e3b3b;
+    color: white;
+    padding: 8px 10px 8px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+tbody #atualizar:hover{
+    background-color: #2e2d2d;
+    color: white !important;       
+    font-weight: 700;  
+}
+a.voltar {
+    margin: 10px 20px 20px 30px;
+    color: #007BFF;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: bold;
+}
+a.voltar:hover {
+    text-decoration: underline;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  gap:20px
+}
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00000055;
+}
+#confirmModal .modal-content {
+    width: 90%; /* Ocupa 90% da largura do container */
+    max-width: 400px; /* Mas não passa de 400px, para não ficar muito grande */
+    text-align: center;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#confirmModal p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1.5rem; /* Aumenta o espaço abaixo do texto */
+}
+
+/* 3. Estiliza os botões "Sim" e "Não" dentro do modal */
+#confirmModal .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Espaçamento entre os botões */
+}
+
+#confirmModal .btn {
+    padding: 0.6rem 1.5rem; /* Tamanho dos botões */
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+#btnConfirm {
+  background-color: #c82333;
+  color:white
+}
+#btnConfirm:hover {
+  background-color: rgb(163, 8, 24);
+}
+#btnCancel {
+  background-color: #a0a0a0;
+}
+#btnCancel:hover {
+  background-color: #838383;
+}
+#confirmModal .btn-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    font-size: 1rem;
+    padding: 0.5rem;
+}
+/****** PAGINA SUCESSO ******/
+h2 .sucesso{
+    margin-top: 0;
+    margin-bottom: 10px ; 
+}
+.sucesso{
+    color: #015b0e;
+    text-align: center;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+.sucessop{
+    text-align:left;
+    font-weight: 500;
+}
+.divp{
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+    margin: 20px auto; 
+    width: 300px; 
+    padding: 10px;
+    background-color: #f0f0f0; 
+    border-radius: 10px;
+}
+
+/************ GRADE **************/
 .filtros-grade {
     display: flex;
     gap: 15px;
@@ -1107,4 +1060,12 @@ button#reservar{
 
 .back-icon-link:hover {
     color: #c30000;
+}
+
+/* ======================================================= */
+/* ESTILOS PARA O MODAL DE CONFIRMAÇÃO DE AÇÕES (SOLICITAÇÕES) */
+/* ======================================================= */
+
+.action-modal #btnConfirmarSolicitacao:hover, #btnCancelarSolicitacao:hover{
+    filter: brightness(90%); 
 }

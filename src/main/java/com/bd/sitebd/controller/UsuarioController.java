@@ -81,6 +81,12 @@ public class UsuarioController {
 
         YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
 
+        // Pega o mês e ano atuais
+        YearMonth mesCorrente = YearMonth.now();
+        // Adiciona uma variável ao modelo que será true se o mês exibido for o atual ou
+        // um passado
+        model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
+
         // Chama o novo método do serviço, passando o email do usuário
         List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaUsuario(ym, emailUsuario);
 
@@ -92,20 +98,28 @@ public class UsuarioController {
             diasDoMes.add(new DiaCalendario(0, "vazio"));
         }
 
+        // Bloco de código com a nova lógica
+        LocalDate hoje = LocalDate.now(); // Pega a data atual
+
         for (int i = 1; i <= ym.lengthOfMonth(); i++) {
             LocalDate dataDoDia = ym.atDay(i);
-
-            List<Reserva> eventosDoDia = reservasAuditorio.stream()
-                    .filter(r -> r.getData().isEqual(dataDoDia))
-                    .sorted(Comparator.comparing(Reserva::getHora))
-                    .toList();
-
             DiaCalendario diaObj;
-            // A única coisa que importa agora é se o dia é indisponível ou não.
-            if (dataDoDia.getDayOfWeek() == DayOfWeek.SUNDAY) {
+
+            // 1. Verifica se o dia já passou
+            if (dataDoDia.isBefore(hoje)) {
+                diaObj = new DiaCalendario(i, "passado");
+
+                // 2. Se não passou, verifica se é domingo
+            } else if (dataDoDia.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 diaObj = new DiaCalendario(i, "indisponivel");
+
+                // 3. Caso contrário, está disponível (e pode ter eventos)
             } else {
-                diaObj = new DiaCalendario(i, "disponivel"); // Todo dia que não é domingo é 'disponivel'
+                diaObj = new DiaCalendario(i, "disponivel");
+                List<Reserva> eventosDoDia = reservasAuditorio.stream()
+                        .filter(r -> r.getData().isEqual(dataDoDia))
+                        .sorted(Comparator.comparing(Reserva::getHora))
+                        .toList();
                 diaObj.setEventos(eventosDoDia);
             }
             diasDoMes.add(diaObj);
@@ -160,7 +174,7 @@ public class UsuarioController {
     @PreAuthorize("hasAnyRole('ADMIN','PROFESSOR')")
     @GetMapping("/grade")
     public String grade(Model model) {
-        model.addAttribute("activepage", "grade");
+        model.addAttribute("activePage", "grade");
         return "grade";
     }
 }

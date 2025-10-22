@@ -6,6 +6,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+    </style>
     <title>Auditório</title>
 </head>
 <body>
@@ -18,20 +21,31 @@
         <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <p th:text="${erro}"></p><button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a th:href="@{/auditorio(mes=${anteriorMes}, ano=${anteriorAno})}" class="btn btn-outline-primary">&lt; Anterior</a>
-            <h2 th:text="${#temporals.format(ym, 'MMMM yyyy', new java.util.Locale('pt', 'BR'))}" class="h2-aud text-capitalize"></h2>
-            <a th:href="@{/auditorio(mes=${proximoMes}, ano=${proximoAno})}" class="btn btn-outline-primary">Próximo &gt;</a>
-        </div>
-        <div class="d-flex gap-3 flex-wrap my-4">
-            <div class="dia semanal">Seg</div><div class="dia semanal">Ter</div><div class="dia semanal">Qua</div><div class="dia semanal">Qui</div><div class="dia semanal">Sex</div><div class="dia semanal">Sab</div><div class="dia semanal">Dom</div>
-        </div>
+    <div class="navegacao-calendario mb-4">
 
+        <a th:if="${!desabilitarAnterior}" th:href="@{/auditorio(mes=${anteriorMes}, ano=${anteriorAno})}" class="btn-nav-calendario">&lt; Anterior</a>
+        <div th:if="${desabilitarAnterior}" class="nav-placeholder"></div>
+
+        <h2 th:text="${#temporals.format(ym, 'MMMM yyyy', new java.util.Locale('pt', 'BR'))}" class="h2-aud text-capitalize"></h2>
+
+        <a th:href="@{/auditorio(mes=${proximoMes}, ano=${proximoAno})}" class="btn-nav-calendario">Próximo &gt;</a>
+
+    </div>
         <div class="grid-mensal">
+            <div class="dia-semana-header">Seg</div>
+            <div class="dia-semana-header">Ter</div>
+            <div class="dia-semana-header">Qua</div>
+            <div class="dia-semana-header">Qui</div>
+            <div class="dia-semana-header">Sex</div>
+            <div class="dia-semana-header">Sab</div>
+            <div class="dia-semana-header">Dom</div>
+
             <div th:each="dia : ${diasDoMes}"
-                 class="dia mensal"
-                 th:classappend="${dia.dia == 0} ? 'vazio' : (${dia.status == 'indisponivel'} ? 'indisponivel' : 'disponivel')"
-                 th:attr="data-dia=${dia.dia}, data-eventos=${dia.getEventosAsJson()}">
+                class="dia mensal"
+               th:classappend="${dia.dia == 0 ? 'vazio' : 
+                   dia.status == 'passado' ? 'passado' : 
+                   dia.status == 'indisponivel' ? 'indisponivel' : 'disponivel'}"
+                th:attr="data-dia=${dia.dia}, data-eventos=${dia.getEventosAsJson()}">
                 
                 <div class="conteudo-dia">
                     <span class="numero-dia" th:text="${dia.dia != 0 ? dia.dia : ''}"></span>
@@ -49,6 +63,7 @@
         </div>
     </main>
     
+    <!-- MODAL QUE EXIBE AS RESERVAS -->
     <div id="modal-dia-view" class="overlay">
         <div class="modal-dialog modal-dialog-centered"> 
             <div class="modal-content">
@@ -69,28 +84,53 @@
         </div>
     </div>
 
-    <div id="overlay-reserva" class="overlay">
-        <div class="form-modal">
-            <div class="modal-content-inner">
-                <form th:action="@{/auditorio/solicitar}" method="post" class="solicitacao-form">
+    <!-- MODAL PARA RESERVAR -->
+<div id="overlay-reserva" class="overlay">
+    <div class="modal-dialog modal-dialog-centered"> 
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Solicitar Reserva do Auditório</h5>
+                <button type="button" class="btn-close" id="fechar-modal-reserva"></button>
+            </div> 
+
+            <div class="modal-body">
+                <form th:action="@{/auditorio/solicitar}" method="post" id="formReservaAuditorio">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                   <div class="modal-header">
-                    <h5 class="modal-title" id="modal-dia-titulo"></h5>
-                    <button type="button" class="btn-close" id="fechar-modal-view"></button>
-                </div>  
-                    <h3>Solicitar Reserva do Auditório</h3>
+                    
                     <p>Preencha os dados abaixo para enviar a solicitação.</p>
-                    <div class="form-group"><label for="nomeRequisitor">Nome Completo do Requisitor:</label><input type="text" id="nomeRequisitor" name="nomeRequisitor" required /></div>
-                    <div class="form-group"><label for="eventoProposto">Evento Proposto:</label><input type="text" id="eventoProposto" name="eventoProposto" required /></div>
-                    <div class="form-group"><label for="dataEvento">Data:</label><input type="text" id="dataEvento" name="dataEvento" readonly /></div>
-                    <div class="form-group"><label for="horaEvento">Hora Início:</label><input type="time" id="horaEvento" name="horaEvento" required /></div>
-                    <div class="form-group"><label for="horaFimEvento">Hora Fim:</label><input type="time" id="horaFimEvento" name="horaFimEvento" required /></div>
-                    <button type="submit" class="btn-submit">Enviar Solicitação</button>
+                    <div class="form-group">
+                        <label for="nomeRequisitor">Nome Completo do Requisitor:<span class="text-danger ms-1">*</span></label>
+                        <input type="text" id="nomeRequisitor" name="nomeRequisitor" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="eventoProposto">Evento Proposto:<span class="text-danger ms-1">*</span></label>
+                        <input type="text" id="eventoProposto" name="eventoProposto" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="dataEvento">Data:</label>
+                        <input type="text" id="dataEvento" name="dataEvento" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="horaEvento">Hora Início:<span class="text-danger ms-1">*</span></label>
+                        <input type="time" id="horaEvento" name="horaEvento" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="horaFimEvento">Hora Fim:<span class="text-danger ms-1">*</span></label>
+                        <input type="time" id="horaFimEvento" name="horaFimEvento" required />
+                    </div>
                 </form>
             </div>
+            
+            <div class="modal-footer justify-content-between"> 
+                <button type="button" class="btn btn-secondary" id="btn-voltar-listagem">Voltar</button>
+
+                <button type="submit" form="formReservaAuditorio" class="btn btn-danger" id="solicitacao-reserva">Enviar Solicitação</button>
+            </div>
+
         </div>
     </div>
-
+</div>
     <script th:src="@{/js/auditorio-calendar.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <div th:replace="~{fragments/footer :: footer}"></div>
