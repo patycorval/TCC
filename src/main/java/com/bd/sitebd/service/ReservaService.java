@@ -54,20 +54,51 @@ public class ReservaService {
         return false;
     }
 
+    public boolean temConflitoComAprovadas(Reserva novaReserva) {
+        List<Reserva> reservasAprovadasNoDia = reservaRepository.findByNumeroAndDataAndStatus(
+                novaReserva.getNumero(),
+                novaReserva.getData(),
+                StatusReserva.APROVADA);
+
+        // 2. Pega os horários da nova solicitação
+        LocalTime inicioNova = novaReserva.getHora();
+        LocalTime fimNova = novaReserva.getHoraFim();
+
+        // 3. Verifica se há algum conflito de horário
+        for (Reserva r : reservasAprovadasNoDia) {
+            LocalTime inicioExistente = r.getHora();
+            LocalTime fimExistente = r.getHoraFim();
+            // Lógica de verificação de sobreposição
+            boolean conflito = inicioNova.isBefore(fimExistente) && fimNova.isAfter(inicioExistente);
+            if (conflito) {
+                return true; // Encontrou um conflito!
+            }
+        }
+        return false; // Nenhum conflito encontrado
+    }
+
     public Reserva salvar(Reserva reserva) {
         if (reserva.getHoraFim().isBefore(reserva.getHora()) || reserva.getHoraFim().equals(reserva.getHora())) {
-            throw new IllegalArgumentException("A hora de fim não pode ser menor ou igual à de início.");
+            throw new IllegalArgumentException(
+                    "A hora de fim não pode ser menor ou igual à de início. Por favor, tente novamente com um horário válido.");
         }
         Duration duracao = Duration.between(reserva.getHora(), reserva.getHoraFim());
         if (duracao.toMinutes() < 30) {
             throw new IllegalArgumentException("A reserva deve durar ao menos 30 minutos.");
         }
-        if (!"Auditorio".equals(reserva.getNumero()) && temConflito(reserva)) {
-            throw new IllegalArgumentException("Já existe uma reserva para essa sala nesse horário.");
-        }
-        if (!"Auditorio".equals(reserva.getNumero())) {
+        if ("Auditorio".equals(reserva.getNumero())) {
+            if (temConflitoComAprovadas(reserva)) {
+                throw new IllegalArgumentException(
+                        "Este horário já está ocupado por uma reserva aprovada. Por favor, escolha outro horário.");
+            }
+        } else { // Se for para salas e laboratórios...
+            // ...usa a verificação de conflito antiga (que checa contra qualquer reserva).
+            if (temConflito(reserva)) {
+                throw new IllegalArgumentException("Já existe uma reserva para esta sala neste horário.");
+            }
             reserva.setStatus(StatusReserva.APROVADA);
         }
+
         return reservaRepository.save(reserva);
     }
 
@@ -83,13 +114,6 @@ public class ReservaService {
             throw new IllegalArgumentException("Já existe uma reserva para essa sala nesse horário.");
         }
         return reservaRepository.save(reserva);
-    }
-
-    public List<Reserva> buscarReservasAuditorio(YearMonth ym) {
-        LocalDate startOfMonth = ym.atDay(1);
-        LocalDate endOfMonth = ym.atEndOfMonth();
-        return reservaRepository.findByNumeroAndStatusAndDataBetweenOrderByDataAscHoraAsc("Auditorio",
-                StatusReserva.APROVADA, startOfMonth, endOfMonth);
     }
 
     public List<Reserva> buscarPorStatus(StatusReserva status) {
@@ -121,11 +145,19 @@ public class ReservaService {
         reservaRepository.deleteById(id);
     }
 
-    // Novo método adicionado
+    // Este método busca apenas reservas APROVADAS (visão geral)
+    public List<Reserva> buscarReservasAuditorio(YearMonth ym) {
+        LocalDate startOfMonth = ym.atDay(1);
+        LocalDate endOfMonth = ym.atEndOfMonth();
+        return reservaRepository.findByNumeroAndStatusAndDataBetweenOrderByDataAscHoraAsc("Auditorio",
+                StatusReserva.APROVADA, startOfMonth, endOfMonth);
+    }
+
+    // Este método busca as reservas para a visão do usuário (aprovadas de outros +
+    // todas as suas)
     public List<Reserva> buscarReservasAuditorioParaUsuario(YearMonth ym, String email) {
         LocalDate startOfMonth = ym.atDay(1);
         LocalDate endOfMonth = ym.atEndOfMonth();
-        return reservaRepository.findByNumeroAndStatusAndDataBetweenAndEmailRequisitorOrderByDataAscHoraAsc("Auditorio",
-                StatusReserva.APROVADA, startOfMonth, endOfMonth, email);
+        return reservaRepository.findReservasAuditorioParaUsuario("Auditorio", startOfMonth, endOfMonth, email);
     }
 }

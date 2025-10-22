@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Referências aos elementos dos modais
+    const usuarioLogadoEmail = document.body.getAttribute('data-usuario-logado');
+
+    // Referências aos elementos
     const modalDiaView = document.getElementById('modal-dia-view');
     const modalReservaForm = document.getElementById('overlay-reserva');
     const modalDiaTitulo = document.getElementById('modal-dia-titulo');
@@ -7,89 +9,94 @@ document.addEventListener('DOMContentLoaded', () => {
     const semEventosAviso = document.getElementById('sem-eventos-aviso');
     const campoDataForm = document.getElementById('dataEvento');
 
-    // Botões de Ação
+    // Botões
     const btnAbrirFormReserva = document.getElementById('btn-abrir-form-reserva');
     const btnVoltarListagem = document.getElementById('btn-voltar-listagem');
     const btnFecharView = document.getElementById('fechar-modal-view');
-    const btnFecharForm = document.getElementById('fechar-modal-reserva'); 
-
-    // --- LÓGICA PARA ABRIR E TROCAR MODAIS ---
-
-    // Abre o formulário a partir da listagem
-    btnAbrirFormReserva.addEventListener('click', () => {
-        const dataSelecionada = btnAbrirFormReserva.getAttribute('data-dia-selecionado');
-        campoDataForm.value = dataSelecionada;
-        modalDiaView.style.display = 'none';
-        modalReservaForm.style.display = 'flex';
-    });
-
-    // Volta do formulário para a listagem
-    btnVoltarListagem.addEventListener('click', () => {
-        modalReservaForm.style.display = 'none';
-        modalDiaView.style.display = 'flex';
-    });
-
-
-    // --- LÓGICA PARA EXIBIR DADOS NO MODAL DE VISUALIZAÇÃO ---
+    const btnFecharForm = document.getElementById('fechar-modal-reserva');
 
     const formatarHora = (horaArray) => {
-        if (!Array.isArray(horaArray) || horaArray.length < 2) return horaArray;
-        return `${horaArray[0].toString().padStart(2, '0')}:${horaArray[1].toString().padStart(2, '0')}`;
+        if (!Array.isArray(horaArray) || horaArray.length < 2) {
+            return '00:00';
+        }
+        const hora = horaArray[0].toString().padStart(2, '0');
+        const minuto = horaArray[1].toString().padStart(2, '0');
+        return `${hora}:${minuto}`;
     };
 
-    const formatarData = (dia, mes, ano) => {
-        const data = new Date(ano, mes - 1, dia);
-        return data.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-    };
-
-    document.querySelectorAll('.dia.mensal:not(.vazio)').forEach(diaElemento => {
+    // Abre o modal de visualização
+    document.querySelectorAll('.dia.mensal:not(.vazio, .passado, .indisponivel)').forEach(diaElemento => {
         diaElemento.addEventListener('click', () => {
-            if (diaElemento.classList.contains('indisponivel')) return;
-
             const dia = diaElemento.getAttribute('data-dia');
+            const eventos = JSON.parse(diaElemento.getAttribute('data-eventos'));
+            
             const urlParams = new URLSearchParams(window.location.search);
             const ano = urlParams.get('ano') || new Date().getFullYear();
             const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
             
-            modalDiaTitulo.textContent = `Eventos para ${formatarData(dia, mes, ano)}`;
-            btnAbrirFormReserva.setAttribute('data-dia-selecionado', `${ano}-${mes.toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`);
+            const dataFormatada = `${dia.padStart(2, '0')}/${mes.toString().padStart(2, '0')}/${ano}`;
+            modalDiaTitulo.textContent = `Eventos para ${dataFormatada}`;
+            
+            const dataParaForm = `${ano}-${mes.toString().padStart(2, '0')}-${dia.padStart(2, '0')}`;
+            btnAbrirFormReserva.setAttribute('data-dia-selecionado', dataParaForm);
 
-            const eventos = JSON.parse(diaElemento.getAttribute('data-eventos'));
             listaEventosContainer.innerHTML = '';
 
             if (eventos && eventos.length > 0) {
                 semEventosAviso.style.display = 'none';
                 listaEventosContainer.style.display = 'block';
+                
                 eventos.forEach(evento => {
-                const horaInicioFormatada = formatarHora(evento.hora);
-                const horaFimFormatada = formatarHora(evento.horaFim);
-                const statusClass = `status-${evento.status.toLowerCase()}`;
+                    const horaInicio = formatarHora(evento.hora);
+                    const horaFim = formatarHora(evento.horaFim);
+                    
+                    const isOwner = evento.emailRequisitor === usuarioLogadoEmail;
 
-                // 1. Monta o conteúdo interno do item da lista
-                const conteudoItem = `
-                    <div class="evento-info">
-                        <span class="evento-nome-modal">${evento.evento}</span>
-                        <span class="evento-solicitante-modal">Solicitado por: ${evento.nome}</span>
-                    </div>
-                    <div class="evento-horario">
-                        <span class="evento-hora-modal">${horaInicioFormatada} - ${horaFimFormatada}</span>
-                        <span class="badge ${statusClass}">${evento.status}</span>
-                    </div>
-                `;
+                    let solicitanteHtml = '';
+                    let statusHtml = '';
 
-                let itemHTML;
-                // 2. Verifica se o evento pertence ao usuário logado (o backend envia 'owner: true')
-                if (evento.owner) {
-                    // Se for o dono, cria um link <a> que leva para a listagem com o ID da reserva
-                    itemHTML = `<a href="/listagem?destaque=${evento.id}" class="list-group-item evento-modal-item link-reserva">${conteudoItem}</a>`;
-                } else {
-                    // Se não for, cria um <li> normal, sem link
-                    itemHTML = `<li class="list-group-item evento-modal-item">${conteudoItem}</li>`;
-                }
+                    if (isOwner) {
+                        let statusClass = '';
+                        if (evento.status === 'APROVADA') {
+                        statusClass = 'bg-success';
+                        } else if (evento.status === 'PENDENTE') {
+                        statusClass = 'bg-warning text-dark';
+                        } else if (evento.status === 'REJEITADA') {
+                        statusClass = 'bg-danger'; 
+                        } else {
+                        statusClass = 'bg-secondary'; 
+                        }
+                        statusHtml = `<span class="badge ${statusClass}">${evento.status}</span>`;
+            
+                    } else {
+                        // A tag <br>
+                        solicitanteHtml = `<small class="text-muted">Solicitado por: ${evento.nome}</small>`;
+                    }
+                    
+                    const conteudoItem = `
+                        <div class="evento-info d-flex flex-column">
+                            <strong class="evento-nome-modal">${evento.evento}</strong>
+                            ${solicitanteHtml}
+                        </div>
+                        <div class="evento-horario text-end d-flex flex-column align-items-end">
+                            <span class="evento-hora-modal">${horaInicio} - ${horaFim}</span>
+                            ${statusHtml}
+                        </div>
+                    `;
 
-                // 3. Adiciona o HTML gerado (seja <a> ou <li>) ao container
-                listaEventosContainer.innerHTML += itemHTML;
-            });
+                    let elemento;
+                    if (isOwner) {
+                        elemento = document.createElement('a');
+                        elemento.href = `/listagem#reserva-${evento.id}`;
+                        elemento.className = 'list-group-item list-group-item-action d-flex justify-content-between'; 
+                    } else {
+                        elemento = document.createElement('li');
+                        elemento.className = 'list-group-item d-flex justify-content-between';
+                    }
+                    
+                    elemento.innerHTML = conteudoItem;
+                    listaEventosContainer.appendChild(elemento);
+                });
             } else {
                 semEventosAviso.style.display = 'block';
                 listaEventosContainer.style.display = 'none';
@@ -99,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- LÓGICA UNIFICADA PARA FECHAR OS MODAIS ---
 
+    // --- LÓGICA PARA FECHAR E TROCAR MODAIS ---
     const fecharTodosModais = () => {
         modalDiaView.style.display = 'none';
         modalReservaForm.style.display = 'none';
@@ -108,7 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnFecharView.addEventListener('click', fecharTodosModais);
     btnFecharForm.addEventListener('click', fecharTodosModais);
-    // Fecha ao clicar fora (no overlay)
-    modalDiaView.addEventListener('click', (e) => { if (e.target.id === 'modal-dia-view') fecharTodosModais(); });
-    modalReservaForm.addEventListener('click', (e) => { if (e.target.id === 'overlay-reserva') fecharTodosModais(); });
+
+    btnAbrirFormReserva.addEventListener('click', () => {
+        const dataSelecionada = btnAbrirFormReserva.getAttribute('data-dia-selecionado');
+        campoDataForm.value = dataSelecionada;
+        modalDiaView.style.display = 'none';
+        modalReservaForm.style.display = 'flex';
+    });
+
+    btnVoltarListagem.addEventListener('click', () => {
+        modalReservaForm.style.display = 'none';
+        modalDiaView.style.display = 'flex';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modalDiaView || event.target === modalReservaForm) {
+            fecharTodosModais();
+        }
+    });
 });

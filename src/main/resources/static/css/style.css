@@ -306,7 +306,7 @@ header {
 
 .indicador.status-aprovada { background-color: #198754; }
 .indicador.status-pendente { background-color: #ffc107; }
-.indicador.status-rejeitada { background-color: #6c757d; }
+.indicador.status-rejeitada { background-color: #bb0505; }
 
 .evento-modal-item {
     display: flex;
@@ -428,7 +428,6 @@ header {
 .dia .conteudo-dia {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
@@ -573,6 +572,78 @@ header {
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* ======================================== */
+/* NOVOS ESTILOS PARA O CALENDÁRIO AUDITÓRIO - Quadrado da data */
+/* ======================================== */
+
+.dia .conteudo-dia {
+    justify-content: space-between; /* Empurra o header para cima e o botão para baixo */
+    padding: 8px; /* Adiciona um respiro interno */
+}
+
+/* Novo container para o número e as bolinhas */
+.dia-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Número na esquerda, bolinhas na direita */
+    padding: 0 10px 0 5px;
+    align-items: flex-start;
+}
+
+.numero-dia {
+    font-size: 1.8rem;
+    font-weight: 500;
+}
+
+/* Container das bolinhas */
+.indicadores-evento {
+    display: flex;
+    flex-direction: column; /* Empilha as bolinhas verticalmente */
+    gap: 4px; /* Espaçamento entre as bolinhas */
+    margin-top: 6px; /* Ajuste fino para alinhar com o número */
+}
+
+/* Botão de solicitar reserva (+) */
+.btn-solicitar-reserva {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0; 
+    transition: opacity 0.3s ease;
+    height: 40px; 
+    z-index: 5;
+    margin-top: 20px;
+    align-self: center; 
+}
+
+.icone-solicitar {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.2s ease;
+}
+.icone-solicitar:hover {
+    transform: scale(1.1);
+}
+
+/* EFEITO DE HOVER */
+/* No hover de um dia disponível... */
+.dia.disponivel:hover .btn-solicitar-reserva {
+    opacity: 1; /* ...o botão "+" aparece. */
+}
+
+/* ...e o header (número + bolinhas) sobe para dar espaço ao botão. */
+.dia.disponivel:hover .dia-header {
+    transform: translateY( 12px);
+}
+
+.indicador {
+    width: 13px; /* Aumenta a largura */
+    height: 13px;  /* Diminui a altura */
+    border-radius: 10px; /* Cria bordas arredondadas (efeito de pílula) */
+    display: block;
 }
 
 /************* LINK NO MODAL ****************/
@@ -1063,3 +1134,13 @@ button#reservar{
 .action-modal #btnConfirmarSolicitacao:hover, #btnCancelarSolicitacao:hover{
     filter: brightness(90%); 
 }
+
+.indicador.status-outros {
+    background-color: #6c757d; /* Cor cinza do Bootstrap (secondary) */
+}
+
+#lista-eventos-modal .list-group-item {
+    padding-top: 1rem; /* Aumenta o padding superior */
+    padding-bottom: 1rem; /* Aumenta o padding inferior */
+}
+

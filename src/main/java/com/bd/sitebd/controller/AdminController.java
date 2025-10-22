@@ -112,7 +112,7 @@ public class AdminController {
                         .filter(r -> r.getData().isEqual(dataDoDia))
                         .sorted(Comparator.comparing(Reserva::getHora))
                         .toList();
-                diaObj.setEventos(eventosDoDia);
+                diaObj.setEventos(eventosDoDia);    
             }
             diasDoMes.add(diaObj);
         }

@@ -122,21 +122,20 @@
     </div>
 
 <script>
-    // Referências aos elementos do modal
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- LÓGICA DO MODAL DE CONFIRMAÇÃO (JÁ ESTAVA CORRETA) ---
     const modal = document.getElementById('confirmModal');
     const btnConfirm = document.getElementById('btnConfirm');
     const btnCancel = document.getElementById('btnCancel');
     const btnCloseConfirm = document.getElementById('btnCloseConfirmModal');
-
     let reservaIdParaExcluir = null;
 
-    // Função única para fechar o modal
     const fecharModalConfirmacao = () => {
         modal.style.display = 'none';
         reservaIdParaExcluir = null;
     };
 
-    // Abre o modal quando qualquer botão de apagar é clicado
     document.querySelectorAll('.btn-apagar').forEach(botao => {
         botao.addEventListener('click', () => {
             reservaIdParaExcluir = botao.getAttribute('data-id');
@@ -144,7 +143,6 @@
         });
     });
 
-    // Associa a função de fechar aos três gatilhos: botão "Não", botão "X" e clique fora
     btnCancel.addEventListener('click', fecharModalConfirmacao);
     btnCloseConfirm.addEventListener('click', fecharModalConfirmacao);
     window.addEventListener('click', (event) => {
@@ -153,41 +151,43 @@
         }
     });
 
-    // Lógica para confirmar a exclusão
     btnConfirm.addEventListener('click', () => {
         if (reservaIdParaExcluir) {
             const form = document.createElement('form');
             form.method = 'post';
             form.action = '/deletar/' + reservaIdParaExcluir;
-
             const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-            
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = '_csrf';
             input.value = csrfToken;
             form.appendChild(input);
-
             document.body.appendChild(form);
             form.submit();
         }
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const params = new URLSearchParams(window.location.search);
-        const destaqueId = params.get('destaque');
+    // --- NOVA LÓGICA DE DESTAQUE ---
+    // Pega a "âncora" da URL (ex: #reserva-123)
+    const hash = window.location.hash;
 
-        if (destaqueId) {
-            const elementoDestaque = document.getElementById('reserva-' + destaqueId);
+    // Verifica se a âncora existe e começa com #reserva-
+    if (hash && hash.startsWith('#reserva-')) {
+        const idParaDestaque = hash.substring(1); // Remove o '#'
+        const linhaParaDestaque = document.getElementById(idParaDestaque);
 
-            if (elementoDestaque) {
-                elementoDestaque.scrollIntoView({
-                    behavior: 'smooth', 
-                    block: 'center'     
-                });
-            }
+        if (linhaParaDestaque) {
+            // Adiciona a classe de destaque do Bootstrap (fundo amarelo)
+            linhaParaDestaque.classList.add('table-warning');
+
+            // Rola a página até a linha para garantir que ela esteja visível
+            linhaParaDestaque.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
         }
-    });
+    }
+});
 </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <div th:replace="~{fragments/footer :: footer}"></div>

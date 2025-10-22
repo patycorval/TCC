@@ -75,19 +75,15 @@ public class UsuarioController {
             @RequestParam(value = "ano", required = false) Integer ano,
             Model model) {
 
-        // Pega o email do usuário logado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String emailUsuario = authentication.getName();
 
-        YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
+        model.addAttribute("usuarioLogadoEmail", emailUsuario);
 
-        // Pega o mês e ano atuais
+        YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
         YearMonth mesCorrente = YearMonth.now();
-        // Adiciona uma variável ao modelo que será true se o mês exibido for o atual ou
-        // um passado
         model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
 
-        // Chama o novo método do serviço, passando o email do usuário
         List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaUsuario(ym, emailUsuario);
 
         List<DiaCalendario> diasDoMes = new ArrayList<>();
@@ -98,22 +94,16 @@ public class UsuarioController {
             diasDoMes.add(new DiaCalendario(0, "vazio"));
         }
 
-        // Bloco de código com a nova lógica
-        LocalDate hoje = LocalDate.now(); // Pega a data atual
+        LocalDate hoje = LocalDate.now();
 
         for (int i = 1; i <= ym.lengthOfMonth(); i++) {
             LocalDate dataDoDia = ym.atDay(i);
             DiaCalendario diaObj;
 
-            // 1. Verifica se o dia já passou
             if (dataDoDia.isBefore(hoje)) {
                 diaObj = new DiaCalendario(i, "passado");
-
-                // 2. Se não passou, verifica se é domingo
             } else if (dataDoDia.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 diaObj = new DiaCalendario(i, "indisponivel");
-
-                // 3. Caso contrário, está disponível (e pode ter eventos)
             } else {
                 diaObj = new DiaCalendario(i, "disponivel");
                 List<Reserva> eventosDoDia = reservasAuditorio.stream()
