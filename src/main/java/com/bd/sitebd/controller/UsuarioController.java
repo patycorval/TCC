@@ -161,10 +161,10 @@ public class UsuarioController {
         return "redirect:/auditorio?mes=" + dataEvento.getMonthValue() + "&ano=" + dataEvento.getYear();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','PROFESSOR')")
-    @GetMapping("/grade")
-    public String grade(Model model) {
-        model.addAttribute("activePage", "grade");
-        return "grade";
-    }
+    // @PreAuthorize("hasAnyRole('ADMIN','PROFESSOR')")
+    // @GetMapping("/grade")
+    // public String grade(Model model) {
+    //     model.addAttribute("activePage", "grade");
+    //     return "grade";
+    // }
 }
