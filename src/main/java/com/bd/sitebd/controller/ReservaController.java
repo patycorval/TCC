@@ -40,11 +40,12 @@ public class ReservaController {
         try {
             reserva.setEmailRequisitor(authentication.getName());
             reserva.setNome(authentication.getName());
-            reserva.setStatus(StatusReserva.APROVADA); // Reservas de sala são aprovadas diretamente
+            // reserva.setStatus(StatusReserva.APROVADA); // Reservas de sala são aprovadas
+            // diretamente
             reservaService.salvar(reserva);
 
             model.addAttribute("reservaEfetuada", true);
-            
+
             Reserva novaReserva = new Reserva();
             novaReserva.setNumero(reserva.getNumero());
             model.addAttribute("reserva", novaReserva);
@@ -57,7 +58,7 @@ public class ReservaController {
             return "reservar";
         }
     }
-    
+
     // Listar as reservas do usuário logado
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")

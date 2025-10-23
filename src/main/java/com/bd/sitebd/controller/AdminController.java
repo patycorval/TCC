@@ -4,6 +4,7 @@ import com.bd.sitebd.model.Reserva;
 import com.bd.sitebd.model.Usuario;
 import com.bd.sitebd.model.dto.DiaCalendario;
 import com.bd.sitebd.model.enums.StatusReserva;
+import org.springframework.security.core.Authentication;
 import com.bd.sitebd.model.enums.TipoUsuario;
 import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.service.UsuarioService;
@@ -78,6 +79,11 @@ public class AdminController {
             @RequestParam(value = "ano", required = false) Integer ano,
             Model model) {
 
+        Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                .getAuthentication();
+        String emailUsuario = authentication.getName();
+        model.addAttribute("usuarioLogadoEmail", emailUsuario);
+
         // Lógica completa copiada do UsuarioController para manter a consistência
         YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
 
@@ -112,7 +118,7 @@ public class AdminController {
                         .filter(r -> r.getData().isEqual(dataDoDia))
                         .sorted(Comparator.comparing(Reserva::getHora))
                         .toList();
-                diaObj.setEventos(eventosDoDia);    
+                diaObj.setEventos(eventosDoDia);
             }
             diasDoMes.add(diaObj);
         }

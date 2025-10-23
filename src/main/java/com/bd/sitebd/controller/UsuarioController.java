@@ -3,7 +3,6 @@ package com.bd.sitebd.controller;
 import com.bd.sitebd.model.Sala;
 import com.bd.sitebd.service.SalaService;
 import com.bd.sitebd.model.Reserva;
-import com.bd.sitebd.model.enums.StatusReserva;
 import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.model.dto.DiaCalendario;
 
@@ -148,12 +147,19 @@ public class UsuarioController {
             novaSolicitacao.setData(dataEvento);
             novaSolicitacao.setHora(horaEvento);
             novaSolicitacao.setHoraFim(horaFimEvento);
-            novaSolicitacao.setStatus(StatusReserva.PENDENTE);
 
             reservaService.salvar(novaSolicitacao);
 
-            redirectAttributes.addFlashAttribute("mensagemSucesso",
-                    "Sua solicitação foi enviada e está aguardando aprovação.");
+            // Verifica se o usuário é ADMIN para personalizar a mensagem
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+            if (isAdmin) {
+                redirectAttributes.addFlashAttribute("mensagemSucesso", "Reserva do auditório confirmada com sucesso!");
+            } else {
+                redirectAttributes.addFlashAttribute("mensagemSucesso",
+                        "Sua solicitação foi enviada e está aguardando aprovação.");
+            }
 
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
@@ -164,7 +170,7 @@ public class UsuarioController {
     // @PreAuthorize("hasAnyRole('ADMIN','PROFESSOR')")
     // @GetMapping("/grade")
     // public String grade(Model model) {
-    //     model.addAttribute("activePage", "grade");
-    //     return "grade";
+    // model.addAttribute("activePage", "grade");
+    // return "grade";
     // }
 }
