@@ -2,6 +2,7 @@ package com.bd.sitebd.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -42,25 +43,29 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authenticationProvider(authenticationProvider())
-
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**").permitAll()
-                        .requestMatchers("/login").permitAll() // login liberado
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // rotas de admin só para ADMIN
-                        .anyRequest().authenticated() // o resto: qualquer usuário logado
-                )
+                        // 1. REGRAS MAIS ESPECÍFICAS PRIMEIRO:
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**").permitAll() // Recursos
+                                                                                                    // estáticos
+                        .requestMatchers("/login", "/register").permitAll() // Páginas públicas
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Rotas de Admin
+                        .requestMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN") // API POST para Admin
+                        .requestMatchers(HttpMethod.GET, "/api/**").authenticated() // API GET para logados
+                        .requestMatchers(HttpMethod.GET, "/grade").hasRole("ADMIN") // Página Grade para Admin
+
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
-                        .loginPage("/login") // nossa página de login
+                        .loginPage("/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll())
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // endpoint de logout
-                        .logoutSuccessUrl("/login") // redireciona para login depois do logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
                         .permitAll())
                 .exceptionHandling(handler -> handler
-                        .accessDeniedPage("/403"));
+                        .accessDeniedPage("/403"))
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
-
 }
