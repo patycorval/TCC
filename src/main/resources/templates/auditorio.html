@@ -21,6 +21,15 @@
         <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <p th:text="${erro}"></p><button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
+        <div class="legenda-cores my-4 mb-15">
+            <p>Legenda:</p>
+            <div class="item-legenda"><div class="indicador status-aprovada"></div><span>Minha Reserva (Aprovada)</span></div>
+            <div class="item-legenda"><div class="indicador status-pendente"></div><span>Minha Reserva (Pendente)</span></div>
+            <div class="item-legenda"><div class="indicador status-rejeitada"></div><span>Minha Reserva (Rejeitada)</span></div>
+            <div class="item-legenda"><div class="indicador status-outros"></div><span>Outras Reservas</span></div>
+            <div class="item-legenda"><div class="cor-legenda disponivel"></div><span>Disponível</span></div>
+            <div class="item-legenda"><div class="cor-legenda indisponivel"></div><span>Indisponível</span></div>
+        </div>
     <div class="navegacao-calendario mb-4">
 
         <a th:if="${!desabilitarAnterior}" th:href="@{/auditorio(mes=${anteriorMes}, ano=${anteriorAno})}" class="btn-nav-calendario">&lt; Anterior</a>
@@ -62,16 +71,6 @@
                 </button>
             </div>
         </div>
-        </div>
-
-      <div class="legenda-cores my-4">
-            <p>Legenda:</p>
-            <div class="item-legenda"><div class="indicador status-aprovada"></div><span>Minha Reserva (Aprovada)</span></div>
-            <div class="item-legenda"><div class="indicador status-pendente"></div><span>Minha Reserva (Pendente)</span></div>
-            <div class="item-legenda"><div class="indicador status-rejeitada"></div><span>Minha Reserva (Rejeitada)</span></div>
-            <div class="item-legenda"><div class="indicador status-outros"></div><span>Outras Reservas</span></div>
-            <div class="item-legenda"><div class="cor-legenda disponivel"></div><span>Disponível</span></div>
-            <div class="item-legenda"><div class="cor-legenda indisponivel"></div><span>Indisponível</span></div>
         </div>
     </main>
     

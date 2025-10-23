@@ -27,7 +27,7 @@ h1 {
         font-size: 2rem;
     }
 }
-h3{
+h3{ 
     font-weight: 700;
     padding-top: 6px;
 }
@@ -434,6 +434,7 @@ header {
 .dia .conteudo-dia {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
   height: 100%;
@@ -584,18 +585,30 @@ header {
 /* NOVOS ESTILOS PARA O CALENDÁRIO AUDITÓRIO - Quadrado da data */
 /* ======================================== */
 
-.dia .conteudo-dia {
-    justify-content: space-between; /* Empurra o header para cima e o botão para baixo */
-    padding: 8px; /* Adiciona um respiro interno */
-}
 
 /* Novo container para o número e as bolinhas */
+/* 1. Torna o cabeçalho do dia um container de posicionamento */
 .dia-header {
+    position: relative;
     width: 100%;
     display: flex;
-    justify-content: space-between; /* Número na esquerda, bolinhas na direita */
-    padding: 0 10px 0 5px;
+    justify-content: space-between;
     align-items: flex-start;
+    padding-top: 5px; /* Adiciona um pequeno espaço no topo */
+}
+
+/* 2. Posiciona a checkbox no canto superior direito */
+.checkbox-bloqueio {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 2; /* Garante que a checkbox fique sobre outros elementos */
+}
+
+/* 3. Garante que os indicadores não sejam empurrados */
+.indicadores-evento {
+    margin-left: auto; /* Alinha os indicadores à direita, respeitando a checkbox */
+    padding-right: 25px; /* Cria espaço para a checkbox não sobrepor os indicadores */
 }
 
 .numero-dia {
@@ -613,16 +626,18 @@ header {
 
 /* Botão de solicitar reserva (+) */
 .btn-solicitar-reserva {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    opacity: 0; 
-    transition: opacity 0.3s ease;
-    height: 40px; 
-    z-index: 5;
-    margin-top: 20px;
-    align-self: center; 
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: absolute; 
+  bottom: 10px; 
+  /* GARANTE CENTRALIZAÇÃO HORIZONTAL */
+  left: 50%;
+  transform: translateX(-50%);
+  /* FIM DA CENTRALIZAÇÃO */
+  opacity: 0; 
+  transition: opacity 0.3s ease, transform 0.3s ease; 
 }
 
 .icone-solicitar {
@@ -651,6 +666,12 @@ header {
     border-radius: 10px; /* Cria bordas arredondadas (efeito de pílula) */
     display: block;
 }
+
+.dia.mensal.bloqueado {
+        background-color: #333; /* Mesma cor de 'indisponivel' ou outra de sua preferência */
+        color: white;
+        cursor: pointer; /* Permite clique */
+    }
 
 /************* LINK NO MODAL ****************/
 /* Estilo para o item de reserva que é um link no modal */

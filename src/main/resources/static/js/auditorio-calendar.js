@@ -24,6 +24,35 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${hora}:${minuto}`;
     };
 
+    // --- CORREÇÃO 1: Impede que cliques na checkbox se espalhem ---
+    // Adicionamos um listener que para o evento do clique imediatamente.
+    document.querySelectorAll('.checkbox-bloqueio').forEach(checkbox => {
+        checkbox.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+    });
+
+    // --- CORREÇÃO 2: Listener específico para o botão '+' (btn-solicitar-reserva) ---
+    // Este listener agora cuida de abrir o modal de reserva DIRETAMENTE.
+    document.querySelectorAll('.btn-solicitar-reserva').forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation(); // Impede que o clique acione o modal da lista de eventos.
+
+            const diaElemento = event.currentTarget.closest('.dia.mensal');
+            const dia = diaElemento.getAttribute('data-dia');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const ano = urlParams.get('ano') || new Date().getFullYear();
+            const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
+            
+            const dataParaForm = `${ano}-${mes.toString().padStart(2, '0')}-${dia.padStart(2, '0')}`;
+            campoDataForm.value = dataParaForm;
+
+            // Abre diretamente o modal do formulário de reserva
+            modalReservaForm.style.display = 'flex';
+        });
+    });
+
     // Abre o modal de visualização
     document.querySelectorAll('.dia.mensal:not(.vazio, .passado, .indisponivel)').forEach(diaElemento => {
         diaElemento.addEventListener('click', () => {
