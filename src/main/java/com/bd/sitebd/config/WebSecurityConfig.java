@@ -61,11 +61,7 @@ public class WebSecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login")
-                        .permitAll())
-                .exceptionHandling(handler -> handler
-                        .accessDeniedPage("/403"))
-                .csrf(csrf -> csrf.disable());
-
+                        .permitAll());
         return http.build();
     }
 }

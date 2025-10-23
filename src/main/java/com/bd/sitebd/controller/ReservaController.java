@@ -44,7 +44,7 @@ public class ReservaController {
             reservaService.salvar(reserva);
 
             model.addAttribute("reservaEfetuada", true);
-            
+
             Reserva novaReserva = new Reserva();
             novaReserva.setNumero(reserva.getNumero());
             model.addAttribute("reserva", novaReserva);
@@ -57,18 +57,26 @@ public class ReservaController {
             return "reservar";
         }
     }
-    
-    // Listar as reservas do usuário logado
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")
-    public String listarReservas(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public String listarReservas(Model model, Authentication authentication) {
         String emailUsuario = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        List<Reserva> todasAsReservas = reservaService.listarPorUsuario(emailUsuario);
+        List<Reserva> todasAsReservas;
+
+        // Se for ADMIN, busca TODAS as reservas. Senão, busca só as do usuário.
+        if (isAdmin) {
+            todasAsReservas = reservaService.listarTodas(); // Usa o método que lista tudo
+        } else {
+            todasAsReservas = reservaService.listarPorUsuario(emailUsuario); // Mantém o comportamento original
+        }
 
         List<Reserva> reservasSalas = todasAsReservas.stream()
-                .filter(r -> !"Auditorio".equalsIgnoreCase(r.getNumero()))
+                .filter(r -> r.getNumero() != null && !"Auditorio".equalsIgnoreCase(r.getNumero())) // Adicionado check
+                                                                                                    // null
                 .toList();
 
         List<Reserva> reservasAuditorio = todasAsReservas.stream()

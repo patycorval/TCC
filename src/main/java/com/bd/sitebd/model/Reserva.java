@@ -22,17 +22,27 @@ public class Reserva {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate data;
 
-    private LocalTime hora; // Nome do campo corrigido para 'hora'
+    private LocalTime hora;
     private LocalTime horaFim;
 
     @Enumerated(EnumType.STRING)
     private StatusReserva status;
 
+    // --- NOVOS CAMPOS ---
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy para não carregar sempre
+    @JoinColumn(name = "curso_id")
+    private Curso curso;
+
+    private Integer semestre; // Usamos Integer para permitir null
+    // --- FIM NOVOS CAMPOS ---
+
     // Construtores
     public Reserva() {
     }
 
-    // Getters e Setters
+    // Getters e Setters (EXISTENTES)
+    // ... (id, numero, nome, evento, emailRequisitor, data, hora, horaFim, status)
+    // ...
     public Long getId() {
         return id;
     }
@@ -81,7 +91,6 @@ public class Reserva {
         this.data = data;
     }
 
-    // Getters e Setters corrigidos para o campo 'hora'
     public LocalTime getHora() {
         return hora;
     }
@@ -106,10 +115,25 @@ public class Reserva {
         this.status = status;
     }
 
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
+
+    public Integer getSemestre() {
+        return semestre;
+    }
+
+    public void setSemestre(Integer semestre) {
+        this.semestre = semestre;
+    }
+
     @Transient
     private boolean isOwner;
 
-    // Adicione os Getters e Setters para o novo campo
     public boolean isOwner() {
         return isOwner;
     }
