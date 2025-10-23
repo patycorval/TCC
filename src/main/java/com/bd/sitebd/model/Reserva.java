@@ -10,39 +10,36 @@ import java.time.LocalTime;
 @Entity
 public class Reserva {
 
+    // ... (Seus campos Id, numero, nome, etc. continuam aqui) ...
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String numero;
     private String nome;
     private String evento;
     private String emailRequisitor;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate data;
-
     private LocalTime hora;
     private LocalTime horaFim;
-
     @Enumerated(EnumType.STRING)
     private StatusReserva status;
-
-    // --- NOVOS CAMPOS ---
-    @ManyToOne(fetch = FetchType.LAZY) // Lazy para não carregar sempre
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
     private Curso curso;
+    private Integer semestre;
 
-    private Integer semestre; // Usamos Integer para permitir null
-    // --- FIM NOVOS CAMPOS ---
+    // --- NOVO CAMPO ---
+    @Column(name = "is_grade_reserva") // Mapeia para a coluna do banco
+    private boolean gradeReserva = false; // Valor padrão em Java
+    // --- FIM NOVO CAMPO ---
 
     // Construtores
     public Reserva() {
     }
 
-    // Getters e Setters (EXISTENTES)
-    // ... (id, numero, nome, evento, emailRequisitor, data, hora, horaFim, status)
-    // ...
+    // --- GETTERS E SETTERS (EXISTENTES E NOVOS) ---
+    // ... (getters/setters para id, numero, nome, etc...) ...
     public Long getId() {
         return id;
     }
@@ -129,6 +126,14 @@ public class Reserva {
 
     public void setSemestre(Integer semestre) {
         this.semestre = semestre;
+    }
+
+    public boolean isGradeReserva() {
+        return gradeReserva;
+    }
+
+    public void setGradeReserva(boolean gradeReserva) {
+        this.gradeReserva = gradeReserva;
     }
 
     @Transient

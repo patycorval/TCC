@@ -126,6 +126,7 @@ public class GradeController {
                 r.setStatus(StatusReserva.APROVADA);
                 r.setCurso(curso);
                 r.setSemestre(semestreInt);
+                r.setGradeReserva(true);
 
                 try {
                     reservaService.salvar(r);

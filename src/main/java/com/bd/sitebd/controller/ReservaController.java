@@ -42,7 +42,7 @@ public class ReservaController {
             reserva.setNome(authentication.getName());
             reserva.setStatus(StatusReserva.APROVADA); // Reservas de sala são aprovadas diretamente
             reservaService.salvar(reserva);
-
+            reserva.setGradeReserva(false);
             model.addAttribute("reservaEfetuada", true);
 
             Reserva novaReserva = new Reserva();
