@@ -22,7 +22,7 @@ h1 {
     font-size: 3rem; 
 }
 
-@media (max-width: 1199.98px) {
+@media (max-width: 1400px) {
     h1 {
         font-size: 2rem;
     }
@@ -858,7 +858,7 @@ a.voltar:hover {
 .modal {
   display: none;
   position: fixed;
-  z-index: 999;
+  z-index: 2000;
   left: 0;
   top: 0;
   height: 100vh;

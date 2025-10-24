@@ -10,29 +10,36 @@ import java.time.LocalTime;
 @Entity
 public class Reserva {
 
+    // ... (Seus campos Id, numero, nome, etc. continuam aqui) ...
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String numero;
     private String nome;
     private String evento;
     private String emailRequisitor;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate data;
-
-    private LocalTime hora; // Nome do campo corrigido para 'hora'
+    private LocalTime hora;
     private LocalTime horaFim;
-
     @Enumerated(EnumType.STRING)
     private StatusReserva status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id")
+    private Curso curso;
+    private Integer semestre;
+
+    // --- NOVO CAMPO ---
+    @Column(name = "is_grade_reserva") // Mapeia para a coluna do banco
+    private boolean gradeReserva = false; // Valor padrão em Java
+    // --- FIM NOVO CAMPO ---
 
     // Construtores
     public Reserva() {
     }
 
-    // Getters e Setters
+    // --- GETTERS E SETTERS (EXISTENTES E NOVOS) ---
+    // ... (getters/setters para id, numero, nome, etc...) ...
     public Long getId() {
         return id;
     }
@@ -81,7 +88,6 @@ public class Reserva {
         this.data = data;
     }
 
-    // Getters e Setters corrigidos para o campo 'hora'
     public LocalTime getHora() {
         return hora;
     }
@@ -106,10 +112,33 @@ public class Reserva {
         this.status = status;
     }
 
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
+
+    public Integer getSemestre() {
+        return semestre;
+    }
+
+    public void setSemestre(Integer semestre) {
+        this.semestre = semestre;
+    }
+
+    public boolean isGradeReserva() {
+        return gradeReserva;
+    }
+
+    public void setGradeReserva(boolean gradeReserva) {
+        this.gradeReserva = gradeReserva;
+    }
+
     @Transient
     private boolean isOwner;
 
-    // Adicione os Getters e Setters para o novo campo
     public boolean isOwner() {
         return isOwner;
     }

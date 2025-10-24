@@ -1,12 +1,10 @@
 package com.bd.sitebd.controller;
 
 import com.bd.sitebd.model.Reserva;
-import com.bd.sitebd.model.enums.StatusReserva;
 import com.bd.sitebd.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,9 +41,8 @@ public class ReservaController {
             // reserva.setStatus(StatusReserva.APROVADA); // Reservas de sala são aprovadas
             // diretamente
             reservaService.salvar(reserva);
-
+            reserva.setGradeReserva(false);
             model.addAttribute("reservaEfetuada", true);
-
             Reserva novaReserva = new Reserva();
             novaReserva.setNumero(reserva.getNumero());
             model.addAttribute("reserva", novaReserva);
@@ -59,17 +56,25 @@ public class ReservaController {
         }
     }
 
-    // Listar as reservas do usuário logado
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")
-    public String listarReservas(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public String listarReservas(Model model, Authentication authentication) {
         String emailUsuario = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        List<Reserva> todasAsReservas = reservaService.listarPorUsuario(emailUsuario);
+        List<Reserva> todasAsReservas;
+
+        // Se for ADMIN, busca TODAS as reservas. Senão, busca só as do usuário.
+        if (isAdmin) {
+            todasAsReservas = reservaService.listarTodas(); // Usa o método que lista tudo
+        } else {
+            todasAsReservas = reservaService.listarPorUsuario(emailUsuario); // Mantém o comportamento original
+        }
 
         List<Reserva> reservasSalas = todasAsReservas.stream()
-                .filter(r -> !"Auditorio".equalsIgnoreCase(r.getNumero()))
+                .filter(r -> r.getNumero() != null && !"Auditorio".equalsIgnoreCase(r.getNumero())) // Adicionado check
+                                                                                                    // null
                 .toList();
 
         List<Reserva> reservasAuditorio = todasAsReservas.stream()
