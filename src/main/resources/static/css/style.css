@@ -1159,6 +1159,23 @@ button#reservar{
 /* ESTILOS PARA O MODAL DE CONFIRMAÇÃO DE AÇÕES (SOLICITAÇÕES) */
 /* ======================================================= */
 
+.main-container-fill {
+    /* Define a altura mínima como 60% da altura da tela. 
+       Você pode aumentar (ex: 65vh) se quiser mais espaço. */
+    min-height: 60vh; 
+    display: flex;
+    flex-direction: column;
+}
+
+.centered-message {
+    flex-grow: 1; /* Faz esta div crescer para ocupar o espaço vazio */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d; /* Um cinza suave para a mensagem */
+    text-align: center;
+}
+
 .action-modal #btnConfirmarSolicitacao:hover, #btnCancelarSolicitacao:hover{
     filter: brightness(90%); 
 }

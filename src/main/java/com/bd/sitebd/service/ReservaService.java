@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -187,5 +188,28 @@ public class ReservaService {
                                 return reservaRepository.findByEmailRequisitorAndDataBetweenOrderByDataAsc(email, hoje,
                                                 hoje.plusDays(15));
                 }
+        }
+
+        /**
+         * NOVO MÉTODO: Determina qual filtro de período é o mais apropriado para uma
+         * data de reserva.
+         * 
+         * @param dataReserva A data da reserva.
+         * @return Uma string representando o período ('15dias', '30dias', 'proximas',
+         *         'anteriores').
+         */
+        public String determinarPeriodoParaData(LocalDate dataReserva) {
+                LocalDate hoje = LocalDate.now();
+                if (dataReserva.isBefore(hoje)) {
+                        return "anteriores";
+                }
+                long diasDeDiferenca = ChronoUnit.DAYS.between(hoje, dataReserva);
+                if (diasDeDiferenca <= 15) {
+                        return "15dias";
+                }
+                if (diasDeDiferenca <= 30) {
+                        return "30dias";
+                }
+                return "proximas";
         }
 }

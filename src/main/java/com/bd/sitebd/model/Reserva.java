@@ -29,6 +29,10 @@ public class Reserva {
     private Curso curso;
     private Integer semestre;
 
+    // NOVO CAMPO (não será salvo no banco)
+    @Transient
+    private String periodoIdeal;
+
     // --- NOVO CAMPO ---
     @Column(name = "is_grade_reserva") // Mapeia para a coluna do banco
     private boolean gradeReserva = false; // Valor padrão em Java
@@ -134,6 +138,14 @@ public class Reserva {
 
     public void setGradeReserva(boolean gradeReserva) {
         this.gradeReserva = gradeReserva;
+    }
+
+    public String getPeriodoIdeal() {
+        return periodoIdeal;
+    }
+
+    public void setPeriodoIdeal(String periodoIdeal) {
+        this.periodoIdeal = periodoIdeal;
     }
 
     @Transient

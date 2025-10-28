@@ -1,6 +1,7 @@
 package com.bd.sitebd.controller;
 
 import com.bd.sitebd.model.Reserva;
+import com.bd.sitebd.model.enums.StatusReserva;
 import com.bd.sitebd.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,7 +59,12 @@ public class ReservaController {
         }
     }
 
-    // Listar as reservas do usuário logado - MÉTODO 
+    /**
+     * MÉTODO CORRIGIDO
+     * Agora ele recebe o parâmetro 'periodo' da URL. Se nenhum for passado, ele usa
+     * '15dias' como padrão.
+     * Isso garante que o filtro enviado pelo calendário seja aplicado.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")
     public String listarReservas(@RequestParam(name = "periodo", defaultValue = "15dias") String periodo, Model model) {
@@ -79,7 +85,7 @@ public class ReservaController {
         model.addAttribute("reservasAuditorio", reservasAuditorio);
         model.addAttribute("reservasSalas", reservasSalas);
         model.addAttribute("activePage", "listagem");
-        model.addAttribute("periodoSelecionado", periodo); // Para manter o filtro selecionado na view
+        model.addAttribute("periodoSelecionado", periodo); // Mantém o <select> na opção correta
 
         return "listagem";
     }
