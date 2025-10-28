@@ -1,11 +1,12 @@
 package com.bd.sitebd.controller;
 
+import com.bd.sitebd.model.Curso;
 import com.bd.sitebd.model.Reserva;
 import com.bd.sitebd.model.Usuario;
 import com.bd.sitebd.model.dto.DiaCalendario;
 import com.bd.sitebd.model.enums.StatusReserva;
-import org.springframework.security.core.Authentication;
 import com.bd.sitebd.model.enums.TipoUsuario;
+import com.bd.sitebd.repositories.CursoRepository;
 import com.bd.sitebd.service.DiaBloqueadoService;
 import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.service.UsuarioService;
@@ -15,13 +16,15 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,18 +38,30 @@ public class AdminController {
     private UsuarioService usuarioService;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ReservaService reservaService;
 
     @Autowired
+    private CursoRepository cursoRepository;
+
+    @Autowired
     private DiaBloqueadoService diaBloqueadoService;
 
-    // Tela de cadastro de usuários (apenas ADMIN)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cadastro")
-    public String exibirCadastro() {
+    public String exibirCadastro(Model model) {
+        List<Curso> todosOsCursos = cursoRepository.findAll();
+        model.addAttribute("listaDeCursos", todosOsCursos);
+        System.out.println("--- DEBUG AdminController ---");
+        System.out.println("Número de cursos encontrados no banco: " + todosOsCursos.size());
+        if (!todosOsCursos.isEmpty()) {
+            // Imprime detalhes do primeiro curso para confirmar que os dados estão corretos
+            System.out.println("Primeiro curso: ID=" + todosOsCursos.get(0).getId() + ", Sigla="
+                    + todosOsCursos.get(0).getSigla() + ", Periodo=" + todosOsCursos.get(0).getPeriodo());
+        }
+        System.out.println("Adicionando ao model com nome: listaDeCursos");
         return "cadastro";
     }
 
@@ -56,11 +71,27 @@ public class AdminController {
             @RequestParam String senha,
             @RequestParam String confirmarSenha,
             @RequestParam TipoUsuario tipo,
+            @RequestParam(required = false) List<Long> cursos,
             RedirectAttributes redirectAttributes) {
 
         if (!senha.equals(confirmarSenha)) {
             redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não conferem!");
+            redirectAttributes.addFlashAttribute("usuarioInput", Map.of("email", email, "tipo", tipo.name()));
             return "redirect:/admin/cadastro";
+        }
+
+        Set<Curso> cursosSelecionados = new HashSet<>();
+        if ((tipo == TipoUsuario.PROFESSOR || tipo == TipoUsuario.MONITOR)) {
+            if (cursos == null || cursos.isEmpty()) {
+                redirectAttributes.addFlashAttribute("mensagemErro",
+                        "Professores e Monitores devem estar associados a pelo menos um curso!");
+                redirectAttributes.addFlashAttribute("usuarioInput", Map.of("email", email, "tipo", tipo.name()));
+                return "redirect:/admin/cadastro";
+            }
+            cursosSelecionados.addAll(cursoRepository.findAllById(cursos));
+            if (cursosSelecionados.size() != cursos.size()) {
+                System.err.println("Aviso: Alguns IDs de curso inválidos foram enviados ou não encontrados.");
+            }
         }
 
         try {
@@ -68,14 +99,29 @@ public class AdminController {
             novo.setEmail(email);
             novo.setSenha(passwordEncoder.encode(senha));
             novo.setTipo(tipo);
+            novo.setCursos(cursosSelecionados);
 
             usuarioService.salvar(novo);
 
             redirectAttributes.addFlashAttribute("mensagem", "Usuário cadastrado com sucesso!");
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensagemErro", e.getMessage());
+            String mensagemErro = "Erro ao cadastrar usuário.";
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("unique constraint")
+                    && e.getMessage().toLowerCase().contains("email")) {
+                mensagemErro = "Este e-mail já está cadastrado.";
+            } else {
+                e.printStackTrace();
+            }
+            redirectAttributes.addFlashAttribute("mensagemErro", mensagemErro);
+
+            redirectAttributes.addFlashAttribute("usuarioInput",
+                    Map.of("email", email, "tipo", tipo.name(), "cursos", cursos != null ? cursos : List.of())); // Envia
+                                                                                                                 // IDs
+                                                                                                                 // de
+                                                                                                                 // volta
         }
+
         return "redirect:/admin/cadastro";
     }
 
@@ -90,22 +136,15 @@ public class AdminController {
         String emailUsuario = authentication.getName();
         model.addAttribute("usuarioLogadoEmail", emailUsuario);
 
-        // Lógica completa copiada do UsuarioController para manter a consistência
         YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
-
         List<LocalDate> diasBloqueados = diaBloqueadoService.buscarDiasBloqueadosNoMes(ym);
-
         YearMonth mesCorrente = YearMonth.now();
         model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
-
-        // Para o admin, buscamos TODAS as reservas do auditório, não apenas as de um
-        // usuário
         List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorio(ym);
 
         List<DiaCalendario> diasDoMes = new ArrayList<>();
         LocalDate primeiroDiaDoMes = ym.atDay(1);
         int diaDaSemanaDoPrimeiroDia = primeiroDiaDoMes.getDayOfWeek().getValue();
-
         for (int i = 1; i < diaDaSemanaDoPrimeiroDia; i++) {
             diasDoMes.add(new DiaCalendario(0, "vazio"));
         }
@@ -116,22 +155,18 @@ public class AdminController {
             LocalDate dataDoDia = ym.atDay(i);
             DiaCalendario diaObj;
 
-            // ----- INÍCIO DA LÓGICA CORRIGIDA -----
             if (dataDoDia.isBefore(hoje)) {
                 diaObj = new DiaCalendario(i, "passado");
             } else {
-                // Para dias futuros ou o dia de hoje
                 boolean foiBloqueadoPeloAdmin = diasBloqueados.contains(dataDoDia);
                 boolean ehDomingo = dataDoDia.getDayOfWeek() == DayOfWeek.SUNDAY;
 
                 if (foiBloqueadoPeloAdmin) {
-                    diaObj = new DiaCalendario(i, "bloqueado"); // Status para dias bloqueados
+                    diaObj = new DiaCalendario(i, "bloqueado");
                 } else if (ehDomingo) {
-                    diaObj = new DiaCalendario(i, "indisponivel"); // Status para domingos
+                    diaObj = new DiaCalendario(i, "indisponivel");
                 } else {
-                    diaObj = new DiaCalendario(i, "disponivel"); // Status para dias normais
-
-                    // Adiciona os eventos do dia (reservas)
+                    diaObj = new DiaCalendario(i, "disponivel");
                     List<Reserva> eventosDoDia = reservasAuditorio.stream()
                             .filter(r -> r.getData().isEqual(dataDoDia))
                             .sorted(Comparator.comparing(Reserva::getHora))
@@ -139,8 +174,6 @@ public class AdminController {
                     diaObj.setEventos(eventosDoDia);
                 }
             }
-            // ----- FIM DA LÓGICA CORRIGIDA -----
-
             diasDoMes.add(diaObj);
         }
 
@@ -169,51 +202,51 @@ public class AdminController {
             @RequestParam("status") String status,
             RedirectAttributes redirectAttributes) {
         try {
-            StatusReserva novoStatus = StatusReserva.valueOf(status);
+            StatusReserva novoStatus = StatusReserva.valueOf(status.toUpperCase());
             reservaService.atualizarStatus(id, novoStatus);
             redirectAttributes.addFlashAttribute("mensagemSucesso", "Status da reserva atualizado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "Status inválido fornecido.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao atualizar o status da reserva.");
+            e.printStackTrace();
         }
         return "redirect:/admin/solicitacoes";
     }
 
-    // Endpoint para BLOQUEAR
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/auditorio/bloquear-dias")
     public String bloquearDias(
             @RequestParam(value = "diasSelecionados", required = false) Set<LocalDate> diasParaBloquear,
             RedirectAttributes redirectAttributes) {
         if (diasParaBloquear == null || diasParaBloquear.isEmpty()) {
-            return "redirect:/admin/auditorio-admin"; // Redireciona se nada for selecionado
+            return "redirect:/admin/auditorio-admin";
         }
         try {
             diasParaBloquear.forEach(diaBloqueadoService::bloquearDia);
-            // Mensagem de sucesso removida
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Ocorreu um erro ao bloquear os dias.");
+            e.printStackTrace();
         }
         YearMonth ym = YearMonth.from(diasParaBloquear.iterator().next());
         return "redirect:/admin/auditorio-admin?mes=" + ym.getMonthValue() + "&ano=" + ym.getYear();
     }
 
-    // NOVO Endpoint para DESBLOQUEAR
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/auditorio/desbloquear-dias")
     public String desbloquearDias(
             @RequestParam(value = "diasSelecionados", required = false) Set<LocalDate> diasParaDesbloquear,
             RedirectAttributes redirectAttributes) {
         if (diasParaDesbloquear == null || diasParaDesbloquear.isEmpty()) {
-            return "redirect:/admin/auditorio-admin"; // Redireciona se nada for selecionado
+            return "redirect:/admin/auditorio-admin";
         }
         try {
             diasParaDesbloquear.forEach(diaBloqueadoService::desbloquearDia);
-            // Mensagem de sucesso removida
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Ocorreu um erro ao desbloquear os dias.");
+            e.printStackTrace();
         }
         YearMonth ym = YearMonth.from(diasParaDesbloquear.iterator().next());
         return "redirect:/admin/auditorio-admin?mes=" + ym.getMonthValue() + "&ano=" + ym.getYear();
     }
-
 }

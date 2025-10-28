@@ -2,6 +2,7 @@ package com.bd.sitebd.model;
 
 import jakarta.persistence.*;
 import com.bd.sitebd.model.enums.TipoUsuario;
+import java.util.Set;
 
 @Entity
 @Table(name = "usuarios")
@@ -19,7 +20,11 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TipoUsuario tipo; // ADMIN, PROFESSOR, MONITOR
+    private TipoUsuario tipo;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "usuario_curso", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "curso_id"))
+    private Set<Curso> cursos;
 
     // Getters e Setters
     public Long getId() {
@@ -52,5 +57,13 @@ public class Usuario {
 
     public void setTipo(TipoUsuario tipo) {
         this.tipo = tipo;
+    }
+
+    public Set<Curso> getCursos() {
+        return cursos;
+    }
+
+    public void setCursos(Set<Curso> cursos) {
+        this.cursos = cursos;
     }
 }
