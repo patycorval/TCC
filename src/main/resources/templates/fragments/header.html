@@ -58,7 +58,7 @@
                 <li class="nav-item">
                     <a th:href="@{/listagem}" class="nav-link" th:classappend="${activePage == 'listagem'} ? ' active' : ''">Minhas Reservas</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" th:if="${usuarioTipo != 'MONITOR'}">
                     <a th:href="@{/auditorio}" class="nav-link" th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
                 </li>
                 <li class="nav-item dropdown" th:if="${usuarioEmail != null}">

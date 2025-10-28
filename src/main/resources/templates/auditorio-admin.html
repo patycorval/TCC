@@ -18,16 +18,31 @@
     
     <form method="post" id="formBloqueio">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div th:if="${mensagemSucesso}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <p th:text="${mensagemSucesso}"></p><button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <p th:text="${erro}"></p><button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div class="legenda-cores my-4 mb-25">
+            <p>Legenda:</p>
+            <div class="item-legenda"><div class="indicador status-aprovada"></div><span>Minha Reserva (Aprovada)</span></div>
+            <div class="item-legenda"><div class="indicador status-pendente"></div><span>Minha Reserva (Pendente)</span></div>
+            <div class="item-legenda"><div class="indicador status-rejeitada"></div><span>Minha Reserva (Rejeitada)</span></div>
+            <div class="item-legenda"><div class="indicador status-outros"></div><span>Outras Reservas</span></div>
+            <div class="item-legenda"><div class="cor-legenda disponivel"></div><span>Disponível</span></div>
+            <div class="item-legenda"><div class="cor-legenda indisponivel"></div><span>Indisponível</span></div>
+        </div>
 
-        <a th:if="${!desabilitarAnterior}" th:href="@{/admin/auditorio-admin(mes=${anteriorMes}, ano=${anteriorAno})}" class="btn-nav-calendario">&lt; Anterior</a>
-        <div th:if="${desabilitarAnterior}" class="nav-placeholder"></div>
+        <div class="navegacao-calendario mb-4">
+            <a th:if="${!desabilitarAnterior}" th:href="@{/admin/auditorio-admin(mes=${anteriorMes}, ano=${anteriorAno})}" class="btn-nav-calendario">&lt; Anterior</a>
+            <div th:if="${desabilitarAnterior}" class="nav-placeholder"></div>
 
-        <h2 th:text="${#temporals.format(ym, 'MMMM yyyy', new java.util.Locale('pt', 'BR'))}" class="h2-aud text-capitalize"></h2>
+            <h2 th:text="${#temporals.format(ym, 'MMMM yyyy', new java.util.Locale('pt', 'BR'))}" class="h2-aud text-capitalize"></h2>
 
-        <a th:href="@{/admin/auditorio-admin(mes=${proximoMes}, ano=${proximoAno})}" class="btn-nav-calendario">Próximo &gt;</a>
-
-    </div>
-    <div class="grid-mensal">
+            <a th:href="@{/admin/auditorio-admin(mes=${proximoMes}, ano=${proximoAno})}" class="btn-nav-calendario">Próximo &gt;</a>
+        </div>
+        <div class="grid-mensal">
             <div class="dia-semana-header">Seg</div>
             <div class="dia-semana-header">Ter</div>
             <div class="dia-semana-header">Qua</div>
@@ -36,30 +51,30 @@
             <div class="dia-semana-header">Sab</div>
             <div class="dia-semana-header">Dom</div>
         
-        <div th:each="dia : ${diasDoMes}"
-            class="dia mensal"
-            th:classappend="${dia.dia == 0 ? 'vazio' : dia.status}"
-            th:attr="data-dia=${dia.dia}, data-eventos=${dia.getEventosAsJson()}">
-            <div class="conteudo-dia">
-                <div class="dia-header">
-                    <span class="numero-dia" th:text="${dia.dia != 0 ? dia.dia : ''}"></span>
-                    <input type="checkbox" name="diasSelecionados"
-                        th:if="${dia.status != 'vazio' && dia.status != 'passado' && dia.status != 'indisponivel'}"
-                        th:value="${#temporals.format(ym.atDay(dia.dia), 'yyyy-MM-dd')}"
-                        class="checkbox-bloqueio">
-                    <div class="indicadores-evento" th:if="${!#lists.isEmpty(dia.eventos)}">
-                        <span th:each="reserva : ${dia.eventos}" class="indicador"
-                            th:classappend="${reserva.emailRequisitor == usuarioLogadoEmail}
-                                            ? 'status-' + ${reserva.status.name().toLowerCase()}
-                                            : 'status-outros'">
-                        </span>
+            <div th:each="dia : ${diasDoMes}"
+                class="dia mensal"
+                th:classappend="${dia.dia == 0 ? 'vazio' : dia.status}"
+                th:attr="data-dia=${dia.dia}, data-eventos=${dia.getEventosAsJson()}">
+                <div class="conteudo-dia">
+                    <div class="dia-header">
+                        <span class="numero-dia" th:text="${dia.dia != 0 ? dia.dia : ''}"></span>
+                        <input type="checkbox" name="diasSelecionados"
+                            th:if="${dia.status != 'vazio' && dia.status != 'passado' && dia.status != 'indisponivel'}"
+                            th:value="${#temporals.format(ym.atDay(dia.dia), 'yyyy-MM-dd')}"
+                            class="checkbox-bloqueio">
+                        <div class="indicadores-evento" th:if="${!#lists.isEmpty(dia.eventos)}">
+                            <span th:each="reserva : ${dia.eventos}" class="indicador"
+                                th:classappend="${reserva.emailRequisitor == usuarioLogadoEmail}
+                                                ? 'status-' + ${reserva.status.name().toLowerCase()}
+                                                : 'status-outros'">
+                            </span>
+                        </div>
                     </div>
+                    <button type="button" th:if="${dia.status == 'disponivel'}" class="btn-solicitar-reserva">
+                        <img th:src="@{/img/adicionar-evento.png}" alt="Solicitar Reserva" class="icone-solicitar" />
+                    </button>
                 </div>
-                <button type="button" th:if="${dia.status == 'disponivel'}" class="btn-solicitar-reserva">
-                    <img th:src="@{/img/adicionar-evento.png}" alt="Solicitar Reserva" class="icone-solicitar" />
-                </button>
             </div>
-        </div>
         </div>
         <div class="my-4 d-flex justify-content-end gap-2">
             <button type="submit" class="btn btn-secondary" th:formaction="@{/admin/auditorio/desbloquear-dias}">Desbloquear Selecionados</button>
