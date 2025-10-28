@@ -167,4 +167,25 @@ public class ReservaService {
                 LocalDate endOfMonth = ym.atEndOfMonth();
                 return reservaRepository.findReservasAuditorioParaUsuario("Auditorio", startOfMonth, endOfMonth, email);
         }
+
+        // NOVO MÉTODO COM A LÓGICA DO FILTRO
+        public List<Reserva> listarPorUsuarioEPeriodo(String email, String periodo) {
+                LocalDate hoje = LocalDate.now();
+
+                switch (periodo) {
+                        case "30dias":
+                                return reservaRepository.findByEmailRequisitorAndDataBetweenOrderByDataAsc(email, hoje,
+                                                hoje.plusDays(30));
+                        case "proximas":
+                                return reservaRepository.findByEmailRequisitorAndDataGreaterThanEqualOrderByDataAsc(
+                                                email, hoje);
+                        case "anteriores":
+                                return reservaRepository.findByEmailRequisitorAndDataLessThanOrderByDataDesc(email,
+                                                hoje);
+                        case "15dias":
+                        default:
+                                return reservaRepository.findByEmailRequisitorAndDataBetweenOrderByDataAsc(email, hoje,
+                                                hoje.plusDays(15));
+                }
+        }
 }

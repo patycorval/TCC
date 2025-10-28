@@ -41,4 +41,13 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
                         @Param("dataFim") LocalDate dataFim,
                         @Param("email") String email);
 
+        // NOVOS MÉTODOS PARA FILTRO DE PERÍODO
+        List<Reserva> findByEmailRequisitorAndDataBetweenOrderByDataAsc(String emailRequisitor, LocalDate inicio,
+                        LocalDate fim);
+
+        List<Reserva> findByEmailRequisitorAndDataGreaterThanEqualOrderByDataAsc(String emailRequisitor,
+                        LocalDate data);
+
+        List<Reserva> findByEmailRequisitorAndDataLessThanOrderByDataDesc(String emailRequisitor, LocalDate data);
+
 }
