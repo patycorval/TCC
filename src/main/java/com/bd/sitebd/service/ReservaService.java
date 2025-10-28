@@ -81,6 +81,18 @@ public class ReservaService {
         }
 
         public Reserva salvar(Reserva reserva) {
+                // --- VALIDAÇÃO DE DATA E HORA RETROATIVA ---
+                LocalDate hoje = LocalDate.now();
+                LocalTime agora = LocalTime.now();
+
+                if (reserva.getData().isBefore(hoje)) {
+                        throw new IllegalArgumentException("Não é possível fazer reservas para datas retroativas.");
+                }
+                if (reserva.getData().isEqual(hoje) && reserva.getHora().isBefore(agora)) {
+                        throw new IllegalArgumentException("Não é possível fazer reservas para horários retroativos.");
+                }
+                // --- FIM DA VALIDAÇÃO --
+
                 if (reserva.getHoraFim().isBefore(reserva.getHora())
                                 || reserva.getHoraFim().equals(reserva.getHora())) {
                         throw new IllegalArgumentException("A hora de fim não pode ser menor ou igual à de início.");
@@ -110,6 +122,18 @@ public class ReservaService {
         }
 
         public Reserva atualizar(Reserva reserva) {
+                // --- VALIDAÇÃO DE DATA E HORA RETROATIVA ---
+                LocalDate hoje = LocalDate.now();
+                LocalTime agora = LocalTime.now();
+
+                if (reserva.getData().isBefore(hoje)) {
+                        throw new IllegalArgumentException("Não é possível atualizar reservas para datas retroativas.");
+                }
+                if (reserva.getData().isEqual(hoje) && reserva.getHora().isBefore(agora)) {
+                        throw new IllegalArgumentException(
+                                        "Não é possível atualizar reservas para horários retroativos.");
+                }
+                // --- FIM DA VALIDAÇÃO ---
                 if (reserva.getHoraFim().isBefore(reserva.getHora())
                                 || reserva.getHoraFim().equals(reserva.getHora())) {
                         throw new IllegalArgumentException("A hora de fim não pode ser menor ou igual à de início.");

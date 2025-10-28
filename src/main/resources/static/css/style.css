@@ -116,9 +116,8 @@ div p{
 .div-reservar a.btn {
     display: inline-block;
     width: 80%;
-    padding: 8px 12px;
-    margin-bottom: 5px;
-
+    /* padding: 8px 12px; */
+    /* margin-bottom: 5px; */
     background-color: #ffffff;
     color: #000000;
     text-decoration: none;
@@ -892,7 +891,8 @@ a.voltar:hover {
 #confirmModal p {
     font-size: 1.1rem;
     color: #333;
-    margin-bottom: 1.5rem; /* Aumenta o espaço abaixo do texto */
+    margin-bottom: 1rem; /* Aumenta o espaço abaixo do texto */
+    margin-top: 10px
 }
 
 /* 3. Estiliza os botões "Sim" e "Não" dentro do modal */
