@@ -1,16 +1,19 @@
 package com.bd.sitebd.controller;
 
 import com.bd.sitebd.model.Reserva;
+import com.bd.sitebd.model.enums.StatusReserva;
 import com.bd.sitebd.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class ReservaController {
@@ -56,34 +59,33 @@ public class ReservaController {
         }
     }
 
+    /**
+     * MÉTODO CORRIGIDO
+     * Agora ele recebe o parâmetro 'periodo' da URL. Se nenhum for passado, ele usa
+     * '15dias' como padrão.
+     * Isso garante que o filtro enviado pelo calendário seja aplicado.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")
-    public String listarReservas(Model model, Authentication authentication) {
+    public String listarReservas(@RequestParam(name = "periodo", defaultValue = "15dias") String periodo, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String emailUsuario = authentication.getName();
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        List<Reserva> todasAsReservas;
+        List<Reserva> todasAsReservas = reservaService.listarPorUsuarioEPeriodo(emailUsuario, periodo);
 
-        // Se for ADMIN, busca TODAS as reservas. Senão, busca só as do usuário.
-        if (isAdmin) {
-            todasAsReservas = reservaService.listarTodas(); // Usa o método que lista tudo
-        } else {
-            todasAsReservas = reservaService.listarPorUsuario(emailUsuario); // Mantém o comportamento original
-        }
-
-        List<Reserva> reservasSalas = todasAsReservas.stream()
-                .filter(r -> r.getNumero() != null && !"Auditorio".equalsIgnoreCase(r.getNumero())) // Adicionado check
-                                                                                                    // null
-                .toList();
-
+        // Separa as reservas por tipo (Auditório ou Sala/Lab)
         List<Reserva> reservasAuditorio = todasAsReservas.stream()
                 .filter(r -> "Auditorio".equalsIgnoreCase(r.getNumero()))
-                .toList();
+                .collect(Collectors.toList());
 
-        model.addAttribute("reservasSalas", reservasSalas);
+        List<Reserva> reservasSalas = todasAsReservas.stream()
+                .filter(r -> !"Auditorio".equalsIgnoreCase(r.getNumero()))
+                .collect(Collectors.toList());
+
         model.addAttribute("reservasAuditorio", reservasAuditorio);
+        model.addAttribute("reservasSalas", reservasSalas);
         model.addAttribute("activePage", "listagem");
+        model.addAttribute("periodoSelecionado", periodo); // Mantém o <select> na opção correta
 
         return "listagem";
     }

@@ -93,6 +93,12 @@ public class UsuarioController {
         List<LocalDate> diasBloqueados = diaBloqueadoService.buscarDiasBloqueadosNoMes(ym);
         List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaUsuario(ym, emailUsuario);
 
+        // ATUALIZAÇÃO: Adiciona o período ideal para cada reserva
+        reservasAuditorio.forEach(reserva -> {
+            String periodoIdeal = reservaService.determinarPeriodoParaData(reserva.getData());
+            reserva.setPeriodoIdeal(periodoIdeal); // Um novo campo temporário no modelo Reserva
+        });
+        
         List<DiaCalendario> diasDoMes = new ArrayList<>();
         LocalDate primeiroDiaDoMes = ym.atDay(1);
         int diaDaSemanaDoPrimeiroDia = primeiroDiaDoMes.getDayOfWeek().getValue();
