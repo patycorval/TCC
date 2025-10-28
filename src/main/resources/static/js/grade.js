@@ -4,122 +4,113 @@ document.addEventListener('DOMContentLoaded', function () {
         matutino: ['07:40 às 08:30', '08:30 às 09:20', '09:30 às 10:20', '10:20 às 11:10', '11:10 às 12:00', '12:00 às 12:50'],
         noturno: ['18:40 às 19:30', '19:30 às 20:20', '20:30 às 21:20', '21:20 às 22:10', '22:10 às 23:00']
     };
-    // Mapeamento de DayOfWeek (Java) para String (Português)
     const diasDaSemanaJava = { MONDAY: 'Segunda', TUESDAY: 'Terça', WEDNESDAY: 'Quarta', THURSDAY: 'Quinta', FRIDAY: 'Sexta', SATURDAY: 'Sábado' };
     const diasDaSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-    // Seletores do DOM
+    // Seletores DOM (IDs atualizados)
     const cursoSelect = document.getElementById('curso');
     const periodoSelect = document.getElementById('periodo');
     const semestreSelect = document.getElementById('semestre');
-    const professorFiltroSelect = document.getElementById('professorFiltro');
+    const usuarioFiltroSelect = document.getElementById('usuarioFiltro'); // ALTERADO
     const gradeBody = document.getElementById('gradeBody');
-    
-    // Modal
+
+    // Modal (IDs atualizados)
     const modalElement = document.getElementById('modalAula');
     const modal = new bootstrap.Modal(modalElement);
     const modalTitle = document.getElementById('modalAulaTitle');
-    const modalProfessorSelect = document.getElementById('modalProfessor');
+    const modalUsuarioSelect = document.getElementById('modalUsuario'); // ALTERADO
     const modalSalaSelect = document.getElementById('modalSala');
     const modalDiaInput = document.getElementById('modalDiaSemana');
     const modalHorarioInput = document.getElementById('modalHorario');
     const btnSalvarAula = document.getElementById('btnSalvarAula');
 
-    // --- EVENTOS PRINCIPAIS ---
+    // CSRF Tokens
+    const csrfToken = document.querySelector("meta[name='_csrf']")?.getAttribute("content");
+    const csrfHeader = document.querySelector("meta[name='_csrf_header']")?.getAttribute("content");
 
-    // Quando o ADMIN muda o CURSO
-    cursoSelect.addEventListener('change', async function() {
-        await carregarGradeECursos();
-    });
-    
-    // Quando o ADMIN muda o SEMESTRE
-    semestreSelect.addEventListener('change', async () => {
-        await carregarGradeECursos();
-    });
-
-    // Quando o ADMIN clica em SALVAR no MODAL
+    // --- EVENTOS ---
+    cursoSelect.addEventListener('change', carregarUsuariosEGrade);
+    semestreSelect.addEventListener('change', carregarUsuariosEGrade);
     btnSalvarAula.addEventListener('click', salvarAulaSemestre);
 
     // --- FUNÇÕES ---
 
-    // Função principal: Carrega professores e depois a grade
-    async function carregarGradeECursos() {
+    async function carregarUsuariosEGrade() {
         const cursoId = cursoSelect.value;
         const selectedOption = cursoSelect.options[cursoSelect.selectedIndex];
-        const periodo = selectedOption.dataset.periodo; // 'matutino' ou 'noturno'
-        
-        // Atualiza o <select> de período
+        // Adiciona verificação se selectedOption existe
+        const periodo = selectedOption?.dataset.periodo; 
+        const semestre = semestreSelect.value;
+
         periodoSelect.value = periodo ? periodo.toLowerCase() : "";
-        
-        // Limpa a grade e os filtros de professor
-        gradeBody.innerHTML = '<tr><td colspan="7">Carregando grade...</td></tr>'; // Feedback visual
-        limparSelect(professorFiltroSelect, "Selecione um professor...");
-        limparSelect(modalProfessorSelect, "Selecione um professor...");
-        
-        if (!cursoId) {
-             gradeBody.innerHTML = ''; // Limpa se nenhum curso selecionado
-             return;
-        }
 
-        // Busca os professores DESSE curso na API
-        await popularProfessores(cursoId);
-        
-        // Gera a grade buscando dados da API
-        await gerarGrade(cursoId, periodo.toLowerCase(), semestreSelect.value);
-    }
+        gradeBody.innerHTML = '<tr><td colspan="7">Carregando...</td></tr>';
+        limparSelect(usuarioFiltroSelect, "Carregando..."); // ALTERADO
+        limparSelect(modalUsuarioSelect, "Carregando...");   // ALTERADO
 
-    // Busca professores na API e popula os <select>
-    async function popularProfessores(cursoId) {
-        try {
-            const response = await fetch(`/api/professores?cursoId=${cursoId}`);
-            if (!response.ok) {
-                 limparSelect(professorFiltroSelect, "Erro ao carregar");
-                 limparSelect(modalProfessorSelect, "Erro ao carregar");
-                 return;
-            }
-            
-            const professores = await response.json();
-             limparSelect(professorFiltroSelect, "Selecione um professor...");
-             limparSelect(modalProfessorSelect, "Selecione um professor...");
-            
-            professores.forEach(prof => {
-                professorFiltroSelect.options.add(new Option(prof.nome, prof.id));
-                modalProfessorSelect.options.add(new Option(prof.nome, prof.id));
-            });
-        } catch (error) {
-            console.error('Erro ao buscar professores:', error);
-             limparSelect(professorFiltroSelect, "Erro de conexão");
-             limparSelect(modalProfessorSelect, "Erro de conexão");
-        }
-    }
-
-    // -- FUNÇÃO MODIFICADA: Gera a grade buscando dados --
-    async function gerarGrade(cursoId, periodo, semestre) {
-        gradeBody.innerHTML = '<tr><td colspan="7">Carregando dados...</td></tr>'; // Feedback
-        const horariosDoPeriodo = horarios[periodo];
-        if (!horariosDoPeriodo) {
-            gradeBody.innerHTML = ''; // Limpa se período inválido
+        if (!cursoId || !periodo) { // Verifica periodo também
+            gradeBody.innerHTML = '';
+            limparSelect(usuarioFiltroSelect, "Selecione um curso");
+            limparSelect(modalUsuarioSelect, "Selecione um curso");
             return;
         }
 
-        // ** BUSCA DADOS REAIS DA API **
-        let dadosDaGrade = [];
+        const usuariosDoCurso = await buscarUsuariosDoCurso(cursoId);
+        if (usuariosDoCurso) {
+            popularSelectUsuarios(usuariosDoCurso);
+        }
+
+        await gerarGrade(cursoId, periodo.toLowerCase(), semestre);
+    }
+
+    async function buscarUsuariosDoCurso(cursoId) {
         try {
-            // Chama a API que busca as reservas da primeira semana
+            // A URL da API continua /api/professores por compatibilidade
+            const response = await fetch(`/api/professores?cursoId=${cursoId}`); 
+            if (!response.ok) {
+                console.error("Erro ao buscar usuários:", response.status);
+                return null;
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Erro de conexão ao buscar usuários:', error);
+            return null;
+        }
+    }
+
+    // ALTERADO: Popula selects de Usuario
+    function popularSelectUsuarios(usuarios) {
+        limparSelect(usuarioFiltroSelect, "Todos"); 
+        limparSelect(modalUsuarioSelect, "Selecione..."); 
+        usuarios.forEach(user => {
+            // Usar user.email como texto (ajuste se Usuario tiver campo 'nome')
+            const displayText = user.email; 
+            usuarioFiltroSelect.options.add(new Option(displayText, user.id));
+            modalUsuarioSelect.options.add(new Option(displayText, user.id));
+        });
+    }
+
+    async function gerarGrade(cursoId, periodo, semestre) {
+        gradeBody.innerHTML = '<tr><td colspan="7">Carregando grade...</td></tr>';
+        const horariosDoPeriodo = horarios[periodo];
+        if (!horariosDoPeriodo) {
+            gradeBody.innerHTML = ''; return;
+        }
+
+        let gradeSalva = [];
+        try {
             const response = await fetch(`/api/grade/reservas?cursoId=${cursoId}&semestre=${semestre}`);
             if (response.ok) {
-                dadosDaGrade = await response.json(); // Espera os dados como ReservaDTO
-                 console.log("Dados recebidos da API:", dadosDaGrade);
+                gradeSalva = await response.json();
             } else {
-                 console.error("Erro ao buscar dados da API:", response.status, response.statusText);
+                 console.error("Erro ao buscar grade:", response.status);
             }
         } catch (error) {
-            console.error('Erro ao buscar dados da grade:', error);
+            console.error('Erro de conexão ao buscar grade:', error);
         }
-        
-        gradeBody.innerHTML = ''; // Limpa o "Carregando"
 
-        // Cria a grade
+        gradeBody.innerHTML = ''; 
+
         horariosDoPeriodo.forEach(horario => {
             const linhaHorario = document.createElement('div');
             linhaHorario.className = 'linha-horario';
@@ -129,23 +120,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 const celulaGrade = document.createElement('div');
                 celulaGrade.className = 'celula-grade';
 
-                // Verifica se existe uma aula para esta célula nos dados recebidos
-                // Compara o dia da semana (convertido) e o horário
-                const aula = dadosDaGrade.find(dto => 
+                const aula = gradeSalva.find(dto =>
                     diasDaSemanaJava[dto.diaSemana] === dia && dto.horario === horario
                 );
 
                 if (aula) {
-                    // Célula preenchida com dados da API
                     celulaGrade.innerHTML = `
                         <div class="detalhes-aula">
-                            <p><strong>${aula.professorNome}</strong></p>
-                            <p style="font-size: 0.8rem">${aula.salaNumero}</p> 
+                            <p><strong>${aula.professorNome}</strong></p> <p style="font-size: 0.8rem">${aula.salaNumero}</p>
                         </div>
                     `;
-                    // Adicionar evento de clique para editar/remover (futuro)
+                    // Adicionar evento de clique para EDITAR (futuro)
                 } else {
-                    // Célula vazia com botão de adicionar
                     const btnAdd = document.createElement('button');
                     btnAdd.className = 'btn btn-sm btn-outline-primary btn-add';
                     btnAdd.innerHTML = '+';
@@ -160,32 +146,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
+    // ALTERADO: Usa modalUsuarioSelect
     function abrirModalParaAdicionar(dia, horario) {
         modalTitle.textContent = `Alocar Horário (${dia} - ${horario})`;
-        modalProfessorSelect.value = "";
+        modalUsuarioSelect.value = ""; 
         modalSalaSelect.value = "";
         modalDiaInput.value = dia;
         modalHorarioInput.value = horario;
         modal.show();
     }
 
+    // ALTERADO: Envia usuarioId
     async function salvarAulaSemestre() {
-        const professorId = modalProfessorSelect.value;
+        const usuarioId = modalUsuarioSelect.value; // ALTERADO
         const salaId = modalSalaSelect.value;
-        const cursoId = cursoSelect.value; // Pega o ID do curso direto
-        
-        if (!professorId || !salaId || !cursoId) {
-            alert('Por favor, selecione Curso, Professor e Sala.');
+        const cursoId = cursoSelect.value;
+
+        if (!usuarioId || !salaId || !cursoId) { // Verifica cursoId também
+            alert('Por favor, selecione Curso, Professor/Monitor e Sala.');
             return;
         }
 
         const payload = {
-            // cursoSigla: não precisamos mais, enviamos ID
-            // periodo: não precisamos mais, controller pega do Curso
-            cursoId: cursoId, // Envia o ID do curso
+            cursoId: cursoId,
             semestre: semestreSelect.value,
-            professorId: professorId,
+            usuarioId: usuarioId, // ALTERADO
             salaId: salaId,
             diaSemana: modalDiaInput.value,
             horario: modalHorarioInput.value
@@ -197,26 +182,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const response = await fetch('/api/grade/salvar-semestre', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    // Adiciona o Header CSRF
-                    [document.querySelector("meta[name='_csrf_header']").getAttribute("content")]: document.querySelector("meta[name='_csrf']").getAttribute("content") 
+                    [csrfHeader]: csrfToken
                 },
                 body: JSON.stringify(payload)
             });
 
             if (response.ok) {
                 modal.hide();
-                atualizarCelulaNaGrade(payload); 
+                atualizarCelulaNaGrade(payload); // Atualiza visualmente
             } else {
                  let errorMessage = `Erro ${response.status}: ${response.statusText}`;
                  try {
-                     const errorData = await response.json(); 
-                     errorMessage = errorData.message || JSON.stringify(errorData);
-                 } catch (e) {
                      errorMessage = await response.text();
-                 }
-                 console.error("Detalhes do erro:", response);
+                 } catch (e) { /* Ignora se não conseguir ler o texto */ }
                  alert('Erro ao salvar: ' + errorMessage);
             }
         } catch (error) {
@@ -227,29 +207,30 @@ document.addEventListener('DOMContentLoaded', function () {
              btnSalvarAula.textContent = "Salvar Semestre";
         }
     }
-    
-    // Atualiza a célula (sem mudanças aqui)
+
+    // ALTERADO: Pega nome/email do modalUsuarioSelect
     function atualizarCelulaNaGrade(payload) {
         const horarioDaCelula = payload.horario;
         const diaDaCelula = payload.diaSemana;
-        const profNome = modalProfessorSelect.options[modalProfessorSelect.selectedIndex].text;
-        const salaNome = modalSalaSelect.options[modalSalaSelect.selectedIndex].text; // Assume que o texto é "Tipo Numero"
+        // Pega o TEXTO da opção selecionada (Email ou Nome do Usuário)
+        const usuarioNome = modalUsuarioSelect.options[modalUsuarioSelect.selectedIndex]?.text || 'N/A'; // ALTERADO
+        const salaNome = modalSalaSelect.options[modalSalaSelect.selectedIndex]?.text || 'N/A';
 
         const linhas = gradeBody.querySelectorAll('.linha-horario');
-        
+
         linhas.forEach(linha => {
-            const horario = linha.querySelector('.horario-celula').textContent;
+            const horario = linha.querySelector('.horario-celula')?.textContent;
             if (horario === horarioDaCelula) {
                 const indiceDoDia = diasDaSemana.indexOf(diaDaCelula);
                 if (indiceDoDia !== -1) {
-                    const celula = linha.children[indiceDoDia + 1]; 
+                    const celula = linha.children[indiceDoDia + 1];
                     if(celula) {
                         celula.innerHTML = `
                             <div class="detalhes-aula">
-                                <p><strong>${profNome}</strong></p>
-                                <p style="font-size: 0.8rem">${salaNome}</p>
+                                <p><strong>${usuarioNome}</strong></p> <p style="font-size: 0.8rem">${salaNome}</p>
                             </div>
                         `;
+                        // Remover botão '+' se existir e adicionar evento de edição (futuro)
                     }
                 }
             }
@@ -257,9 +238,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function limparSelect(selectElement, placeholder) {
-        selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+        if(selectElement) {
+             selectElement.innerHTML = `<option value="">${placeholder || 'Selecione...'}</option>`;
+        }
     }
 
-    carregarGradeECursos(); 
+    // --- INICIALIZAÇÃO ---
+    if (cursoSelect.value) {
+        carregarUsuariosEGrade();
+    } else {
+         gradeBody.innerHTML = ''; 
+    }
 
-});
+}); // Fim do DOMContentLoaded
