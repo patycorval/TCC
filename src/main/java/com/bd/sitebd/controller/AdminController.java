@@ -65,9 +65,12 @@ public class AdminController {
         return "cadastro";
     }
 
+    // Dentro de AdminController.java
+
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/cadastro")
+    @PostMapping("/cadastro") // Certifique-se que o path está correto (/admin/cadastro ou /cadastro)
     public String processarCadastro(@RequestParam String email,
+            @RequestParam String nome,
             @RequestParam String senha,
             @RequestParam String confirmarSenha,
             @RequestParam TipoUsuario tipo,
@@ -76,7 +79,9 @@ public class AdminController {
 
         if (!senha.equals(confirmarSenha)) {
             redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não conferem!");
-            redirectAttributes.addFlashAttribute("usuarioInput", Map.of("email", email, "tipo", tipo.name()));
+            // Reenvia dados para o form (incluindo o nome agora)
+            redirectAttributes.addFlashAttribute("usuarioInput",
+                    Map.of("email", email, "nome", nome, "tipo", tipo.name()));
             return "redirect:/admin/cadastro";
         }
 
@@ -85,7 +90,9 @@ public class AdminController {
             if (cursos == null || cursos.isEmpty()) {
                 redirectAttributes.addFlashAttribute("mensagemErro",
                         "Professores e Monitores devem estar associados a pelo menos um curso!");
-                redirectAttributes.addFlashAttribute("usuarioInput", Map.of("email", email, "tipo", tipo.name()));
+                // Reenvia dados
+                redirectAttributes.addFlashAttribute("usuarioInput",
+                        Map.of("email", email, "nome", nome, "tipo", tipo.name()));
                 return "redirect:/admin/cadastro";
             }
             cursosSelecionados.addAll(cursoRepository.findAllById(cursos));
@@ -97,6 +104,7 @@ public class AdminController {
         try {
             Usuario novo = new Usuario();
             novo.setEmail(email);
+            novo.setNome(nome); // <-- SALVANDO O NOME
             novo.setSenha(passwordEncoder.encode(senha));
             novo.setTipo(tipo);
             novo.setCursos(cursosSelecionados);
@@ -114,14 +122,11 @@ public class AdminController {
                 e.printStackTrace();
             }
             redirectAttributes.addFlashAttribute("mensagemErro", mensagemErro);
-
+            // Reenvia dados em caso de erro (incluindo nome e cursos)
             redirectAttributes.addFlashAttribute("usuarioInput",
-                    Map.of("email", email, "tipo", tipo.name(), "cursos", cursos != null ? cursos : List.of())); // Envia
-                                                                                                                 // IDs
-                                                                                                                 // de
-                                                                                                                 // volta
+                    Map.of("email", email, "nome", nome, "tipo", tipo.name(), "cursos",
+                            cursos != null ? cursos : List.of()));
         }
-
         return "redirect:/admin/cadastro";
     }
 

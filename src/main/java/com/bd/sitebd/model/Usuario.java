@@ -22,6 +22,17 @@ public class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipo;
 
+    @Column(nullable = true)
+    private String nome;
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuario_curso", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "curso_id"))
     private Set<Curso> cursos;
