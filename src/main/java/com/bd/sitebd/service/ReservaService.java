@@ -193,6 +193,15 @@ public class ReservaService {
                 return reservaRepository.findReservasAuditorioParaUsuario("Auditorio", startOfMonth, endOfMonth, email);
         }
 
+
+    public List<Reserva> buscarReservasAuditorioParaAdmin(YearMonth ym) {
+        LocalDate startOfMonth = ym.atDay(1);
+        LocalDate endOfMonth = ym.atEndOfMonth();
+        // Chama o novo método do repositório, excluindo as rejeitadas
+        return reservaRepository.findByNumeroAndDataBetweenAndStatusNotOrderByDataAscHoraAsc(
+                "Auditorio", startOfMonth, endOfMonth, StatusReserva.REJEITADA);
+    }
+
         // NOVO MÉTODO COM A LÓGICA DO FILTRO
         public List<Reserva> listarPorUsuarioEPeriodo(String email, String periodo) {
                 LocalDate hoje = LocalDate.now();

@@ -1,7 +1,6 @@
 package com.bd.sitebd.controller;
 
 import com.bd.sitebd.model.Reserva;
-import com.bd.sitebd.model.enums.StatusReserva;
 import com.bd.sitebd.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

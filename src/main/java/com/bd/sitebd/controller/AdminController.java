@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -93,6 +95,9 @@ public class AdminController {
         // Lógica completa copiada do UsuarioController para manter a consistência
         YearMonth ym = (ano != null && mes != null) ? YearMonth.of(ano, mes) : YearMonth.now();
 
+        // ✨ ALTERAÇÃO AQUI: Usa o novo método para buscar os dados para o admin ✨
+        List<Reserva> todasAsReservasDoMes = reservaService.buscarReservasAuditorioParaAdmin(ym);
+
         List<LocalDate> diasBloqueados = diaBloqueadoService.buscarDiasBloqueadosNoMes(ym);
 
         YearMonth mesCorrente = YearMonth.now();
@@ -130,16 +135,18 @@ public class AdminController {
                     diaObj = new DiaCalendario(i, "indisponivel"); // Status para domingos
                 } else {
                     diaObj = new DiaCalendario(i, "disponivel"); // Status para dias normais
-
-                    // Adiciona os eventos do dia (reservas)
-                    List<Reserva> eventosDoDia = reservasAuditorio.stream()
+                    // ✨ CORREÇÃO APLICADA AQUI ✨
+                    // Filtra os eventos do dia a partir da lista correta `todasAsReservasDoMes`
+                    List<Reserva> eventosDoDia = todasAsReservasDoMes.stream()
                             .filter(r -> r.getData().isEqual(dataDoDia))
                             .sorted(Comparator.comparing(Reserva::getHora))
-                            .toList();
+                            .collect(Collectors.toList());
+
                     diaObj.setEventos(eventosDoDia);
+                    // Adiciona os eventos do dia (reservas)
+
                 }
             }
-            // ----- FIM DA LÓGICA CORRIGIDA -----
 
             diasDoMes.add(diaObj);
         }
@@ -214,6 +221,47 @@ public class AdminController {
         }
         YearMonth ym = YearMonth.from(diasParaDesbloquear.iterator().next());
         return "redirect:/admin/auditorio-admin?mes=" + ym.getMonthValue() + "&ano=" + ym.getYear();
+    }
+
+    /**
+     * ✨ NOVO ENDPOINT PARA ATUALIZAR STATUS EM MASSA ✨
+     * Recebe uma lista de alterações de status e as aplica.
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/auditorio/atualizar-status-massa")
+    public ResponseEntity<Void> atualizarStatusReservaEmMassa(@RequestBody List<UpdateStatusRequest> requests) {
+        try {
+            // Itera sobre a lista de requisições e atualiza cada uma
+            for (UpdateStatusRequest request : requests) {
+                reservaService.atualizarStatus(request.getReservaId(), request.getNovoStatus());
+            }
+            return ResponseEntity.ok().build(); // Retorna 200 OK
+        } catch (Exception e) {
+            // Logar o erro é uma boa prática
+            return ResponseEntity.badRequest().build(); // Retorna 400 em caso de erro
+        }
+    }
+
+    public static class UpdateStatusRequest {
+        private Long reservaId;
+        private StatusReserva novoStatus;
+
+        // Getters e Setters
+        public Long getReservaId() {
+            return reservaId;
+        }
+
+        public void setReservaId(Long reservaId) {
+            this.reservaId = reservaId;
+        }
+
+        public StatusReserva getNovoStatus() {
+            return novoStatus;
+        }
+
+        public void setNovoStatus(StatusReserva novoStatus) {
+            this.novoStatus = novoStatus;
+        }
     }
 
 }

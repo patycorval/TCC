@@ -64,9 +64,7 @@
                             class="checkbox-bloqueio">
                         <div class="indicadores-evento" th:if="${!#lists.isEmpty(dia.eventos)}">
                             <span th:each="reserva : ${dia.eventos}" class="indicador"
-                                th:classappend="${reserva.emailRequisitor == usuarioLogadoEmail}
-                                                ? 'status-' + ${reserva.status.name().toLowerCase()}
-                                                : 'status-outros'">
+                                th:classappend="'status-' + ${reserva.status.name().toLowerCase()}">
                             </span>
                         </div>
                     </div>
@@ -95,11 +93,10 @@
                         <ul class="list-group list-group-flush" id="lista-eventos-modal"></ul>
                         <div id="sem-eventos-aviso" class="alert alert-secondary text-center">Nenhum evento agendado para este dia.</div>
                     </div>
-                    <div class="modal-footer justify-content-end">
-                        <button type="button" class="btn btn-danger" id="btn-abrir-form-reserva">
-                            Solicitar nova reserva
-                        </button>
-                    </div>
+                <div class="modal-footer" id="modal-gestao-footer">
+                    <button type="button" class="btn btn-danger" id="btn-abrir-form-reserva-admin">Solicitar Nova Reserva</button>
+                    <button type="button" class="btn btn-primary" id="btn-aplicar-mudancas" disabled>Aplicar Alterações</button>
+                </div>
                 </div>
             </div>
         </div>
@@ -148,7 +145,7 @@
         </div>
     </div>
 </div>
-    <script th:src="@{/js/auditorio-calendar.js}"></script>
+    <script th:src="@{/js/auditorio-admin.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>

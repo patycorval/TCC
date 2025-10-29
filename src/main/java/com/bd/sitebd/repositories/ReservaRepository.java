@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
-        // --- MÉTODOS ORIGINAIS (MANTIDOS) ---
         List<Reserva> findByNumeroAndData(String numero, LocalDate data);
 
         List<Reserva> findByStatus(StatusReserva status);
@@ -30,6 +29,12 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
         // temConflitoComAprovadas no ReservaService
         List<Reserva> findByNumeroAndDataAndStatus(String numero, LocalDate data, StatusReserva status);
 
+        List<Reserva> findByNumeroAndDataBetweenAndStatusNotOrderByDataAscHoraAsc(
+                        String numero,
+                        LocalDate dataInicio,
+                        LocalDate dataFim,
+                        StatusReserva status);
+
         // buscarReservasAuditorioParaUsuario no ReservaService
         @Query("SELECT r FROM Reserva r WHERE r.numero = :numero " +
                         "AND r.data BETWEEN :dataInicio AND :dataFim " +
@@ -41,7 +46,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
                         @Param("dataFim") LocalDate dataFim,
                         @Param("email") String email);
 
-        // NOVOS MÉTODOS PARA FILTRO DE PERÍODO
         List<Reserva> findByEmailRequisitorAndDataBetweenOrderByDataAsc(String emailRequisitor, LocalDate inicio,
                         LocalDate fim);
 
