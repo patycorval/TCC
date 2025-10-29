@@ -24,12 +24,10 @@
         <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <p th:text="${erro}"></p><button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div class="legenda-cores my-4 mb-25">
+         <div class="legenda-cores my-4 mb-15">
             <p>Legenda:</p>
-            <div class="item-legenda"><div class="indicador status-aprovada"></div><span>Minha Reserva (Aprovada)</span></div>
-            <div class="item-legenda"><div class="indicador status-pendente"></div><span>Minha Reserva (Pendente)</span></div>
-            <div class="item-legenda"><div class="indicador status-rejeitada"></div><span>Minha Reserva (Rejeitada)</span></div>
-            <div class="item-legenda"><div class="indicador status-outros"></div><span>Outras Reservas</span></div>
+            <div class="item-legenda"><div class="indicador status-aprovada"></div><span>Reserva Aprovada</span></div>
+            <div class="item-legenda"><div class="indicador status-pendente"></div><span>Reserva Pendente</span></div>
             <div class="item-legenda"><div class="cor-legenda disponivel"></div><span>Disponível</span></div>
             <div class="item-legenda"><div class="cor-legenda indisponivel"></div><span>Indisponível</span></div>
         </div>

@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalFooter = document.getElementById('modal-gestao-footer');
     // Objeto para armazenar as mudanças de status pendentes
     let pendingChanges = {};
+    let diaElementoAtivo = null;
 
     const formatarHora = (horaInput) => {
         if (typeof horaInput === 'string') return horaInput.substring(0, 5);
@@ -28,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
      // Listeners para fechar e alternar entre os modais
     const fecharTodosModais = () => {
         modalView.style.display = 'none';
-        modalReservaForm.style.display = 'none';
+        if (modalReservaForm) modalReservaForm.style.display = 'none';
+        diaElementoAtivo = null;
     };
 
     btnFecharView.addEventListener('click', fecharTodosModais);
@@ -61,13 +63,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(changesArray)
             });
 
-            if (response.ok) {
-                // Limpa as mudanças pendentes e fecha o modal
+        if (response.ok) {
+                // ✨ INÍCIO DA ATUALIZAÇÃO DINÂMICA (SEM RELOAD) ✨
+                
+                let eventos = JSON.parse(diaElementoAtivo.getAttribute('data-eventos'));
+                
+                // Filtra os eventos, removendo os que foram rejeitados
+                const eventosAtualizados = eventos.map(evento => {
+                    const change = pendingChanges[evento.id];
+                    if (change) {
+                        evento.status = change.novoStatus;
+                    }
+                    return evento;
+                }).filter(evento => evento.status !== 'REJEITADA');
+
+                diaElementoAtivo.setAttribute('data-eventos', JSON.stringify(eventosAtualizados));
+
+                const indicadoresContainer = diaElementoAtivo.querySelector('.indicadores-evento');
+                if (indicadoresContainer) {
+                    indicadoresContainer.innerHTML = ''; // Limpa os indicadores antigos
+                    if (eventosAtualizados.length > 0) {
+                        eventosAtualizados.forEach(reserva => {
+                            const indicadorSpan = document.createElement('span');
+                            indicadorSpan.className = `indicador status-${reserva.status.toLowerCase()}`;
+                            indicadoresContainer.appendChild(indicadorSpan);
+                        });
+                    } else {
+                        // Se não sobraram eventos, o dia volta a ser disponível
+                        diaElementoAtivo.classList.remove('evento');
+                        diaElementoAtivo.classList.add('disponivel');
+                    }
+                }
+
                 pendingChanges = {};
                 fecharTodosModais();
-                // O ideal aqui seria recarregar o calendário para refletir as mudanças,
-                // ou atualizar dinamicamente, mas por simplicidade vamos fechar.
-                window.location.reload(); // Recarrega a página para ver o resultado
+
             } else {
                 alert('Ocorreu um erro ao salvar as alterações.');
             }
@@ -90,7 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listener principal para os dias do calendário
     document.querySelectorAll('.dia.mensal:not(.vazio)').forEach(diaElemento => {
         diaElemento.addEventListener('click', () => {
+            diaElementoAtivo = diaElemento;
             pendingChanges = {}; // Limpa as mudanças pendentes ao abrir um novo dia
+            btnAplicarMudancas.disabled = true;
 
             const dia = diaElemento.getAttribute('data-dia');
             const eventos = JSON.parse(diaElemento.getAttribute('data-eventos'));
