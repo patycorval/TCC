@@ -147,6 +147,7 @@ public class AdminController {
 
                 }
             }
+            // ----- FIM DA LÓGICA CORRIGIDA -----
 
             diasDoMes.add(diaObj);
         }

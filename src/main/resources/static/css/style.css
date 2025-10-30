@@ -279,7 +279,7 @@ header {
     border-radius: 8px; /* Adiciona bordas arredondadas aos dias */
 }
 
-.grid-mensal .dia.mensal:not(.indisponivel):hover {
+.grid-mensal .dia.mensal:not(.indisponivel, .bloqueado):hover {
     background-color: #e9ecef;
 }
 
@@ -397,9 +397,6 @@ header {
     cursor: not-allowed; /* Agora esta regra terá prioridade */
 }
 
-.grid-mensal .dia.mensal:not(.indisponivel):hover {
-    background-color: #e9ecef;
-}
 .dia.evento {
     background-color: #e74c3c; 
     cursor: pointer;
@@ -670,9 +667,26 @@ header {
 .dia.mensal.bloqueado {
         background-color: #333; /* Mesma cor de 'indisponivel' ou outra de sua preferência */
         color: white;
-        cursor: pointer; /* Permite clique */
+        cursor: default; /* Permite clique */
     }
 
+.dia.indisponivel:hover,
+.dia.vazio:hover,
+.dia.bloqueado:hover,
+.dia.passado:hover {
+    transform: none; 
+    font-weight: 500; 
+    box-shadow: none; 
+    z-index: 1;
+}
+
+#confirm-block-modal .modal-dialog {
+    max-width: 500px;
+    width: 90%; 
+    margin: 1.75rem auto; 
+}
+
+/* ESTILO ESPECÍFICO: Modal de Confirmação de Bloqueio (Limita a largura) */
 /************* LINK NO MODAL ****************/
 /* Estilo para o item de reserva que é um link no modal */
 .link-reserva {

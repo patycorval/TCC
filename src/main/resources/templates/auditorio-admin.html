@@ -73,9 +73,16 @@
             </div>
         </div>
         <div class="my-4 d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-secondary" th:formaction="@{/admin/auditorio/desbloquear-dias}">Desbloquear Selecionados</button>
+            
+                        <button type="button" class="btn btn-dark" id="btn-bloquear-selecionados-trigger">Bloquear Selecionados</button>
+            
+                        <button type="submit" class="btn btn-dark" th:formaction="@{/admin/auditorio/bloquear-dias}" style="display: none;" id="submit-bloqueio-real"></button>
+        </div>
+        <!-- <div class="my-4 d-flex justify-content-end gap-2">
             <button type="submit" class="btn btn-secondary" th:formaction="@{/admin/auditorio/desbloquear-dias}">Desbloquear Selecionados</button>
             <button type="submit" class="btn btn-dark" th:formaction="@{/admin/auditorio/bloquear-dias}">Bloquear Selecionados</button>
-        </div>
+        </div> -->
     </form>
     </main>
 
@@ -139,6 +146,27 @@
                     <span sec:authorize="hasRole('ADMIN')">Reservar</span>
                     <span sec:authorize="!hasRole('ADMIN')">Enviar Solicitação</span>
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirm-block-modal" class="overlay">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="confirm-block-modal-title"><i class="bi bi-exclamation-triangle-fill"></i> Atenção: Eventos Encontrados!</h5>
+                <button type="button" class="btn-close" id="fechar-confirm-block"></button>
+            </div>
+            <div class="modal-body mb-2">
+                <p class="mt-3">Os dias listados abaixo contêm reservas. Bloquear estes dias resultará na <b>rejeição automática</b> de todas as reservas do Auditório nessas datas.</p>
+                <p class="mb-2">Tem certeza que deseja prosseguir?</p>
+                <ul id="dias-com-eventos-lista" class="list-group list-group-flush mb-3">
+                    </ul>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-block">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-block">Sim, Bloquear e Rejeitar Reservas</button>
             </div>
         </div>
     </div>

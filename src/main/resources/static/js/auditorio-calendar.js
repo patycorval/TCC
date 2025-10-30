@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Listener principal para os dias do calendário
-    document.querySelectorAll('.dia.mensal:not(.vazio)').forEach(diaElemento => {
+    document.querySelectorAll('.dia.mensal:not(.vazio, .bloqueado, .indisponivel)').forEach(diaElemento => {
         diaElemento.addEventListener('click', (event) => {
             // Se o clique foi no botão de adicionar, não faz mais nada aqui
             if (event.target.closest('.btn-solicitar-reserva')) {

@@ -13,9 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnFecharView = document.getElementById('fechar-modal-view');
     const btnFecharForm = document.getElementById('fechar-modal-reserva');
+    const btnFecharBloqueio = document.getElementById('fechar-confirm-block')
     const btnVoltarListagem = document.getElementById('btn-voltar-listagem');
     
     const modalFooter = document.getElementById('modal-gestao-footer');
+
+    // NOVAS REFERÊNCIAS para o modal de confirmação de bloqueio
+    const formBloqueio = document.getElementById('formBloqueio');
+    const btnBloquearTrigger = document.getElementById('btn-bloquear-selecionados-trigger');
+    const btnBloquearReal = document.getElementById('submit-bloqueio-real');
+    const confirmBlockModal = document.getElementById('confirm-block-modal');
+    const btnConfirmBlock = document.getElementById('btn-confirm-block');
+    const btnCancelBlock = document.getElementById('btn-cancel-block');
+    const diasComEventosLista = document.getElementById('dias-com-eventos-lista');
+
     // Objeto para armazenar as mudanças de status pendentes
     let pendingChanges = {};
     let diaElementoAtivo = null;
@@ -30,11 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const fecharTodosModais = () => {
         modalView.style.display = 'none';
         if (modalReservaForm) modalReservaForm.style.display = 'none';
+        if (confirmBlockModal) confirmBlockModal.style.display = 'none';
         diaElementoAtivo = null;
     };
 
     btnFecharView.addEventListener('click', fecharTodosModais);
     btnFecharForm.addEventListener('click', fecharTodosModais);
+    btnFecharBloqueio.addEventListener('click', fecharTodosModais);
+    btnCancelBlock.addEventListener('click', fecharTodosModais);
     btnVoltarListagem.addEventListener('click', () => {
         modalReservaForm.style.display = 'none';
         modalView.style.display = 'flex';
@@ -118,7 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Listener principal para os dias do calendário
-    document.querySelectorAll('.dia.mensal:not(.vazio)').forEach(diaElemento => {
+        document.querySelectorAll('.dia.mensal:not(.vazio, .bloqueado, .indisponivel)').forEach(diaElemento => {
+
         diaElemento.addEventListener('click', () => {
             diaElementoAtivo = diaElemento;
             pendingChanges = {}; // Limpa as mudanças pendentes ao abrir um novo dia
@@ -207,34 +222,149 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-        // Listener para o botão de solicitar reserva (símbolo '+')
-    document.querySelectorAll('.btn-solicitar-reserva').forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.stopPropagation(); // Impede que o modal de visualização abra
-            
-            const diaElemento = event.currentTarget.closest('.dia.mensal');
-            const dia = diaElemento.getAttribute('data-dia');
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const ano = urlParams.get('ano') || new Date().getFullYear();
-            const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
-            
-            const dataParaForm = `${ano}-${mes.toString().padStart(2, '0')}-${dia.padStart(2, '0')}`;
-            campoDataForm.value = dataParaForm;
-            
-            modalReservaForm.style.display = 'flex';
+//      Adicionar listener para o checkbox e impedir a propagação
+    document.querySelectorAll('.checkbox-bloqueio').forEach(checkbox => {
+        checkbox.addEventListener('click', (event) => {
+            event.stopPropagation(); // Impede que o clique no checkbox acione o evento de clique do dia
         });
     });
 
-    window.addEventListener('click', (event) => {
-        // Se o alvo do clique for o overlay do modal de visualização, fecha
-        if (event.target === modalView) {
-            fecharTodosModais();
-        }
-        // Se o alvo do clique for o overlay do modal de formulário, fecha
-        if (event.target === modalReservaForm) {
-            fecharTodosModais();
-        }
+    // NOVO: Lógica de Interceptação de Bloqueio
+btnBloquearTrigger.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    const diasSelecionadosCheckboxes = document.querySelectorAll('.checkbox-bloqueio:checked');
+    
+    if (diasSelecionadosCheckboxes.length === 0) {
+        alert("Selecione pelo menos um dia para bloquear.");
+        return;
+    }
+
+    const diasComEventos = [];
+
+    // 1. Encontrar dias selecionados que têm eventos
+    diasSelecionadosCheckboxes.forEach(checkbox => {
+        // Encontra o elemento .dia.mensal pai do checkbox
+        const diaElemento = checkbox.closest('.dia.mensal');
+        const eventosJson = diaElemento.getAttribute('data-eventos');
+        const diaNumero = diaElemento.getAttribute('data-dia');
+
+        if (eventosJson) {
+            try {
+                const eventos = JSON.parse(eventosJson);
+                // Array para armazenar apenas o nome e hora dos eventos ATIVOS neste dia
+                const activeEventDetails = []; // <-- CORRIGIDO: Variável definida no escopo correto
+                
+                // Verifica se há algum evento que não foi rejeitado (ou seja, APROVADA ou PENDENTE)
+                const hasActiveEvents = eventos.some(e => {
+                    if (e.status !== 'REJEITADA') {
+                        activeEventDetails.push({ 
+                            evento: e.evento,
+                            hora: formatarHora(e.hora)
+                        });
+                        return true;
+                    }
+                    return false;
+                });
+
+                if (hasActiveEvents) {
+                    // Formata a data para exibição: yyyy-MM-dd -> dd/MM/yyyy
+                    const dataFormatada = checkbox.value.split('-').reverse().join('/');
+                    diasComEventos.push({ 
+                        dia: diaNumero, 
+                        data: dataFormatada,
+                        eventos: activeEventDetails // <-- Variável preenchida corretamente
+                    });
+                }  
+            } catch (e) {
+                console.error("Erro ao processar JSON de eventos:", e);
+            }
+        }
+    });
+
+    // 2. Decidir se mostra o modal ou submete o formulário
+    if (diasComEventos.length > 0) {
+        // Popula a lista no modal
+        diasComEventosLista.innerHTML = '';
+        diasComEventos.forEach(dia => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item list-group-item-danger mb-2';
+
+            // Constrói a string de eventos formatada
+            const eventosTexto = dia.eventos.map(e => `${e.evento} (${e.hora})`).join('; ');
+            
+            // MODIFICADO: Inclui a lista de eventos no item
+            li.innerHTML = `Dia ${dia.data} - Evento: ${eventosTexto}`;
+            diasComEventosLista.appendChild(li);
+        });
+
+        confirmBlockModal.style.display = 'flex';
+    } else {
+        // Nenhum evento encontrado nos dias selecionados, submete diretamente
+        btnBloquearReal.click();
+    }
+});
+
+// Listener para confirmar o bloqueio no modal
+btnConfirmBlock.addEventListener('click', () => {
+    // CORRIGIDO: fecharTodosModais para incluir o modal de confirmação
+    modalView.style.display = 'none';
+    if (modalReservaForm) modalReservaForm.style.display = 'none';
+    confirmBlockModal.style.display = 'none';
+
+    // 3. Força o clique no botão de submissão real para bloquear
+    btnBloquearReal.click();
+});
+// FIM da NOVO: Lógica de Interceptação de Bloqueio
+
+
+    // Listener para o botão "Solicitar Nova Reserva"
+    btnAbrirFormReserva.addEventListener('click', () => {
+        const dataSelecionada = btnAbrirFormReserva.getAttribute('data-dia-selecionado');
+        if (campoDataForm) campoDataForm.value = dataSelecionada;
+        fecharTodosModais();
+        if (modalReservaForm) modalReservaForm.style.display = 'flex';
+    });
+
+    // Listener para o botão de solicitar reserva (símbolo '+')
+    document.querySelectorAll('.btn-solicitar-reserva').forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation(); // Impede que o modal de visualização abra
+            
+            const diaElemento = event.currentTarget.closest('.dia.mensal');
+            const dia = diaElemento.getAttribute('data-dia');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const ano = urlParams.get('ano') || new Date().getFullYear();
+            const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
+            
+            const dataParaForm = `${ano}-${mes.toString().padStart(2, '0')}-${dia.padStart(2, '0')}`;
+            campoDataForm.value = dataParaForm;
+            
+            modalReservaForm.style.display = 'flex';
+        });
+    });
+
+    // Adicionar listener para o checkbox e impedir a propagação
+    document.querySelectorAll('.checkbox-bloqueio').forEach(checkbox => {
+        checkbox.addEventListener('click', (event) => {
+            event.stopPropagation(); // Impede que o clique no checkbox acione o evento de clique do dia
+        });
     });
+
+    window.addEventListener('click', (event) => {
+        // Se o alvo do clique for o overlay do modal de visualização, fecha
+        if (event.target === modalView) {
+            fecharTodosModais();
+        }
+        // Se o alvo do clique for o overlay do modal de formulário, fecha
+        if (event.target === modalReservaForm) {
+            fecharTodosModais();
+        }
+        // Se o alvo do clique for o overlay do modal de bloqueio, fecha
+        if (event.target === confirmBlockModal) {
+            fecharTodosModais();
+        }
+    });
 
 });
