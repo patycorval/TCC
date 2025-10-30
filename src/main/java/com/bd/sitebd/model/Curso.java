@@ -15,18 +15,46 @@ public class Curso {
     private String periodo;
 
     @ManyToMany(mappedBy = "cursos")
-    @JsonIgnore // Evita loop infinito ao converter para JSON
-    private Set<Professor> professores;
+    @JsonIgnore
+    private Set<Usuario> usuarios;
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getSigla() { return sigla; }
-    public void setSigla(String sigla) { this.sigla = sigla; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-    public String getPeriodo() { return periodo; }
-    public void setPeriodo(String periodo) { this.periodo = periodo; }
-    public Set<Professor> getProfessores() { return professores; }
-    public void setProfessores(Set<Professor> professores) { this.professores = professores; }
+    public Set<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(Set<Usuario> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSigla() {
+        return sigla;
+    }
+
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(String periodo) {
+        this.periodo = periodo;
+    }
 }
