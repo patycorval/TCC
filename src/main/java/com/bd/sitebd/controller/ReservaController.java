@@ -5,7 +5,6 @@ import com.bd.sitebd.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -68,11 +67,31 @@ public class ReservaController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")
-    public String listarReservas(@RequestParam(name = "periodo", defaultValue = "15dias") String periodo, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String emailUsuario = authentication.getName();
+    public String listarReservas(
+            @RequestParam(name = "periodo", defaultValue = "15dias") String periodo,
+            Model model,
+            Authentication authentication) { // Recebe Authentication
 
-        List<Reserva> todasAsReservas = reservaService.listarPorUsuarioEPeriodo(emailUsuario, periodo);
+        String emailUsuario = authentication.getName();
+        // Verifica se o usuário tem a ROLE_ADMIN
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        List<Reserva> todasAsReservas;
+
+        if (isAdmin) {
+            // Se for ADMIN, busca TODAS as reservas (ainda usando o filtro de período, se
+            // necessário)
+            // Se o filtro de período NÃO se aplica ao Admin, chame
+            // reservaService.listarTodas()
+            System.out.println("DEBUG: Usuário é ADMIN. Buscando todas as reservas.");
+            // Vamos assumir que o admin também quer filtrar por período
+            todasAsReservas = reservaService.listarTodasPorPeriodo(periodo); // <--- PRECISAMOS CRIAR ESTE MÉTODO
+        } else {
+            // Se não for Admin, busca apenas as do usuário logado
+            System.out.println("DEBUG: Usuário NÃO é ADMIN. Buscando reservas para: " + emailUsuario);
+            todasAsReservas = reservaService.listarPorUsuarioEPeriodo(emailUsuario, periodo);
+        }
 
         // Separa as reservas por tipo (Auditório ou Sala/Lab)
         List<Reserva> reservasAuditorio = todasAsReservas.stream()
@@ -80,13 +99,16 @@ public class ReservaController {
                 .collect(Collectors.toList());
 
         List<Reserva> reservasSalas = todasAsReservas.stream()
-                .filter(r -> !"Auditorio".equalsIgnoreCase(r.getNumero()))
+                .filter(r -> r.getNumero() != null && !"Auditorio".equalsIgnoreCase(r.getNumero()))
                 .collect(Collectors.toList());
+
+        System.out.println("DEBUG: Total " + todasAsReservas.size() + ", Salas " + reservasSalas.size() + ", Auditório "
+                + reservasAuditorio.size());
 
         model.addAttribute("reservasAuditorio", reservasAuditorio);
         model.addAttribute("reservasSalas", reservasSalas);
         model.addAttribute("activePage", "listagem");
-        model.addAttribute("periodoSelecionado", periodo); // Mantém o <select> na opção correta
+        model.addAttribute("periodoSelecionado", periodo);
 
         return "listagem";
     }

@@ -4,7 +4,9 @@ import com.bd.sitebd.model.Sala;
 import com.bd.sitebd.repositories.SalaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,13 @@ public class SalaService {
 
     @Autowired
     private SalaRepository salaRepository;
+
+    public Sala salvarSalaComImagem(Sala sala, MultipartFile arquivoImagem) throws IOException {
+        sala.setImagemDados(arquivoImagem.getBytes());
+        sala.setImagemTipo(arquivoImagem.getContentType());
+
+        return salaRepository.save(sala);
+    }
 
     public void apagarTodasSalas() {
         salaRepository.deleteAll();
@@ -43,7 +52,7 @@ public class SalaService {
         }
     }
 
-    //  FILTRO  
+    // FILTRO
 
     public List<Sala> getSalasFiltradas(String andar, String recurso, String tiposala) {
         // Pega TODAS as salas do banco
@@ -51,7 +60,8 @@ public class SalaService {
 
         // Aplica os filtros e retorna a lista resultante
         return todasAsSalas.stream()
-                .filter(sala -> andar == null || andar.isEmpty() || (sala.getLocalizacao() != null && sala.getLocalizacao().startsWith(andar)))
+                .filter(sala -> andar == null || andar.isEmpty()
+                        || (sala.getLocalizacao() != null && sala.getLocalizacao().startsWith(andar)))
                 .filter(sala -> tiposala == null || tiposala.isEmpty() || sala.getTipoSala().name().equals(tiposala))
                 .filter(sala -> recurso == null || recurso.isEmpty() || sala.getRecursosAsString().contains(recurso))
                 .toList();

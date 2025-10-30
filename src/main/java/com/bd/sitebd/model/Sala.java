@@ -27,6 +27,13 @@ public class Sala {
     @Column(name = "recurso")
     private List<Recurso> recursos;
 
+    @Lob // Large Object - bom para dados grandes
+    @Column(name = "imagem_dados")
+    private byte[] imagemDados; // Mapeia para BYTEA
+
+    @Column(name = "imagem_tipo")
+    private String imagemTipo;
+
     public Sala() {
     }
 
@@ -102,6 +109,22 @@ public class Sala {
         return qtdComputadores;
     }
 
+    public byte[] getImagemDados() {
+        return imagemDados;
+    }
+
+    public void setImagemDados(byte[] imagemDados) {
+        this.imagemDados = imagemDados;
+    }
+
+    public String getImagemTipo() {
+        return imagemTipo;
+    }
+
+    public void setImagemTipo(String imagemTipo) {
+        this.imagemTipo = imagemTipo;
+    }
+
     @Transient // transient nao existe no banco
     public TipoSala getTipoSala() {
         if (this.qtdComputadores > 1) {
@@ -118,12 +141,12 @@ public class Sala {
         // Para cada recurso, pega seu nome (ex: "TELEVISOR")
         // Junta todos os nomes em uma String, separados por ","
         return this.recursos.stream()
-                            .map(Recurso::name)
-                            .collect(Collectors.joining(","));
+                .map(Recurso::name)
+                .collect(Collectors.joining(","));
     }
 
     @Transient
     public String getTipoSalaDisplayName() {
-    return this.getTipoSala() == TipoSala.LABORATORIO ? "Laboratório" : "Sala de Aula";
+        return this.getTipoSala() == TipoSala.LABORATORIO ? "Laboratório" : "Sala de Aula";
     }
 }
