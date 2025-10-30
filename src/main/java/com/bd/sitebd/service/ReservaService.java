@@ -212,4 +212,20 @@ public class ReservaService {
                 }
                 return "proximas";
         }
+
+        public List<Reserva> listarTodasPorPeriodo(String periodo) {
+                LocalDate hoje = LocalDate.now();
+
+                switch (periodo) {
+                        case "30dias":
+                                return reservaRepository.findByDataBetweenOrderByDataAsc(hoje, hoje.plusDays(30));
+                        case "proximas":
+                                return reservaRepository.findByDataGreaterThanEqualOrderByDataAsc(hoje);
+                        case "anteriores":
+                                return reservaRepository.findByDataLessThanOrderByDataDesc(hoje);
+                        case "15dias":
+                        default:
+                                return reservaRepository.findByDataBetweenOrderByDataAsc(hoje, hoje.plusDays(15));
+                }
+        }
 }

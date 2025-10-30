@@ -50,4 +50,10 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
         List<Reserva> findByEmailRequisitorAndDataLessThanOrderByDataDesc(String emailRequisitor, LocalDate data);
 
+        List<Reserva> findByDataBetweenOrderByDataAsc(LocalDate dataInicio, LocalDate dataFim);
+
+        List<Reserva> findByDataGreaterThanEqualOrderByDataAsc(LocalDate data);
+
+        List<Reserva> findByDataLessThanOrderByDataDesc(LocalDate data);
+
 }
