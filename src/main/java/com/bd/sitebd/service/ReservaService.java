@@ -105,6 +105,14 @@ public class ReservaService {
                         throw new IllegalArgumentException("Já existe uma reserva para essa sala nesse horário.");
                 }
 
+                // Se for o auditório, verifica conflito apenas com reservas APROVADAS
+                if ("Auditorio".equals(reserva.getNumero())) {
+                        if (temConflitoComAprovadas(reserva)) {
+                                throw new IllegalArgumentException(
+                                                "Já existe uma reserva aprovada para o auditório neste dia e horário.");
+                        }
+                }
+
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
                 if ("Auditorio".equals(reserva.getNumero())) {
