@@ -116,9 +116,8 @@ div p{
 .div-reservar a.btn {
     display: inline-block;
     width: 80%;
-    padding: 8px 12px;
-    margin-bottom: 5px;
-
+    /* padding: 8px 12px; */
+    /* margin-bottom: 5px; */
     background-color: #ffffff;
     color: #000000;
     text-decoration: none;
@@ -280,7 +279,7 @@ header {
     border-radius: 8px; /* Adiciona bordas arredondadas aos dias */
 }
 
-.grid-mensal .dia.mensal:not(.indisponivel):hover {
+.grid-mensal .dia.mensal:not(.indisponivel, .bloqueado):hover {
     background-color: #e9ecef;
 }
 
@@ -360,7 +359,7 @@ header {
 
 #lista-eventos-modal .status-aprovada { background-color: #198754; }
 #lista-eventos-modal .status-pendente { background-color: #ffc107; color: #333 !important; }
-#lista-eventos-modal .status-rejeitada { background-color: #6c757d; }
+#lista-eventos-modal .status-rejeitada { background-color: #bb0505; }
 
 .modal-footer {
     margin-top: 1rem !important; 
@@ -398,9 +397,6 @@ header {
     cursor: not-allowed; /* Agora esta regra terá prioridade */
 }
 
-.grid-mensal .dia.mensal:not(.indisponivel):hover {
-    background-color: #e9ecef;
-}
 .dia.evento {
     background-color: #e74c3c; 
     cursor: pointer;
@@ -671,9 +667,26 @@ header {
 .dia.mensal.bloqueado {
         background-color: #333; /* Mesma cor de 'indisponivel' ou outra de sua preferência */
         color: white;
-        cursor: pointer; /* Permite clique */
+        cursor: default; /* Permite clique */
     }
 
+.dia.indisponivel:hover,
+.dia.vazio:hover,
+.dia.bloqueado:hover,
+.dia.passado:hover {
+    transform: none; 
+    font-weight: 500; 
+    box-shadow: none; 
+    z-index: 1;
+}
+
+#confirm-block-modal .modal-dialog {
+    max-width: 500px;
+    width: 90%; 
+    margin: 1.75rem auto; 
+}
+
+/* ESTILO ESPECÍFICO: Modal de Confirmação de Bloqueio (Limita a largura) */
 /************* LINK NO MODAL ****************/
 /* Estilo para o item de reserva que é um link no modal */
 .link-reserva {
@@ -892,7 +905,8 @@ a.voltar:hover {
 #confirmModal p {
     font-size: 1.1rem;
     color: #333;
-    margin-bottom: 1.5rem; /* Aumenta o espaço abaixo do texto */
+    margin-bottom: 1rem; /* Aumenta o espaço abaixo do texto */
+    margin-top: 10px
 }
 
 /* 3. Estiliza os botões "Sim" e "Não" dentro do modal */
@@ -1189,3 +1203,60 @@ button#reservar{
     padding-bottom: 1rem; /* Aumenta o padding inferior */
 }
 
+/* --- ESTILOS PARA GESTÃO DE STATUS (ADMIN) --- */
+
+.status-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre o selo e o ícone */
+    margin-left: 8px;
+}
+
+.btn-edit-status {
+    color: #6c757d; /* Cor cinza para o ícone */
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.btn-edit-status:hover {
+    color: #000; /* Cor mais escura no hover */
+}
+
+.select-status {
+    width: 120px; /* Largura do campo de seleção */
+}
+
+/* Botão "Aplicar Alterações" (Cor Vinho) */
+#btn-aplicar-mudancas {
+    background-color: rgb(120, 4, 4);
+    border-color: rgb(120, 4, 4);
+    color: white; /* Garante que o texto seja branco */
+}
+
+/* Efeito hover para o botão "Aplicar" */
+#btn-aplicar-mudancas:hover {
+    background-color: rgb(100, 3, 3); /* Um tom um pouco mais escuro */
+    border-color: rgb(100, 3, 3);
+}
+
+/* Estilo para o botão quando estiver desabilitado */
+#btn-aplicar-mudancas:disabled {
+    background-color: #6c757d; /* Cinza padrão do Bootstrap */
+    border-color: #6c757d;
+}
+
+
+/* Botão "Solicitar Nova Reserva" (Fundo Branco com Borda Vinho) */
+#btn-abrir-form-reserva-admin {
+    background-color: white;
+    border: 2px solid rgb(120, 4, 4);
+    color: rgb(120, 4, 4);
+    font-weight: 600
+}
+
+/* Efeito hover para o botão "Solicitar" */
+#btn-abrir-form-reserva-admin:hover {
+    background-color: rgb(240, 230, 230); /* Um fundo levemente rosado para o feedback */
+    border-color: rgb(100, 3, 3);
+    color: rgb(100, 3, 3);
+}

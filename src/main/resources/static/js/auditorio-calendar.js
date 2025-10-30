@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Listener principal para os dias do calendário
-    document.querySelectorAll('.dia.mensal:not(.vazio)').forEach(diaElemento => {
+    document.querySelectorAll('.dia.mensal:not(.vazio, .bloqueado, .indisponivel)').forEach(diaElemento => {
         diaElemento.addEventListener('click', (event) => {
             // Se o clique foi no botão de adicionar, não faz mais nada aqui
             if (event.target.closest('.btn-solicitar-reserva')) {
@@ -92,16 +92,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (isOwner) {
                         elemento = document.createElement('a');
-                        // ✨ **A MUDANÇA PRINCIPAL ESTÁ AQUI** ✨
-                        // Agora a URL inclui o período e o ID para destaque
                         elemento.href = `/listagem?periodo=${evento.periodoIdeal}#reserva-${evento.id}`;
                         elemento.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
                     } else {
                         elemento = document.createElement('li');
                         elemento.className = 'list-group-item d-flex justify-content-between align-items-center';
                     }
-                    
-                    elemento.innerHTML = conteudoItem;
+                    let statusBadge = '';
+                    if (isOwner) {
+                        const statusText = evento.status.charAt(0).toUpperCase() + evento.status.slice(1).toLowerCase();
+                        statusBadge = `<span class="badge status-${evento.status.toLowerCase()}">${statusText}</span>`;
+                    }
+
+                    // O HTML é montado numa única vez, com a variável statusBadge já incluída.
+                    elemento.innerHTML = `
+                        <div class="evento-info d-flex flex-column">
+                            <strong class="evento-nome-modal">${evento.evento}</strong>
+                            ${!isOwner ? `<small class="text-muted">Solicitado por: ${evento.nome}</small>` : ''}
+                        </div>
+                        <div class="evento-horario text-end d-flex flex-column align-items-end">
+                            <span class="evento-hora-modal">${horaInicio} - ${horaFim}</span>
+                            ${statusBadge} 
+                        </div>
+                    `;
+
                     listaEventosContainer.appendChild(elemento);
                 });
             } else {
@@ -131,4 +145,16 @@ document.addEventListener('DOMContentLoaded', () => {
             modalReservaForm.style.display = 'flex';
         });
     });
+
+    window.addEventListener('click', (event) => {
+        // Se o alvo do clique for o overlay do modal de visualização, fecha
+        if (event.target === modalDiaView) {
+            fecharTodosModais();
+        }
+        // Se o alvo do clique for o overlay do modal de formulário, fecha
+        if (event.target === modalReservaForm) {
+            fecharTodosModais();
+        }
+    });
+
 });

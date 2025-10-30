@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class ReservaController {
         model.addAttribute("reserva", reserva);
         // Adiciona o atributo com valor 'false' para que a página sempre o encontre.
         model.addAttribute("reservaEfetuada", false);
-
+        model.addAttribute("dataMinima", LocalDate.now().toString());
         return "reservar";
     }
 
@@ -53,6 +54,7 @@ public class ReservaController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("erro", e.getMessage());
             model.addAttribute("reserva", reserva);
+            model.addAttribute("reservaEfetuada", false);
             return "reservar";
         }
     }
@@ -130,6 +132,7 @@ public class ReservaController {
 
         Reserva reserva = optionalReserva.get();
         model.addAttribute("reserva", reserva);
+        model.addAttribute("dataMinima", LocalDate.now().toString());
         return "atualizar";
     }
 

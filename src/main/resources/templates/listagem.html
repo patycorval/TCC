@@ -218,7 +218,12 @@
 
     <div id="confirmModal" class="modal">
       <div class="modal-content">
-        <p>Tem certeza que deseja cancelar esta reserva?</p>
+        <button
+          type="button"
+          id="btnCloseConfirmModal"
+          class="btn-close"
+        ></button>
+        <p>Tem certeza que deseja excluir esta reserva?</p>
         <div class="modal-buttons">
           <button id="btnConfirm" class="btn">Sim</button>
           <button id="btnCancel" class="btn">Não</button>
@@ -232,13 +237,30 @@
         const modal = document.getElementById("confirmModal");
         const btnConfirm = document.getElementById("btnConfirm");
         const btnCancel = document.getElementById("btnCancel");
+        const btnCloseConfirm = document.getElementById("btnCloseConfirmModal");
         let reservaIdParaExcluir = null;
+
+        const fecharModalConfirmacao = () => {
+          modal.style.display = "none";
+          reservaIdParaExcluir = null;
+        };
 
         document.querySelectorAll(".btn-apagar").forEach((botao) => {
           botao.addEventListener("click", () => {
             reservaIdParaExcluir = botao.getAttribute("data-id");
             modal.style.display = "flex";
           });
+        });
+
+        // Adiciona eventos de clique para todos os botões que fecham o modal
+        btnCancel.addEventListener("click", fecharModalConfirmacao);
+        btnCloseConfirm.addEventListener("click", fecharModalConfirmacao); // 3. Adiciona evento ao 'X'
+
+        // 4. Adiciona evento para fechar ao clicar FORA do conteúdo do modal
+        window.addEventListener("click", (event) => {
+          if (event.target == modal) {
+            fecharModalConfirmacao();
+          }
         });
 
         btnCancel.addEventListener("click", () => {

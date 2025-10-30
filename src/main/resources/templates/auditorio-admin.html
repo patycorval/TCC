@@ -24,12 +24,10 @@
         <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <p th:text="${erro}"></p><button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div class="legenda-cores my-4 mb-25">
+         <div class="legenda-cores my-4 mb-15">
             <p>Legenda:</p>
-            <div class="item-legenda"><div class="indicador status-aprovada"></div><span>Minha Reserva (Aprovada)</span></div>
-            <div class="item-legenda"><div class="indicador status-pendente"></div><span>Minha Reserva (Pendente)</span></div>
-            <div class="item-legenda"><div class="indicador status-rejeitada"></div><span>Minha Reserva (Rejeitada)</span></div>
-            <div class="item-legenda"><div class="indicador status-outros"></div><span>Outras Reservas</span></div>
+            <div class="item-legenda"><div class="indicador status-aprovada"></div><span>Reserva Aprovada</span></div>
+            <div class="item-legenda"><div class="indicador status-pendente"></div><span>Reserva Pendente</span></div>
             <div class="item-legenda"><div class="cor-legenda disponivel"></div><span>Disponível</span></div>
             <div class="item-legenda"><div class="cor-legenda indisponivel"></div><span>Indisponível</span></div>
         </div>
@@ -64,9 +62,7 @@
                             class="checkbox-bloqueio">
                         <div class="indicadores-evento" th:if="${!#lists.isEmpty(dia.eventos)}">
                             <span th:each="reserva : ${dia.eventos}" class="indicador"
-                                th:classappend="${reserva.emailRequisitor == usuarioLogadoEmail}
-                                                ? 'status-' + ${reserva.status.name().toLowerCase()}
-                                                : 'status-outros'">
+                                th:classappend="'status-' + ${reserva.status.name().toLowerCase()}">
                             </span>
                         </div>
                     </div>
@@ -77,9 +73,16 @@
             </div>
         </div>
         <div class="my-4 d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-secondary" th:formaction="@{/admin/auditorio/desbloquear-dias}">Desbloquear Selecionados</button>
+            
+                        <button type="button" class="btn btn-dark" id="btn-bloquear-selecionados-trigger">Bloquear Selecionados</button>
+            
+                        <button type="submit" class="btn btn-dark" th:formaction="@{/admin/auditorio/bloquear-dias}" style="display: none;" id="submit-bloqueio-real"></button>
+        </div>
+        <!-- <div class="my-4 d-flex justify-content-end gap-2">
             <button type="submit" class="btn btn-secondary" th:formaction="@{/admin/auditorio/desbloquear-dias}">Desbloquear Selecionados</button>
             <button type="submit" class="btn btn-dark" th:formaction="@{/admin/auditorio/bloquear-dias}">Bloquear Selecionados</button>
-        </div>
+        </div> -->
     </form>
     </main>
 
@@ -95,11 +98,10 @@
                         <ul class="list-group list-group-flush" id="lista-eventos-modal"></ul>
                         <div id="sem-eventos-aviso" class="alert alert-secondary text-center">Nenhum evento agendado para este dia.</div>
                     </div>
-                    <div class="modal-footer justify-content-end">
-                        <button type="button" class="btn btn-danger" id="btn-abrir-form-reserva">
-                            Solicitar nova reserva
-                        </button>
-                    </div>
+                <div class="modal-footer" id="modal-gestao-footer">
+                    <button type="button" class="btn btn-danger" id="btn-abrir-form-reserva-admin">Solicitar Nova Reserva</button>
+                    <button type="button" class="btn btn-primary" id="btn-aplicar-mudancas" disabled>Aplicar Alterações</button>
+                </div>
                 </div>
             </div>
         </div>
@@ -148,7 +150,28 @@
         </div>
     </div>
 </div>
-    <script th:src="@{/js/auditorio-calendar.js}"></script>
+
+<div id="confirm-block-modal" class="overlay">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="confirm-block-modal-title"><i class="bi bi-exclamation-triangle-fill"></i> Atenção: Eventos Encontrados!</h5>
+                <button type="button" class="btn-close" id="fechar-confirm-block"></button>
+            </div>
+            <div class="modal-body mb-2">
+                <p class="mt-3">Os dias listados abaixo contêm reservas. Bloquear estes dias resultará na <b>rejeição automática</b> de todas as reservas do Auditório nessas datas.</p>
+                <p class="mb-2">Tem certeza que deseja prosseguir?</p>
+                <ul id="dias-com-eventos-lista" class="list-group list-group-flush mb-3">
+                    </ul>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-block">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-block">Sim, Bloquear e Rejeitar Reservas</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <script th:src="@{/js/auditorio-admin.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>

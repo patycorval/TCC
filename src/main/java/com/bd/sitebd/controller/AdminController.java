@@ -5,6 +5,7 @@ import com.bd.sitebd.model.Reserva;
 import com.bd.sitebd.model.Usuario;
 import com.bd.sitebd.model.dto.DiaCalendario;
 import com.bd.sitebd.model.enums.StatusReserva;
+import org.springframework.security.core.Authentication;
 import com.bd.sitebd.model.enums.TipoUsuario;
 import com.bd.sitebd.repositories.CursoRepository;
 import com.bd.sitebd.service.DiaBloqueadoService;
@@ -22,8 +23,8 @@ import java.util.Set;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity; // <-- IMPORT ADICIONADO
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,26 +50,27 @@ public class AdminController {
     @Autowired
     private DiaBloqueadoService diaBloqueadoService;
 
+    // --- SEU MÉTODO GET/cadastro (JÁ ESTÁ CORRETO) ---
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cadastro")
     public String exibirCadastro(Model model) {
         List<Curso> todosOsCursos = cursoRepository.findAll();
         model.addAttribute("listaDeCursos", todosOsCursos);
+
         System.out.println("--- DEBUG AdminController ---");
         System.out.println("Número de cursos encontrados no banco: " + todosOsCursos.size());
         if (!todosOsCursos.isEmpty()) {
-            // Imprime detalhes do primeiro curso para confirmar que os dados estão corretos
             System.out.println("Primeiro curso: ID=" + todosOsCursos.get(0).getId() + ", Sigla="
                     + todosOsCursos.get(0).getSigla() + ", Periodo=" + todosOsCursos.get(0).getPeriodo());
         }
         System.out.println("Adicionando ao model com nome: listaDeCursos");
+
         return "cadastro";
     }
 
-    // Dentro de AdminController.java
-
+    // --- SEU MÉTODO POST/cadastro (JÁ ESTÁ CORRETO) ---
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/cadastro") // Certifique-se que o path está correto (/admin/cadastro ou /cadastro)
+    @PostMapping("/cadastro")
     public String processarCadastro(@RequestParam String email,
             @RequestParam String nome,
             @RequestParam String senha,
@@ -79,7 +81,6 @@ public class AdminController {
 
         if (!senha.equals(confirmarSenha)) {
             redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não conferem!");
-            // Reenvia dados para o form (incluindo o nome agora)
             redirectAttributes.addFlashAttribute("usuarioInput",
                     Map.of("email", email, "nome", nome, "tipo", tipo.name()));
             return "redirect:/admin/cadastro";
@@ -90,7 +91,6 @@ public class AdminController {
             if (cursos == null || cursos.isEmpty()) {
                 redirectAttributes.addFlashAttribute("mensagemErro",
                         "Professores e Monitores devem estar associados a pelo menos um curso!");
-                // Reenvia dados
                 redirectAttributes.addFlashAttribute("usuarioInput",
                         Map.of("email", email, "nome", nome, "tipo", tipo.name()));
                 return "redirect:/admin/cadastro";
@@ -104,7 +104,7 @@ public class AdminController {
         try {
             Usuario novo = new Usuario();
             novo.setEmail(email);
-            novo.setNome(nome); // <-- SALVANDO O NOME
+            novo.setNome(nome);
             novo.setSenha(passwordEncoder.encode(senha));
             novo.setTipo(tipo);
             novo.setCursos(cursosSelecionados);
@@ -122,7 +122,6 @@ public class AdminController {
                 e.printStackTrace();
             }
             redirectAttributes.addFlashAttribute("mensagemErro", mensagemErro);
-            // Reenvia dados em caso de erro (incluindo nome e cursos)
             redirectAttributes.addFlashAttribute("usuarioInput",
                     Map.of("email", email, "nome", nome, "tipo", tipo.name(), "cursos",
                             cursos != null ? cursos : List.of()));
@@ -130,6 +129,7 @@ public class AdminController {
         return "redirect:/admin/cadastro";
     }
 
+    // --- SEUS MÉTODOS DE AUDITÓRIO (JÁ ESTÃO CORRETOS) ---
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/auditorio-admin")
     public String auditorioAdmin(@RequestParam(value = "mes", required = false) Integer mes,
@@ -253,5 +253,50 @@ public class AdminController {
         }
         YearMonth ym = YearMonth.from(diasParaDesbloquear.iterator().next());
         return "redirect:/admin/auditorio-admin?mes=" + ym.getMonthValue() + "&ano=" + ym.getYear();
+    }
+
+    // --- FUNCIONALIDADE ADICIONADA DO SEGUNDO ARQUIVO ---
+    /**
+     * NOVO ENDPOINT PARA ATUALIZAR STATUS EM MASSA
+     * Recebe uma lista de alterações de status e as aplica.
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/auditorio/atualizar-status-massa")
+    @ResponseBody // Retorna dados (JSON), não uma página HTML
+    public ResponseEntity<Void> atualizarStatusReservaEmMassa(@RequestBody List<UpdateStatusRequest> requests) {
+        try {
+            // Itera sobre a lista de requisições e atualiza cada uma
+            for (UpdateStatusRequest request : requests) {
+                reservaService.atualizarStatus(request.getReservaId(), request.getNovoStatus());
+            }
+            return ResponseEntity.ok().build(); // Retorna 200 OK
+        } catch (Exception e) {
+            // Logar o erro é uma boa prática
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build(); // Retorna 400 em caso de erro
+        }
+    }
+
+    // --- CLASSE INTERNA ADICIONADA DO SEGUNDO ARQUIVO ---
+    public static class UpdateStatusRequest {
+        private Long reservaId;
+        private StatusReserva novoStatus;
+
+        // Getters e Setters
+        public Long getReservaId() {
+            return reservaId;
+        }
+
+        public void setReservaId(Long reservaId) {
+            this.reservaId = reservaId;
+        }
+
+        public StatusReserva getNovoStatus() {
+            return novoStatus;
+        }
+
+        public void setNovoStatus(StatusReserva novoStatus) {
+            this.novoStatus = novoStatus;
+        }
     }
 }
