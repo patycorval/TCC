@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const diasDaSemanaJava = { MONDAY: 'Segunda', TUESDAY: 'Terça', WEDNESDAY: 'Quarta', THURSDAY: 'Quinta', FRIDAY: 'Sexta', SATURDAY: 'Sábado' };
     const diasDaSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-    // Seletores DOM (sem periodoSelect)
+    // Seletores DOM (IDs atualizados, periodoSelect removido)
     const cursoSelect = document.getElementById('curso');
     const semestreSelect = document.getElementById('semestre');
     const usuarioFiltroSelect = document.getElementById('usuarioFiltro');
@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modal
     const modalElement = document.getElementById('modalAula');
-    // Garante que modalElement existe antes de criar a instância do Modal
     const modal = modalElement ? new bootstrap.Modal(modalElement) : null; 
     const modalTitle = document.getElementById('modalAulaTitle');
     const modalUsuarioSelect = document.getElementById('modalUsuario');
@@ -42,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- FUNÇÕES ---
 
     async function carregarUsuariosEGrade() {
-        // Verifica se os elementos essenciais existem
         if (!cursoSelect || !semestreSelect || !usuarioFiltroSelect || !modalUsuarioSelect || !gradeBody) {
              console.error("Elementos essenciais do filtro ou grade não encontrados.");
              return;
@@ -70,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
             popularSelectUsuarios(usuariosDoCurso);
         }
 
-        await gerarGrade(cursoId, periodo.toLowerCase(), semestre); // Passa período em minúsculo
+        await gerarGrade(cursoId, periodo, semestre); // Passa o período em minúsculo
     }
 
     async function buscarUsuariosDoCurso(cursoId) {
@@ -91,8 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         limparSelect(usuarioFiltroSelect, "Todos");
         limparSelect(modalUsuarioSelect, "Selecione...");
         usuarios.forEach(user => {
-            const displayText = user.nome || user.email;
-            // Adiciona apenas se o usuário tiver ID (segurança)
+            const displayText = user.nome || user.email; // Prioriza nome
             if (user.id) {
                 usuarioFiltroSelect.options.add(new Option(displayText, user.id));
                 modalUsuarioSelect.options.add(new Option(displayText, user.id));
@@ -102,8 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function gerarGrade(cursoId, periodo, semestre) {
         gradeBody.innerHTML = '<tr><td colspan="7">Carregando grade...</td></tr>';
-        const horariosDoPeriodo = horarios[periodo];
+        const horariosDoPeriodo = horarios[periodo]; // Usa o período em minúsculo
         if (!horariosDoPeriodo) {
+            console.error("Período inválido ou não encontrado:", periodo);
             gradeBody.innerHTML = ''; return;
         }
 
@@ -130,22 +128,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 const celulaGrade = document.createElement('div');
                 celulaGrade.className = 'celula-grade';
 
-                // Tenta encontrar a aula correspondente na grade salva
                 const aula = gradeSalva.find(dto =>
                     diasDaSemanaJava[dto.diaSemana] === dia && dto.horario === horario
                 );
 
                 if (aula) {
-                    // Célula preenchida
                     celulaGrade.innerHTML = `
                         <div class="detalhes-aula">
                             <p><strong>${aula.professorNome}</strong></p>
                             <p style="font-size: 0.8rem">${aula.salaNumero}</p>
                         </div>
                     `;
-                    // Futuro: Adicionar evento de clique para editar
                 } else {
-                    // Célula vazia
                     const btnAdd = document.createElement('button');
                     btnAdd.className = 'btn btn-sm btn-outline-primary btn-add';
                     btnAdd.innerHTML = '+';
@@ -209,7 +203,6 @@ document.addEventListener('DOMContentLoaded', function () {
             horario: modalHorarioInput.value
         };
 
-        // Verifica se CSRF está configurado
         if (!csrfHeader || !csrfToken) {
             alert("Erro de configuração de segurança (CSRF). Recarregue a página.");
             return;
@@ -230,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response.ok) {
                 modal.hide();
-                atualizarCelulaNaGrade(payload); // Atualiza a célula visualmente
+                atualizarCelulaNaGrade(payload);
             } else {
                  let errorMessage = `Erro ${response.status}: ${response.statusText}`;
                  try { errorMessage = await response.text(); } catch (e) { /* Ignora */ }
@@ -246,9 +239,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Atualiza a célula visualmente após salvar
     function atualizarCelulaNaGrade(payload) {
-         if (!modalUsuarioSelect || !modalSalaSelect || !gradeBody) return; // Segurança
+         if (!modalUsuarioSelect || !modalSalaSelect || !gradeBody) return;
 
         const horarioDaCelula = payload.horario;
         const diaDaCelula = payload.diaSemana;
@@ -262,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (horario === horarioDaCelula) {
                 const indiceDoDia = diasDaSemana.indexOf(diaDaCelula);
                 if (indiceDoDia !== -1) {
-                    const celula = linha.children[indiceDoDia + 1]; // +1 por causa da célula de horário
+                    const celula = linha.children[indiceDoDia + 1];
                     if(celula) {
                         celula.innerHTML = `
                             <div class="detalhes-aula">
@@ -270,7 +262,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <p style="font-size: 0.8rem">${salaNome}</p>
                             </div>
                         `;
-                        // Futuro: Adicionar botão/evento de remover/editar aqui
                     }
                 }
             }
@@ -284,11 +275,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- INICIALIZAÇÃO ---
-    // Verifica se os elementos principais existem antes de tentar carregar
     if (cursoSelect && cursoSelect.value) {
         carregarUsuariosEGrade();
     } else if (gradeBody) {
-         gradeBody.innerHTML = ''; // Limpa se nenhum curso selecionado inicialmente
+         gradeBody.innerHTML = '';
     } else {
         console.error("Elemento 'curso' ou 'gradeBody' não encontrado na inicialização.");
     }
