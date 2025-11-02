@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @Entity
 public class Reserva {
 
-    // ... (Seus campos Id, numero, nome, etc. continuam aqui) ...
+    // ... (id, numero, nome, etc. ... )
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,21 +29,21 @@ public class Reserva {
     private Curso curso;
     private Integer semestre;
 
-    // NOVO CAMPO (não será salvo no banco)
     @Transient
     private String periodoIdeal;
 
-    // --- NOVO CAMPO ---
-    @Column(name = "is_grade_reserva") // Mapeia para a coluna do banco
-    private boolean gradeReserva = false; // Valor padrão em Java
-    // --- FIM NOVO CAMPO ---
+    // --- CORREÇÃO AQUI ---
+    @Column(name = "is_grade_reserva")
+    private boolean gradeReserva = false; // <-- NOME DO CAMPO ALTERADO (removido o 'is')
+    // --- FIM DA CORREÇÃO ---
 
     // Construtores
     public Reserva() {
     }
 
-    // --- GETTERS E SETTERS (EXISTENTES E NOVOS) ---
-    // ... (getters/setters para id, numero, nome, etc...) ...
+    // --- GETTERS E SETTERS ---
+
+    // ... (getters/setters para id, numero, nome, etc.) ...
     public Long getId() {
         return id;
     }
@@ -132,13 +132,15 @@ public class Reserva {
         this.semestre = semestre;
     }
 
+    // --- GETTER/SETTER CORRIGIDOS PARA O NOVO NOME DO CAMPO ---
     public boolean isGradeReserva() {
-        return gradeReserva;
+        return gradeReserva; // <-- Agora referencia o campo 'gradeReserva'
     }
 
     public void setGradeReserva(boolean gradeReserva) {
-        this.gradeReserva = gradeReserva;
+        this.gradeReserva = gradeReserva; // <-- Agora referencia o campo 'gradeReserva'
     }
+    // --- FIM DA CORREÇÃO ---
 
     public String getPeriodoIdeal() {
         return periodoIdeal;
@@ -156,6 +158,6 @@ public class Reserva {
     }
 
     public void setOwner(boolean owner) {
-        isOwner = owner;
+        this.isOwner = owner;
     }
 }
