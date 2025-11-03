@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
+        // --- MÉTODOS QUE VOCÊ JÁ TINHA (MANTIDOS) ---
         List<Reserva> findByNumeroAndData(String numero, LocalDate data);
 
         List<Reserva> findByStatus(StatusReserva status);
@@ -23,19 +24,14 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
         List<Reserva> findByNumeroAndStatusAndDataBetweenAndEmailRequisitorOrderByDataAscHoraAsc(String numero,
                         StatusReserva status, LocalDate dataInicio, LocalDate dataFim, String emailRequisitor);
 
-        List<Reserva> findByCursoIdAndSemestreAndDataBetweenOrderByDataAscHoraAsc(
-                        Long cursoId, Integer semestre, LocalDate dataInicio, LocalDate dataFim);
+        List<Reserva> findByCursoIdAndSemestreAndDataBetweenOrderByDataAscHoraAsc(Long cursoId, Integer semestre,
+                        LocalDate dataInicio, LocalDate dataFim);
 
-        // temConflitoComAprovadas no ReservaService
         List<Reserva> findByNumeroAndDataAndStatus(String numero, LocalDate data, StatusReserva status);
 
-        List<Reserva> findByNumeroAndDataBetweenAndStatusNotOrderByDataAscHoraAsc(
-                        String numero,
-                        LocalDate dataInicio,
-                        LocalDate dataFim,
-                        StatusReserva status);
+        List<Reserva> findByNumeroAndDataBetweenAndStatusNotOrderByDataAscHoraAsc(String numero, LocalDate dataInicio,
+                        LocalDate dataFim, StatusReserva status);
 
-        // buscarReservasAuditorioParaUsuario no ReservaService
         @Query("SELECT r FROM Reserva r WHERE r.numero = :numero " +
                         "AND r.data BETWEEN :dataInicio AND :dataFim " +
                         "AND (r.status = 'APROVADA' OR r.emailRequisitor = :email) " +
@@ -59,5 +55,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
         List<Reserva> findByDataGreaterThanEqualOrderByDataAsc(LocalDate data);
 
         List<Reserva> findByDataLessThanOrderByDataDesc(LocalDate data);
+
+        List<Reserva> findByCursoIdAndSemestreAndGradeReservaTrue(Long cursoId, Integer semestre);
 
 }

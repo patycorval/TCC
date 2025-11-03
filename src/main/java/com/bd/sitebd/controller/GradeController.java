@@ -18,6 +18,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,22 +56,40 @@ public class GradeController {
                 List.of(TipoUsuario.PROFESSOR, TipoUsuario.MONITOR));
     }
 
+    // Dentro de GradeController.java
+
     @GetMapping("/api/grade/reservas")
     @ResponseBody
     public List<ReservaDTO> getReservasParaGrade(
             @RequestParam Long cursoId,
             @RequestParam int semestre) {
 
-        int mesInicio = LocalDate.now().getMonthValue() >= 8 ? 8 : 2;
-        LocalDate inicioSemestre = LocalDate.now().withMonth(mesInicio).with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate inicioBusca = inicioSemestre.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+        System.out.println("==========================================================");
+        System.out.println("[DEBUG GET /api/grade/reservas]");
+        System.out.println("Buscando grade para Curso ID: " + cursoId + ", Semestre: " + semestre);
 
-        LocalDate fimBusca = inicioBusca.plusDays(6);
+        // --- NOVA LÓGICA DE BUSCA (MAIS ROBUSTA) ---
+        // 1. Busca TODAS as reservas que são da GRADE para este CURSO e SEMESTRE
+        List<Reserva> todasAsReservasDaGrade = reservaRepository.findByCursoIdAndSemestreAndGradeReservaTrue(
+                cursoId, semestre);
 
-        List<Reserva> reservasDaSemana = reservaRepository.findByCursoIdAndSemestreAndDataBetweenOrderByDataAscHoraAsc(
-                cursoId, semestre, inicioBusca, fimBusca);
+        System.out.println("Reservas da grade encontradas no banco (total): " + todasAsReservasDaGrade.size());
 
-        return reservasDaSemana.stream().map(ReservaDTO::new).collect(Collectors.toList());
+        // 2. Filtra para obter apenas UMA reserva para cada slot (dia/horário)
+        List<Reserva> gradeUnica = todasAsReservasDaGrade.stream()
+                .collect(Collectors.groupingBy(
+                        // Agrupa por uma chave combinada de Dia da Semana + Horário de Início
+                        r -> r.getData().getDayOfWeek().toString() + "_" + r.getHora().toString(),
+                        // Pega apenas o primeiro item de cada grupo (a reserva com a data mais antiga)
+                        Collectors.collectingAndThen(Collectors.minBy(Comparator.comparing(Reserva::getData)),
+                                Optional::get)))
+                .values().stream().toList(); // Pega os valores do mapa (a reserva única de cada slot)
+
+        System.out.println("Retornando " + gradeUnica.size() + " slots únicos para o frontend.");
+        System.out.println("==========================================================");
+
+        // 3. Converte para DTO e retorna
+        return gradeUnica.stream().map(ReservaDTO::new).collect(Collectors.toList());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
