@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const diasDaSemanaJava = { MONDAY: 'Segunda', TUESDAY: 'Terça', WEDNESDAY: 'Quarta', THURSDAY: 'Quinta', FRIDAY: 'Sexta', SATURDAY: 'Sábado' };
     const diasDaSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-    // Seletores DOM (IDs atualizados, periodoSelect removido)
+    // --- SELETORES DOM (REMOVIDO usuarioFiltroSelect) ---
     const cursoSelect = document.getElementById('curso');
     const semestreSelect = document.getElementById('semestre');
-    const usuarioFiltroSelect = document.getElementById('usuarioFiltro');
+    // const usuarioFiltroSelect = document.getElementById('usuarioFiltro'); // REMOVIDO
     const gradeBody = document.getElementById('gradeBody');
 
     // Modal
@@ -40,25 +40,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- FUNÇÕES ---
 
+    // --- NOVA FUNÇÃO PLACEHOLDER ---
+    function mostrarPlaceholderGrade() {
+        if (!gradeBody) return;
+        gradeBody.innerHTML = ''; // Limpa a grade
+        const placeholder = document.createElement('div');
+        placeholder.className = 'grade-placeholder'; // Usa a nova classe CSS
+        placeholder.textContent = 'Selecione um curso e um semestre para exibir a grade.';
+        gradeBody.appendChild(placeholder);
+    }
+    // --- FIM DA NOVA FUNÇÃO ---
+
+
     async function carregarUsuariosEGrade() {
-        if (!cursoSelect || !semestreSelect || !usuarioFiltroSelect || !modalUsuarioSelect || !gradeBody) {
+        // --- VERIFICAÇÃO CORRIGIDA (removido !usuarioFiltroSelect) ---
+        if (!cursoSelect || !semestreSelect || !modalUsuarioSelect || !gradeBody) {
              console.error("Elementos essenciais do filtro ou grade não encontrados.");
              return;
         }
 
         const cursoId = cursoSelect.value;
         const selectedOption = cursoSelect.options[cursoSelect.selectedIndex];
-        const periodo = selectedOption?.dataset.periodo; // Pega o período do data attribute
+        const periodo = selectedOption?.dataset.periodo;
         const semestre = semestreSelect.value;
 
         // Limpa grade e selects
         gradeBody.innerHTML = '<tr><td colspan="7">Carregando...</td></tr>';
-        limparSelect(usuarioFiltroSelect, "Carregando...");
+        // limparSelect(usuarioFiltroSelect, "Carregando..."); // REMOVIDO
         limparSelect(modalUsuarioSelect, "Carregando...");
 
         if (!cursoId || !periodo) {
-            gradeBody.innerHTML = '';
-            limparSelect(usuarioFiltroSelect, "Selecione um curso");
+            mostrarPlaceholderGrade(); // Mostra placeholder se curso/periodo não selecionado
+            // limparSelect(usuarioFiltroSelect, "Selecione um curso"); // REMOVIDO
             limparSelect(modalUsuarioSelect, "Selecione um curso");
             return;
         }
@@ -85,26 +98,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // --- FUNÇÃO CORRIGIDA (só popula o modal) ---
     function popularSelectUsuarios(usuarios) {
-        limparSelect(usuarioFiltroSelect, "Todos");
-        limparSelect(modalUsuarioSelect, "Selecione...");
+        // limparSelect(usuarioFiltroSelect, "Todos"); // REMOVIDO
+        limparSelect(modalUsuarioSelect, "Selecione..."); // Popula SÓ o modal
         usuarios.forEach(user => {
-            const displayText = user.nome || user.email; // Prioriza nome
+            const displayText = user.nome || user.email;
             if (user.id) {
-                usuarioFiltroSelect.options.add(new Option(displayText, user.id));
+                // usuarioFiltroSelect.options.add(new Option(displayText, user.id)); // REMOVIDO
                 modalUsuarioSelect.options.add(new Option(displayText, user.id));
             }
         });
     }
 
+    // ... (função gerarGrade(cursoId, periodo, semestre) continua EXATAMENTE IGUAL) ...
     async function gerarGrade(cursoId, periodo, semestre) {
         gradeBody.innerHTML = '<tr><td colspan="7">Carregando grade...</td></tr>';
-        const horariosDoPeriodo = horarios[periodo]; // Usa o período em minúsculo
+        const horariosDoPeriodo = horarios[periodo];
         if (!horariosDoPeriodo) {
             console.error("Período inválido ou não encontrado:", periodo);
-            gradeBody.innerHTML = ''; return;
+            mostrarPlaceholderGrade(); 
+            return;
         }
-
         let gradeSalva = [];
         try {
             const response = await fetch(`/api/grade/reservas?cursoId=${cursoId}&semestre=${semestre}`);
@@ -116,22 +131,17 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Erro de conexão ao buscar grade:', error);
         }
-
         gradeBody.innerHTML = '';
-
         horariosDoPeriodo.forEach(horario => {
             const linhaHorario = document.createElement('div');
             linhaHorario.className = 'linha-horario';
             linhaHorario.innerHTML = `<div class="horario-celula">${horario}</div>`;
-
             diasDaSemana.forEach(dia => {
                 const celulaGrade = document.createElement('div');
                 celulaGrade.className = 'celula-grade';
-
                 const aula = gradeSalva.find(dto =>
                     diasDaSemanaJava[dto.diaSemana] === dia && dto.horario === horario
                 );
-
                 if (aula) {
                     celulaGrade.innerHTML = `
                         <div class="detalhes-aula">
@@ -154,23 +164,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Função modificada para pré-preencher
+    // --- FUNÇÃO CORRIGIDA (não depende mais do filtro) ---
     function abrirModalParaAdicionar(dia, horario) {
-        if (!modal || !modalTitle || !modalUsuarioSelect || !modalSalaSelect || !modalDiaInput || !modalHorarioInput) {
-             console.error("Elementos do modal não encontrados para abrir.");
-             return;
-        }
+        if (!modal) { console.error("Instância do modal não encontrada."); return; }
         modalTitle.textContent = `Alocar Horário (${dia} - ${horario})`;
-
-        const usuarioSelecionadoNoFiltro = usuarioFiltroSelect.value;
-
-        if (usuarioSelecionadoNoFiltro) {
-            modalUsuarioSelect.value = usuarioSelecionadoNoFiltro;
-            // modalUsuarioSelect.disabled = true; // Descomente para travar
-        } else {
-            modalUsuarioSelect.value = "";
-            modalUsuarioSelect.disabled = false;
-        }
+        
+        // Remove a lógica de pré-preenchimento
+        modalUsuarioSelect.value = ""; 
+        modalUsuarioSelect.disabled = false; 
 
         modalSalaSelect.value = "";
         modalDiaInput.value = dia;
@@ -178,22 +179,20 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.show();
     }
 
+    // ... (função salvarAulaSemestre continua EXATAMENTE IGUAL) ...
     async function salvarAulaSemestre() {
          if (!modalUsuarioSelect || !modalSalaSelect || !cursoSelect || !semestreSelect || !modalDiaInput || !modalHorarioInput || !btnSalvarAula) {
              console.error("Elementos necessários para salvar não encontrados.");
              alert("Erro interno. Recarregue a página.");
              return;
          }
-
         const usuarioId = modalUsuarioSelect.value;
         const salaId = modalSalaSelect.value;
         const cursoId = cursoSelect.value;
-
         if (!usuarioId || !salaId || !cursoId) {
             alert('Por favor, selecione Curso, Professor/Monitor e Sala.');
             return;
         }
-
         const payload = {
             cursoId: cursoId,
             semestre: semestreSelect.value,
@@ -202,25 +201,18 @@ document.addEventListener('DOMContentLoaded', function () {
             diaSemana: modalDiaInput.value,
             horario: modalHorarioInput.value
         };
-
         if (!csrfHeader || !csrfToken) {
             alert("Erro de configuração de segurança (CSRF). Recarregue a página.");
             return;
         }
-
         try {
             btnSalvarAula.disabled = true;
             btnSalvarAula.textContent = "Salvando...";
-
             const response = await fetch('/api/grade/salvar-semestre', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
-                },
+                headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
                 body: JSON.stringify(payload)
             });
-
             if (response.ok) {
                 modal.hide();
                 atualizarCelulaNaGrade(payload);
@@ -235,20 +227,17 @@ document.addEventListener('DOMContentLoaded', function () {
         } finally {
              btnSalvarAula.disabled = false;
              btnSalvarAula.textContent = "Salvar Semestre";
-             // modalUsuarioSelect.disabled = false; // Garante destravar
         }
     }
 
+    // ... (função atualizarCelulaNaGrade continua EXATAMENTE IGUAL) ...
     function atualizarCelulaNaGrade(payload) {
          if (!modalUsuarioSelect || !modalSalaSelect || !gradeBody) return;
-
         const horarioDaCelula = payload.horario;
         const diaDaCelula = payload.diaSemana;
         const usuarioNome = modalUsuarioSelect.options[modalUsuarioSelect.selectedIndex]?.text || 'N/A';
         const salaNome = modalSalaSelect.options[modalSalaSelect.selectedIndex]?.text || 'N/A';
-
         const linhas = gradeBody.querySelectorAll('.linha-horario');
-
         linhas.forEach(linha => {
             const horario = linha.querySelector('.horario-celula')?.textContent;
             if (horario === horarioDaCelula) {
@@ -268,17 +257,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // ... (função limparSelect continua EXATAMENTE IGUAL) ...
     function limparSelect(selectElement, placeholder) {
         if(selectElement) {
              selectElement.innerHTML = `<option value="">${placeholder || 'Selecione...'}</option>`;
         }
     }
 
-    // --- INICIALIZAÇÃO ---
+    // --- INICIALIZAÇÃO ATUALIZADA ---
     if (cursoSelect && cursoSelect.value) {
         carregarUsuariosEGrade();
     } else if (gradeBody) {
-         gradeBody.innerHTML = '';
+         mostrarPlaceholderGrade();
     } else {
         console.error("Elemento 'curso' ou 'gradeBody' não encontrado na inicialização.");
     }

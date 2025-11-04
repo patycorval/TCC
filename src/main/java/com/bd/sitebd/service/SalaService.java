@@ -16,13 +16,6 @@ public class SalaService {
     @Autowired
     private SalaRepository salaRepository;
 
-    public Sala salvarSalaComImagem(Sala sala, MultipartFile arquivoImagem) throws IOException {
-        sala.setImagemDados(arquivoImagem.getBytes());
-        sala.setImagemTipo(arquivoImagem.getContentType());
-
-        return salaRepository.save(sala);
-    }
-
     public void apagarTodasSalas() {
         salaRepository.deleteAll();
     }
