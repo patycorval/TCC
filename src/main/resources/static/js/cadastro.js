@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    // --- Início: Código do TomSelect ---
+    // Verifica se o select #cursos existe na página
+    var cursosSelect = document.getElementById('cursos');
+    
+    if (cursosSelect) {
+        new TomSelect(cursosSelect, {
+            plugins: ['remove_button'], // Adiciona o 'x' para remover
+            persist: false,
+            create: false, // Impede que o usuário crie novas opções
+            placeholder: 'Selecione um ou mais cursos...'
+        });
+    }
+    // --- Fim: Código do TomSelect ---
+    
     const tipoSelect = document.getElementById('tipo');
     const cursoSelectDiv = document.getElementById('cursoSelectDiv'); 
     const cursoSelect = document.getElementById('cursos'); 

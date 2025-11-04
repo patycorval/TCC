@@ -157,9 +157,13 @@ header {
     height: auto;  
     transition: transform 0.2s;  
 }
-.logo-fatec:hover, .logo-cps:hover {
-    transform: scale(1.10); 
+/* ADICIONE ESTA NOVA REGRA */
+/* Quando o link pai (a) estiver em hover, aplica o transform nas duas logos filhas */
+a.d-flex.align-items-center.me-md-auto:hover .logo-fatec,
+a.d-flex.align-items-center.me-md-auto:hover .logo-cps {
+    transform: scale(1.10);
 }
+
 .d-flex.align-items-center {
   gap: 10px; /* controla o espaço entre os logos */
 }
@@ -1042,7 +1046,6 @@ h2 .sucesso{
 
 .form-card {
     max-width: 100%;
-    width: 450px;
     border-radius: 15px;
 }
 
@@ -1259,4 +1262,12 @@ button#reservar{
     background-color: rgb(240, 230, 230); /* Um fundo levemente rosado para o feedback */
     border-color: rgb(100, 3, 3);
     color: rgb(100, 3, 3);
+}
+
+/* ============================================== */
+/* === CORREÇÃO TOM-SELECT  === */
+/* ============================================== */
+
+a.remove{
+    margin-top: 0px
 }

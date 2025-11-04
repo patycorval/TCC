@@ -36,18 +36,18 @@
         <input type="text" id="numero" name="numero" th:field="*{numero}" readonly />
 
             <!-- Nome do Reservante -->
-        <label for="nome">Seu Nome:</label>
+        <label for="nome">Seu Nome: <span class="text-danger ms-1">*</span></label>
         <input type="text" id="nome" name="nome" th:field="*{nome}" required />
 
         <!-- Data da Reserva -->
-        <label for="data">Data:</label>
+        <label for="data">Data: <span class="text-danger ms-1">*</span></label>
         <input type="date" id="data" name="data" th:field="*{data}" th:min="${dataMinima}" required/>
 
         <!-- Hora da Reserva -->
-        <label for="hora">Hora Início:</label>
+        <label for="hora">Hora Início: <span class="text-danger ms-1">*</span></label>
         <input type="time" id="hora" name="hora" th:field="*{hora}" required />
 
-        <label for="horaFim">Hora Fim:</label>
+        <label for="horaFim">Hora Fim: <span class="text-danger ms-1">*</span></label>
         <input type="time" id="horaFim" name="horaFim" th:field="*{horaFim}" required />
 
         <input type="submit" value="Atualizar" name="atualizar" id="atualiza">

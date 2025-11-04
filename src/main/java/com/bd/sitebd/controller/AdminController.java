@@ -54,6 +54,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cadastro")
     public String exibirCadastro(Model model) {
+        model.addAttribute("activePage", "cadastro");
         List<Curso> todosOsCursos = cursoRepository.findAll();
         model.addAttribute("listaDeCursos", todosOsCursos);
 
