@@ -54,6 +54,11 @@ h3{
     color: white;
     padding: 10px;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    min-height: -webkit-fill-available;
 }
 .div-reservar img {
     width: 100%;
@@ -77,6 +82,15 @@ h3{
     border-style: none;
     font-weight: 400;
     transition: transform 0.3s;
+    margin-top: auto;
+}
+
+/* Correção para o alinhamento dos recursos */
+.recursos-container {
+    flex-wrap: wrap;      /* Permite que os itens quebrem a linha */
+    align-items: center;  /* Alinha os itens verticalmente */
+    gap: 6px;
+    margin-bottom: 1rem; 
 }
 
 .filtro-div{

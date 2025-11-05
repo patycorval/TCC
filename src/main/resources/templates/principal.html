@@ -62,6 +62,19 @@
               >
                 Projetor
               </option>
+
+              <option
+                value="COMPUTADOR"
+                th:selected="${recursoSelecionado == 'COMPUTADOR'}"
+              >
+                Computador
+              </option>
+              <option
+                value="NOTEBOOK"
+                th:selected="${recursoSelecionado == 'NOTEBOOK'}"
+              >
+                Notebook
+              </option>
             </select>
           </div>
           <div class="col-md-3">
@@ -123,12 +136,12 @@
           <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
             Máquinas
           </p>
-          <div>
+         <div class="recursos-container">
             <span>Recursos: </span>
             <span
               th:each="recurso : ${sala.recursos}"
               th:text="${recurso}"
-              class="badge bg-secondary me-1 mb-3"
+              class="badge bg-secondary me-1 mb-1"
             >
             </span>
             <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
@@ -168,12 +181,12 @@
           <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
             Máquinas
           </p>
-          <div>
+        <div class="recursos-container">
             <span>Recursos: </span>
             <span
               th:each="recurso : ${sala.recursos}"
               th:text="${recurso}"
-              class="badge bg-secondary me-1 mb-3"
+              class="badge bg-secondary me-1 mb-1"
             >
             </span>
             <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
