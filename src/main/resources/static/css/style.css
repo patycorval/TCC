@@ -1039,6 +1039,23 @@ h2 .sucesso{
     cursor: pointer;
 }
 
+.grade-placeholder {
+    /* Ocupa todas as colunas do grid-tabela (Horário + 6 dias) */
+    grid-column: 1 / -1; 
+    
+    /* Estilo visual */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px; /* <-- A "âncora" que segura o espaço vertical */
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    color: #aaa;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
 
 /* =================================================================== */
 /* --- ESTILOS FINAIS PARA LOGIN E CADASTRO --- */

@@ -2,24 +2,27 @@ package com.bd.sitebd.model;
 
 import jakarta.persistence.*;
 import java.util.List;
-
 import com.bd.sitebd.model.enums.Recurso;
 import com.bd.sitebd.model.enums.TipoSala;
 import java.util.stream.Collectors;
 
 @Entity
+@Table(name = "sala") // Garante que o nome da tabela esteja correto
 public class Sala {
 
+    // --- SEUS CAMPOS EXISTENTES ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private int qtdComputadores;
-    private String numero; // NUMERO DA SALA
-    private Integer capacidade; // QT ALUNO
-    private String localizacao; // ANDAR
-    private TipoSala tipo; // Ex: Laboratório, Sala comum
-    private boolean ativa = true; // SE ESTA RESERVADA OU NAO
+    private String numero;
+    private Integer capacidade;
+    private String localizacao;
+
+    @Enumerated(EnumType.STRING) // Assumindo que seu 'tipo' é um Enum
+    private TipoSala tipo;
+
+    private boolean ativa = true;
 
     @ElementCollection(targetClass = Recurso.class)
     @Enumerated(EnumType.STRING)
@@ -27,34 +30,33 @@ public class Sala {
     @Column(name = "recurso")
     private List<Recurso> recursos;
 
-    @Lob // Large Object - bom para dados grandes
-    @Column(name = "imagem_dados")
-    private byte[] imagemDados; // Mapeia para BYTEA
+    // --- CAMPO DE IMAGEM ATUALIZADO ---
+    @Column(name = "imagem_url") // Mapeia para a nova coluna do banco
+    private String imagemUrl; // Apenas um campo de texto
+    // --- FIM DA ATUALIZAÇÃO ---
 
-    @Column(name = "imagem_tipo")
-    private String imagemTipo;
-
+    // Construtores
     public Sala() {
     }
+    // (Seu outro construtor, se houver)
 
-    public Sala(String numero, Integer capacidade, String localizacao, TipoSala tipo, boolean ativa,
-            List<Recurso> recursos, int qtdComputadores) {
-        this.numero = numero;
-        this.capacidade = capacidade;
-        this.localizacao = localizacao;
-        this.tipo = tipo;
-        this.ativa = ativa;
-        this.recursos = recursos;
-        this.qtdComputadores = qtdComputadores;
-    }
+    // --- GETTERS E SETTERS ---
 
-    // Getters e Setters
+    // (Getters/setters existentes: id, numero, capacidade, etc.)
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getQtdComputadores() {
+        return qtdComputadores;
+    }
+
+    public void setQtdComputadores(int qtdComputadores) {
+        this.qtdComputadores = qtdComputadores;
     }
 
     public String getNumero() {
@@ -81,6 +83,14 @@ public class Sala {
         this.localizacao = localizacao;
     }
 
+    public TipoSala getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoSala tipo) {
+        this.tipo = tipo;
+    }
+
     public boolean isAtiva() {
         return ativa;
     }
@@ -97,35 +107,18 @@ public class Sala {
         this.recursos = recursos;
     }
 
-    public TipoSala getTipo() {
-        return tipo;
+    // --- GETTER E SETTER PARA IMAGEM_URL ---
+    public String getImagemUrl() {
+        return imagemUrl;
     }
 
-    public void setTipo(TipoSala tipo) {
-        this.tipo = tipo;
+    public void setImagemUrl(String imagemUrl) {
+        this.imagemUrl = imagemUrl;
     }
+    // --- FIM ---
 
-    public int getQtdComputadores() {
-        return qtdComputadores;
-    }
-
-    public byte[] getImagemDados() {
-        return imagemDados;
-    }
-
-    public void setImagemDados(byte[] imagemDados) {
-        this.imagemDados = imagemDados;
-    }
-
-    public String getImagemTipo() {
-        return imagemTipo;
-    }
-
-    public void setImagemTipo(String imagemTipo) {
-        this.imagemTipo = imagemTipo;
-    }
-
-    @Transient // transient nao existe no banco
+    // --- Seus métodos @Transient (MANTENHA-OS) ---
+    @Transient
     public TipoSala getTipoSala() {
         if (this.qtdComputadores > 1) {
             return TipoSala.LABORATORIO;
@@ -138,8 +131,6 @@ public class Sala {
         if (this.recursos == null || this.recursos.isEmpty()) {
             return "";
         }
-        // Para cada recurso, pega seu nome (ex: "TELEVISOR")
-        // Junta todos os nomes em uma String, separados por ","
         return this.recursos.stream()
                 .map(Recurso::name)
                 .collect(Collectors.joining(","));
