@@ -253,19 +253,19 @@ btnBloquearTrigger.addEventListener('click', (event) => {
             try {
                 const eventos = JSON.parse(eventosJson);
                 // Array para armazenar apenas o nome e hora dos eventos ATIVOS neste dia
-                const activeEventDetails = []; // <-- CORRIGIDO: Variável definida no escopo correto
-                
-                // Verifica se há algum evento que não foi rejeitado (ou seja, APROVADA ou PENDENTE)
-                const hasActiveEvents = eventos.some(e => {
-                    if (e.status !== 'REJEITADA') {
-                        activeEventDetails.push({ 
-                            evento: e.evento,
-                            hora: formatarHora(e.hora)
-                        });
-                        return true;
-                    }
-                    return false;
-                });
+                const activeEventDetails = []; 
+                eventos.forEach(e => {
+                    if (e.status !== 'REJEITADA') {
+                        // CORREÇÃO: Adicionamos horaFim aqui
+                        activeEventDetails.push({ 
+                            evento: e.evento,
+                            hora: formatarHora(e.hora),
+                            horaFim: formatarHora(e.horaFim) 
+                        });
+                    }
+                });
+                // 2. Verifica se a lista de eventos ativos NÃO está vazia
+                const hasActiveEvents = activeEventDetails.length > 0;
 
                 if (hasActiveEvents) {
                     // Formata a data para exibição: yyyy-MM-dd -> dd/MM/yyyy
@@ -283,6 +283,28 @@ btnBloquearTrigger.addEventListener('click', (event) => {
     });
 
     // 2. Decidir se mostra o modal ou submete o formulário
+
+/*
+// Itera sobre CADA EVENTO individualmente
+        diasComEventos.forEach(evento => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item list-group-item-danger mb-2'; // mb-2 dá o espaçamento *entre* as caixas
+            
+            // Estilos para remover o espaçamento interno e alinhar à esquerda
+            li.style.padding = '10px 15px';
+            li.style.textAlign = 'left';
+
+            // Escapa o nome do evento para segurança
+            const nomeEvento = evento.eventoNome ? evento.eventoNome.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Evento sem nome";
+            
+            // Monta o HTML no formato "Dia - Evento: Nome (Inicio-Fim)"
+            li.innerHTML = `
+                <strong>Dia ${evento.data}</strong> - Evento: ${nomeEvento} (${evento.hora}-${evento.horaFim})
+            `;
+            
+            diasComEventosLista.appendChild(li);
+        });
+*/
     if (diasComEventos.length > 0) {
         // Popula a lista no modal
         diasComEventosLista.innerHTML = '';
@@ -291,10 +313,10 @@ btnBloquearTrigger.addEventListener('click', (event) => {
             li.className = 'list-group-item list-group-item-danger mb-2';
 
             // Constrói a string de eventos formatada
-            const eventosTexto = dia.eventos.map(e => `${e.evento} (${e.hora})`).join('; ');
+            const eventosTexto = dia.eventos.map(e => `${e.evento} (${e.hora} - ${e.horaFim})`).join(' e ');
             
             // MODIFICADO: Inclui a lista de eventos no item
-            li.innerHTML = `Dia ${dia.data} - Evento: ${eventosTexto}`;
+            li.innerHTML = dia.eventos.length>1? `<strong> Dia ${dia.data} </strong>- Eventos: ${eventosTexto}`: `<strong> Dia ${dia.data} </strong>- Evento: ${eventosTexto}` ;
             diasComEventosLista.appendChild(li);
         });
 

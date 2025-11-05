@@ -90,7 +90,7 @@
                   <th>Sala/Lab</th>
                   <th>Data</th>
                   <th>Horário</th>
-                  <th>Solicitante</th>
+                  <th sec:authorize="hasRole('ADMIN')">Solicitante</th>
                   <th>Status</th>
                   <th>Origem</th>
                   <th class="text-center">Ações</th>
@@ -106,12 +106,10 @@
                   <td
                     th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"
                   ></td>
-                  <td
+ <td
                     th:text="${#temporals.format(reserva.hora, 'HH:mm') + ' - ' + #temporals.format(reserva.horaFim, 'HH:mm')}"
                   ></td>
-
-                  <td th:text="${reserva.nome}"></td>
-
+                  <td sec:authorize="hasRole('ADMIN')" th:text="${reserva.nome}"></td>
                   <td>
                     <span
                       th:class="'badge bg-' + ${reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).APROVADA ? 'success' : (reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).PENDENTE ? 'warning text-dark' : 'secondary')}"
@@ -174,6 +172,7 @@
                   <th>Evento</th>
                   <th>Data</th>
                   <th>Horário</th>
+                  <th sec:authorize="hasRole('ADMIN')">Solicitante</th>
                   <th>Status</th>
                   <th class="text-center">Ações</th>
                 </tr>
@@ -190,6 +189,7 @@
                   <td
                     th:text="${#temporals.format(reserva.hora, 'HH:mm') + ' - ' + #temporals.format(reserva.horaFim, 'HH:mm')}"
                   ></td>
+                  <td sec:authorize="hasRole('ADMIN')" th:text="${reserva.nome}"></td>
                   <td>
                     <span
                       th:classappend="${reserva.status.name() == 'APROVADA'} ? 'bg-success' : (${reserva.status.name() == 'PENDENTE'} ? 'bg-warning text-dark' : 'bg-danger')"

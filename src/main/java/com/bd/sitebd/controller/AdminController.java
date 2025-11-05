@@ -229,7 +229,19 @@ public class AdminController {
             return "redirect:/admin/auditorio-admin";
         }
         try {
-            diasParaBloquear.forEach(diaBloqueadoService::bloquearDia);
+            // Itera sobre cada dia que o admin selecionou para bloquear
+            diasParaBloquear.forEach(dia -> {
+
+                // 1. Bloqueia o dia (como já fazia antes)
+                diaBloqueadoService.bloquearDia(dia);
+
+                // 2. CHAMA O NOVO MÉTODO: Rejeita as reservas existentes nesse dia
+                reservaService.rejeitarReservasAuditorioPorData(dia);
+            });
+
+            // Adiciona uma mensagem de sucesso
+            redirectAttributes.addFlashAttribute("mensagemSucesso",
+                    "Dias bloqueados! Todas as reservas existentes nesses dias foram rejeitadas.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagemErro", "Ocorreu um erro ao bloquear os dias.");
             e.printStackTrace();

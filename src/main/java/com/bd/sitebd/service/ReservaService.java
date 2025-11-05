@@ -268,4 +268,20 @@ public class ReservaService {
                                 return reservaRepository.findByDataBetweenOrderByDataAsc(hoje, hoje.plusDays(15));
                 }
         }
+
+        public void rejeitarReservasAuditorioPorData(LocalDate data) {
+                // Busca todas as reservas (APROVADA, PENDENTE, etc.) para o Auditório no dia
+                List<Reserva> reservasDoDia = reservaRepository.findByNumeroAndData("Auditorio", data);
+
+                if (reservasDoDia != null && !reservasDoDia.isEmpty()) {
+                        for (Reserva reserva : reservasDoDia) {
+                                // Altera o status apenas se não estiver já rejeitada
+                                if (reserva.getStatus() != StatusReserva.REJEITADA) {
+                                        reserva.setStatus(StatusReserva.REJEITADA);
+                                }
+                        }
+                        // Salva todas as alterações no banco de dados de uma vez
+                        reservaRepository.saveAll(reservasDoDia);
+                }
+        }
 }

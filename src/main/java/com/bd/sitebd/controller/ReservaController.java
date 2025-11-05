@@ -1,6 +1,8 @@
 package com.bd.sitebd.controller;
 
 import com.bd.sitebd.model.Reserva;
+import com.bd.sitebd.model.Usuario;
+import com.bd.sitebd.repositories.UsuarioRepository;
 import com.bd.sitebd.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,12 +40,12 @@ public class ReservaController {
     @PostMapping("/reservar")
     public String realizarReserva(@ModelAttribute Reserva reserva, Model model, Authentication authentication) {
         try {
-            reserva.setEmailRequisitor(authentication.getName());
-            reserva.setNome(authentication.getName());
-            // reserva.setStatus(StatusReserva.APROVADA); // Reservas de sala são aprovadas
-            // diretamente
-            reservaService.salvar(reserva);
+            reserva.setEmailRequisitor(authentication.getName()); // Esta linha está CORRETA
+
             reserva.setGradeReserva(false);
+            reservaService.salvar(reserva); // Agora 'reserva' tem o nome do formulário
+            // --- FIM DA MODIFICAÇÃO ---
+
             model.addAttribute("reservaEfetuada", true);
             Reserva novaReserva = new Reserva();
             novaReserva.setNumero(reserva.getNumero());
