@@ -12,6 +12,15 @@ import com.bd.sitebd.service.DiaBloqueadoService;
 import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.service.UsuarioService;
 
+// --- IMPORTS ADICIONADOS PARA CADASTRO DE SALA ---
+import com.bd.sitebd.model.Sala;
+import com.bd.sitebd.model.enums.Recurso;
+import com.bd.sitebd.model.enums.TipoSala;
+import com.bd.sitebd.service.SalaService;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+// --- FIM DOS IMPORTS ADICIONADOS ---
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -23,7 +32,7 @@ import java.util.Set;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity; // <-- IMPORT ADICIONADO
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -50,11 +59,16 @@ public class AdminController {
     @Autowired
     private DiaBloqueadoService diaBloqueadoService;
 
+    // --- INJEÇÃO ADICIONADA ---
+    @Autowired
+    private SalaService salaService;
+    // --- FIM ---
+
     // --- SEU MÉTODO GET/cadastro (JÁ ESTÁ CORRETO) ---
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cadastro")
     public String exibirCadastro(Model model) {
-        model.addAttribute("activePage", "cadastro");
+        model.addAttribute("activePage", "cadastro"); // Mantido
         List<Curso> todosOsCursos = cursoRepository.findAll();
         model.addAttribute("listaDeCursos", todosOsCursos);
 
@@ -80,6 +94,8 @@ public class AdminController {
             @RequestParam(required = false) List<Long> cursos,
             RedirectAttributes redirectAttributes) {
 
+        // ... (Seu código completo para processar o cadastro do usuário) ...
+        // (Mantido exatamente como você enviou)
         if (!senha.equals(confirmarSenha)) {
             redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não conferem!");
             redirectAttributes.addFlashAttribute("usuarioInput",
@@ -128,6 +144,66 @@ public class AdminController {
                             cursos != null ? cursos : List.of()));
         }
         return "redirect:/admin/cadastro";
+    }
+
+    // --- MÉTODOS ADICIONADOS PARA CADASTRO DE SALA ---
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/adicionar-sala")
+    public String exibirFormularioSala(Model model) {
+        model.addAttribute("activePage", "adicionar-sala");
+        return "adicionar-sala";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/adicionar-sala")
+    public String processarAdicionarSala(
+            @RequestParam("numero") String numero,
+            @RequestParam("localizacao") String localizacao,
+            @RequestParam("capacidade") Integer capacidade,
+            @RequestParam("qtdComputadores") int qtdComputadores,
+            @RequestParam("tipo") TipoSala tipo, // Espera a String "SALA_AULA" ou "LABORATORIO"
+            @RequestParam(name = "recursos", required = false) List<Recurso> recursos, // Espera Lista de Enums
+            @RequestParam("imagem") MultipartFile imagem, // O arquivo de upload
+            RedirectAttributes redirectAttributes) {
+
+        // Validação básica do arquivo
+        if (imagem.isEmpty()) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "A imagem é obrigatória.");
+            return "redirect:/admin/adicionar-sala";
+        }
+        String contentType = imagem.getContentType();
+        if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "Formato de arquivo inválido. Apenas JPG ou PNG.");
+            return "redirect:/admin/adicionar-sala";
+        }
+
+        try {
+            Sala novaSala = new Sala();
+            novaSala.setNumero(numero);
+            novaSala.setLocalizacao(localizacao);
+            novaSala.setCapacidade(capacidade);
+            novaSala.setQtdComputadores(qtdComputadores);
+            novaSala.setTipo(tipo);
+            novaSala.setRecursos(recursos);
+            novaSala.setAtiva(true);
+
+            // Chama o SalaService para salvar o arquivo físico e atualizar a entidade
+            salaService.salvarSalaComUpload(novaSala, imagem);
+
+            redirectAttributes.addFlashAttribute("mensagemSucesso",
+                    "Sala '" + novaSala.getNumero() + "' cadastrada com sucesso!");
+            return "redirect:/";
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao salvar a imagem no servidor.");
+            return "redirect:/admin/adicionar-sala";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao salvar a sala: " + e.getMessage());
+            return "redirect:/admin/adicionar-sala";
+        }
     }
 
     // --- SEUS MÉTODOS DE AUDITÓRIO (JÁ ESTÃO CORRETOS) ---
@@ -229,17 +305,10 @@ public class AdminController {
             return "redirect:/admin/auditorio-admin";
         }
         try {
-            // Itera sobre cada dia que o admin selecionou para bloquear
             diasParaBloquear.forEach(dia -> {
-
-                // 1. Bloqueia o dia (como já fazia antes)
                 diaBloqueadoService.bloquearDia(dia);
-
-                // 2. CHAMA O NOVO MÉTODO: Rejeita as reservas existentes nesse dia
-                reservaService.rejeitarReservasAuditorioPorData(dia);
+                reservaService.rejeitarReservasAuditorioPorData(dia); // Rejeita reservas ao bloquear
             });
-
-            // Adiciona uma mensagem de sucesso
             redirectAttributes.addFlashAttribute("mensagemSucesso",
                     "Dias bloqueados! Todas as reservas existentes nesses dias foram rejeitadas.");
         } catch (Exception e) {
@@ -268,29 +337,21 @@ public class AdminController {
         return "redirect:/admin/auditorio-admin?mes=" + ym.getMonthValue() + "&ano=" + ym.getYear();
     }
 
-    // --- FUNCIONALIDADE ADICIONADA DO SEGUNDO ARQUIVO ---
-    /**
-     * NOVO ENDPOINT PARA ATUALIZAR STATUS EM MASSA
-     * Recebe uma lista de alterações de status e as aplica.
-     */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/auditorio/atualizar-status-massa")
-    @ResponseBody // Retorna dados (JSON), não uma página HTML
+    @ResponseBody
     public ResponseEntity<Void> atualizarStatusReservaEmMassa(@RequestBody List<UpdateStatusRequest> requests) {
         try {
-            // Itera sobre a lista de requisições e atualiza cada uma
             for (UpdateStatusRequest request : requests) {
                 reservaService.atualizarStatus(request.getReservaId(), request.getNovoStatus());
             }
-            return ResponseEntity.ok().build(); // Retorna 200 OK
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            // Logar o erro é uma boa prática
             e.printStackTrace();
-            return ResponseEntity.badRequest().build(); // Retorna 400 em caso de erro
+            return ResponseEntity.badRequest().build();
         }
     }
 
-    // --- CLASSE INTERNA ADICIONADA DO SEGUNDO ARQUIVO ---
     public static class UpdateStatusRequest {
         private Long reservaId;
         private StatusReserva novoStatus;

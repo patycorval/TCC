@@ -25,11 +25,15 @@
                  <li class="nav-item">
                     <a th:href="@{/listagem}" class="nav-link" th:classappend="${activePage == 'listagem'} ? ' active' : ''">Todas as Reservas</a>
                 </li>
-                  <li class="nav-item">
+                 <li class="nav-item">
                     <a th:href="@{/admin/auditorio-admin}" class="nav-link" th:classappend="${activePage == 'auditorio'} ? ' active' : ''">Auditório</a>
                 </li>
                 <li class="nav-item">
                     <a th:href="@{/admin/cadastro}" class="nav-link" th:classappend="${activePage == 'cadastro'} ? ' active' : ''">Cadastrar Usuário</a>
+                </li>
+
+                <li class="nav-item">
+                    <a th:href="@{/admin/adicionar-sala}" class="nav-link" th:classappend="${activePage == 'adicionar-sala'} ? ' active' : ''">Cadastrar Sala</a>
                 </li>
                 <li class="nav-item dropdown" th:if="${usuarioEmail != null}">
                 <a class="nav-link dropdown-toggle" href="#" id="perfil" role="button" data-bs-toggle="dropdown" aria-expanded="false">

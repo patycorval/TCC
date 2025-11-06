@@ -38,6 +38,9 @@
             <label for="andar" class="form-label">Andar</label>
             <select class="form-select" id="andar">
               <option value="">Todos</option>
+              <option value="2" th:selected="${andarSelecionado == '2'}">
+                2º Andar
+              </option>
               <option value="3" th:selected="${andarSelecionado == '3'}">
                 3º Andar
               </option>
@@ -48,52 +51,11 @@
           </div>
           <div class="col-md-3">
             <label for="recurso" class="form-label">Recursos</label>
-            <select class="form-select" id="recurso">
-              <option value="">Todos</option>
-              <option
-                value="TELEVISOR"
-                th:selected="${recursoSelecionado == 'TELEVISOR'}"
-              >
-                TV
-              </option>
-              <option
-                value="PROJETOR"
-                th:selected="${recursoSelecionad == 'PROJETOR'}"
-              >
-                Projetor
-              </option>
-
-              <option
-                value="COMPUTADOR"
-                th:selected="${recursoSelecionado == 'COMPUTADOR'}"
-              >
-                Computador
-              </option>
-              <option
-                value="NOTEBOOK"
-                th:selected="${recursoSelecionado == 'NOTEBOOK'}"
-              >
-                Notebook
-              </option>
-            </select>
+            <select class="form-select" id="recurso"></select>
           </div>
           <div class="col-md-3">
             <label for="tiposala" class="form-label">Tipo de Sala</label>
-            <select class="form-select" id="tiposala">
-              <option value="">Todos</option>
-              <option
-                value="LABORATORIO"
-                th:selected="${tipoSalaSelecionado == 'LABORATORIO'}"
-              >
-                Laboratório
-              </option>
-              <option
-                value="SALA_AULA"
-                th:selected="${tipoSalaSelecionado == 'SALA_AULA'}"
-              >
-                Sala de aula
-              </option>
-            </select>
+            <select class="form-select" id="tiposala"></select>
           </div>
           <div class="col-md-2 align-self-end">
             <button
@@ -107,102 +69,158 @@
         </form>
       </div>
 
-      <h2 id="andar3-titulo">Salas e Laboratórios - 3º Andar</h2>
-      <section class="andar3" id="andar3-section">
-        <div
-          class="div-reservar"
-          th:each="sala : ${salasAndar3}"
-          data-andar="3"
-          th:data-tiposala="${sala.tipoSala}"
-          th:data-recursos="${sala.recursosAsString}"
-        >
-          <img
-            th:if="${sala.imagemUrl != null}"
-            th:src="${sala.imagemUrl}"
-            th:alt="'Imagem da sala ' + ${sala.numero}"
-          />
-
-          <img
-            th:unless="${sala.imagemUrl != null}"
-            th:src="@{/img/sala_padrao.jpg}"
-            th:alt="'Imagem da sala ' + ${sala.numero}"
-          />
-
-          <h3 th:text="${sala.numero}">Tipo e Número</h3>
-
-          <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
-            Capacidade
-          </p>
-          <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
-            Máquinas
-          </p>
-         <div class="recursos-container">
-            <span>Recursos: </span>
-            <span
-              th:each="recurso : ${sala.recursos}"
-              th:text="${recurso}"
-              class="badge bg-secondary me-1 mb-1"
-            >
-            </span>
-            <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
+      <div
+        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '2'}"
+      >
+        <h2 id="andar2-titulo">Salas e Laboratórios - 2º Andar</h2>
+        <section class="andar2" id="andar2-section">
+          <div
+            th:if="${#lists.isEmpty(salasAndar2)}"
+            class="text-center text-muted p-5"
+          >
+            Nenhuma sala encontrada no 2º andar.
           </div>
-          <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
-            Reservar
-          </a>
-        </div>
-      </section>
+          <div
+            class="div-reservar"
+            th:each="sala : ${salasAndar2}"
+            data-andar="2"
+            th:data-tiposala="${sala.tipoSala}"
+            th:data-recursos="${sala.recursosAsString}"
+          >
+            <img
+              th:if="${sala.imagemUrl != null}"
+              th:src="${sala.imagemUrl}"
+              th:alt="'Imagem da sala ' + ${sala.numero}"
+            />
+            <img
+              th:unless="${sala.imagemUrl != null}"
+              th:src="@{/img/sala_padrao.jpg}"
+              th:alt="'Imagem da sala ' + ${sala.numero}"
+            />
 
-      <h2 id="andar5-titulo">Salas e Laboratórios - 5º Andar</h2>
-      <section class="andar5" id="andar5-section">
-        <div
-          class="div-reservar"
-          th:each="sala : ${salasAndar5}"
-          data-andar="5"
-          th:data-tiposala="${sala.tipoSala}"
-          th:data-recursos="${sala.recursosAsString}"
-        >
-          <img
-            th:if="${sala.imagemUrl != null}"
-            th:src="${sala.imagemUrl}"
-            th:alt="'Imagem da sala ' + ${sala.numero}"
-          />
-
-          <img
-            th:unless="${sala.imagemUrl != null}"
-            th:src="@{/img/sala_padrao.jpg}"
-            th:alt="'Imagem da sala ' + ${sala.numero}"
-          />
-
-          <h3 th:text="${sala.numero}">Tipo e Número</h3>
-
-          <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
-            Capacidade
-          </p>
-          <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
-            Máquinas
-          </p>
-        <div class="recursos-container">
-            <span>Recursos: </span>
-            <span
-              th:each="recurso : ${sala.recursos}"
-              th:text="${recurso}"
-              class="badge bg-secondary me-1 mb-1"
-            >
-            </span>
-            <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
+            <h3 th:text="${sala.numero}">Tipo e Número</h3>
+            <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
+              Capacidade
+            </p>
+            <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
+              Máquinas
+            </p>
+            <div class="recursos-container">
+              <span>Recursos: </span>
+              <span
+                th:each="recurso : ${sala.recursos}"
+                th:text="${recurso}"
+                class="badge bg-secondary me-1 mb-1"
+              >
+              </span>
+              <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
+            </div>
+            <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
+              Reservar
+            </a>
           </div>
-          <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
-            Reservar
-          </a>
-        </div>
-      </section>
+        </section>
+      </div>
+      <div
+        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '3'}"
+      >
+        <h2 id="andar3-titulo">Salas e Laboratórios - 3º Andar</h2>
+        <section class="andar3" id="andar3-section">
+          <div
+            class="div-reservar"
+            th:each="sala : ${salasAndar3}"
+            data-andar="3"
+            th:data-tiposala="${sala.tipoSala}"
+            th:data-recursos="${sala.recursosAsString}"
+          >
+            <img
+              th:if="${sala.imagemUrl != null}"
+              th:src="${sala.imagemUrl}"
+              th:alt="'Imagem da sala ' + ${sala.numero}"
+            />
+
+            <img
+              th:unless="${sala.imagemUrl != null}"
+              th:src="@{/img/sala_padrao.jpg}"
+              th:alt="'Imagem da sala ' + ${sala.numero}"
+            />
+
+            <h3 th:text="${sala.numero}">Tipo e Número</h3>
+
+            <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
+              Capacidade
+            </p>
+            <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
+              Máquinas
+            </p>
+            <div class="recursos-container">
+              <span>Recursos: </span>
+              <span
+                th:each="recurso : ${sala.recursos}"
+                th:text="${recurso}"
+                class="badge bg-secondary me-1 mb-1"
+              >
+              </span>
+              <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
+            </div>
+            <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
+              Reservar
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <div
+        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '5'}"
+      >
+        <h2 id="andar5-titulo">Salas e Laboratórios - 5º Andar</h2>
+        <section class="andar5" id="andar5-section">
+          <div
+            class="div-reservar"
+            th:each="sala : ${salasAndar5}"
+            data-andar="5"
+            th:data-tiposala="${sala.tipoSala}"
+            th:data-recursos="${sala.recursosAsString}"
+          >
+            <img
+              th:if="${sala.imagemUrl != null}"
+              th:src="${sala.imagemUrl}"
+              th:alt="'Imagem da sala ' + ${sala.numero}"
+            />
+
+            <img
+              th:unless="${sala.imagemUrl != null}"
+              th:src="@{/img/sala_padrao.jpg}"
+              th:alt="'Imagem da sala ' + ${sala.numero}"
+            />
+
+            <h3 th:text="${sala.numero}">Tipo e Número</h3>
+
+            <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
+              Capacidade
+            </p>
+            <p th:text="'Quantidade de máquinas: ' + ${sala.qtdComputadores}">
+              Máquinas
+            </p>
+            <div class="recursos-container">
+              <span>Recursos: </span>
+              <span
+                th:each="recurso : ${sala.recursos}"
+                th:text="${recurso}"
+                class="badge bg-secondary me-1 mb-1"
+              >
+              </span>
+              <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
+            </div>
+            <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
+              Reservar
+            </a>
+          </div>
+        </section>
+      </div>
     </main>
     <script th:src="@{/js/filtroprincipal.js}"></script>
-    <div th:replace="~{fragments/footer :: footer}"></div>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
-      crossorigin="anonymous"
-    ></script>
+    <div th:replace="{fragments/footer :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
