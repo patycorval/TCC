@@ -44,14 +44,16 @@ public class UsuarioController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/")
     public String principal(
-            // O método agora aceita os parâmetros de filtro da URL
             @RequestParam(required = false) String andar,
             @RequestParam(required = false) String recurso,
             @RequestParam(required = false) String tiposala,
             Model model) {
 
-        // busca e filtra as salas com base nos parâmetros recebidos
         List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala);
+
+        List<Sala> salasAndar2 = salasFiltradas.stream()
+                .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("2"))
+                .toList();
 
         List<Sala> salasAndar3 = salasFiltradas.stream()
                 .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("3"))
@@ -61,10 +63,12 @@ public class UsuarioController {
                 .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("5"))
                 .toList();
 
+        model.addAttribute("salasAndar2", salasAndar2);
+
+        // 5. Seus atributos existentes (sem alteração)
         model.addAttribute("salasAndar3", salasAndar3);
         model.addAttribute("salasAndar5", salasAndar5);
         model.addAttribute("activePage", "principal");
-
         model.addAttribute("andarSelecionado", andar);
         model.addAttribute("recursoSelecionado", recurso);
         model.addAttribute("tipoSalaSelecionado", tiposala);
@@ -98,7 +102,7 @@ public class UsuarioController {
             String periodoIdeal = reservaService.determinarPeriodoParaData(reserva.getData());
             reserva.setPeriodoIdeal(periodoIdeal); // Um novo campo temporário no modelo Reserva
         });
-        
+
         List<DiaCalendario> diasDoMes = new ArrayList<>();
         LocalDate primeiroDiaDoMes = ym.atDay(1);
         int diaDaSemanaDoPrimeiroDia = primeiroDiaDoMes.getDayOfWeek().getValue();
