@@ -961,6 +961,11 @@ a.voltar:hover {
     font-size: 1rem;
     padding: 0.5rem;
 }
+
+table .badge {
+  display: inline;
+}
+
 /****** PAGINA SUCESSO ******/
 h2 .sucesso{
     margin-top: 0;

@@ -192,10 +192,10 @@
                   <td sec:authorize="hasRole('ADMIN')" th:text="${reserva.nome}"></td>
                   <td>
                     <span
-                      th:classappend="${reserva.status.name() == 'APROVADA'} ? 'bg-success' : (${reserva.status.name() == 'PENDENTE'} ? 'bg-warning text-dark' : 'bg-danger')"
-                      class="badge"
-                      th:text="${reserva.status}"
-                    >
+    th:classappend="${reserva.status.name() == 'APROVADA'} ? 'bg-success' : (${reserva.status.name() == 'PENDENTE'} ? 'bg-warning text-dark' : 'bg-danger')"
+    class="badge"
+    th:text="${#strings.capitalize( #strings.toLowerCase(reserva.status) )}"
+  >
                     </span>
                   </td>
                   <td class="text-center">
