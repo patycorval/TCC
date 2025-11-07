@@ -8,19 +8,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import com.bd.sitebd.model.Reserva;
 import com.bd.sitebd.model.Sala;
 import com.bd.sitebd.repositories.SalaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate; 
+import java.time.LocalTime;
+import java.util.ArrayList; 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors; 
 
 @Service
 public class SalaService {
 
     @Autowired
     private SalaRepository salaRepository;
+
+    @Autowired
+    private ReservaService reservaService;
 
     public void apagarTodasSalas() {
         salaRepository.deleteAll();
@@ -80,16 +88,42 @@ public class SalaService {
 
     // FILTRO
 
-    public List<Sala> getSalasFiltradas(String andar, String recurso, String tiposala) {
+   public List<Sala> getSalasFiltradas(String andar, String recurso, String tiposala,
+                                          LocalDate data, LocalTime horaInicio, LocalTime horaFim) {
         // Pega TODAS as salas do banco
         List<Sala> todasAsSalas = salaRepository.findAll();
 
         // Aplica os filtros e retorna a lista resultante
-        return todasAsSalas.stream()
-                .filter(sala -> andar == null || andar.isEmpty()
-                        || (sala.getLocalizacao() != null && sala.getLocalizacao().startsWith(andar)))
+        // 2. Aplica os filtros estáticos (andar, tipo, recurso)
+        List<Sala> salasFiltradas = todasAsSalas.stream()
+                .filter(sala -> andar == null || andar.isEmpty() || (sala.getLocalizacao() != null && sala.getLocalizacao().startsWith(andar)))
                 .filter(sala -> tiposala == null || tiposala.isEmpty() || sala.getTipoSala().name().equals(tiposala))
                 .filter(sala -> recurso == null || recurso.isEmpty() || sala.getRecursosAsString().contains(recurso))
-                .toList();
+                .collect(Collectors.toList()); // Coleta a lista aqui
+
+        // 3. Se não houver filtro de data/hora, retorna a lista filtrada por estáticos
+        if (data == null || horaInicio == null || horaFim == null) {
+            return salasFiltradas;
+        }
+
+        // 4. Se houver filtro de data/hora, verifica a disponibilidade
+        List<Sala> salasDisponiveis = new ArrayList<>();
+        
+        for (Sala sala : salasFiltradas) {
+            // Cria uma reserva "fictícia" para usar a lógica de verificação
+            Reserva dummyReserva = new Reserva();
+            dummyReserva.setNumero(sala.getNumero());
+            dummyReserva.setData(data);
+            dummyReserva.setHora(horaInicio);
+            dummyReserva.setHoraFim(horaFim);
+
+            // Re-usa a lógica de conflito que você já criou no ReservaService
+            // Se NÃO tem conflito, a sala está disponível
+            if (!reservaService.temConflito(dummyReserva)) {
+                salasDisponiveis.add(sala);
+            }
+        }
+        
+        return salasDisponiveis; // Retorna apenas as salas disponíveis
     }
 }

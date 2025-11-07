@@ -47,10 +47,13 @@ public class UsuarioController {
             @RequestParam(required = false) String andar,
             @RequestParam(required = false) String recurso,
             @RequestParam(required = false) String tiposala,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFiltro,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime horaInicioFiltro,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime horaFimFiltro,
             Model model) {
 
-        List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala);
-
+       List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala, dataFiltro, horaInicioFiltro, horaFimFiltro);
+       
         List<Sala> salasAndar2 = salasFiltradas.stream()
                 .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("2"))
                 .toList();
@@ -72,6 +75,9 @@ public class UsuarioController {
         model.addAttribute("andarSelecionado", andar);
         model.addAttribute("recursoSelecionado", recurso);
         model.addAttribute("tipoSalaSelecionado", tiposala);
+        model.addAttribute("dataFiltro", dataFiltro);
+        model.addAttribute("horaInicioFiltro", horaInicioFiltro);
+        model.addAttribute("horaFimFiltro", horaFimFiltro);
 
         return "principal";
     }

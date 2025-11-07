@@ -26,21 +26,14 @@
         object-fit: cover;
         width: 100%;
       }
-
-      /* =================== MUDANÇA 1: DEIXAR O "FILTRAR" MAIOR =================== */
-      /* Adicionando padding vertical (py-2) e horizontal (px-3) */
+/* 
       .btn-filtro {
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
         padding-left: 1rem;
         padding-right: 1rem;
-        /* Se você também quiser a cor vermelha nele, descomente as linhas abaixo */
-        /* background-color: #c30000;
-          color: white;
-          border: none;
-          */
-      }
-      /* =================== FIM DA MUDANÇA 1 =================== */
+      } */
+
     </style>
     <title>Página principal</title>
   </head>
@@ -51,94 +44,89 @@
       <h1>Reserva de Salas e Laboratórios - FATEC Rubens Lara</h1>
 
       <div class="container my-4 filtro-div">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
           <h4>Filtros</h4>
-          <div sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/admin/adicionar-sala}" class="btn btn-sm btn-danger">
-              <i class="bi bi-plus-circle-fill me-1"></i>
-              Cadastrar Nova Sala
-            </a>
-          </div>
-        </div>
+      </div>
 
-        <form class="row g-3">
-          <div class="col-md-3">
-            <label for="andar" class="form-label">Andar</label>
-            <select class="form-select" id="andar">
-              <option value="">Todos</option>
-              <option value="2" th:selected="${andarSelecionado == '2'}">
-                2º Andar
-              </option>
-              <option value="3" th:selected="${andarSelecionado == '3'}">
-                3º Andar
-              </option>
-              <option value="5" th:selected="${andarSelecionado == '5'}">
-                5º Andar
-              </option>
-            </select>
+      <div id="filtro-time-alert" class="alert alert-warning d-none mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+          Para filtrar por disponibilidade, por favor, preencha a Data, Hora Início e Hora Fim.
+      </div>
+        <form class="row g-3 align-items-stretch">
+          <div class="col-12 col-md">
+            <div class="form-floating">
+              <select class="form-select" id="andar" placeholder="Andar" aria-label="Andar">
+                <option value="">Todos</option>
+                <option value="2" th:selected="${andarSelecionado == '2'}">2º Andar</option>
+                <option value="3" th:selected="${andarSelecionado == '3'}">3º Andar</option>
+                <option value="5" th:selected="${andarSelecionado == '5'}">5º Andar</option>
+              </select>
+              <label for="andar">Andar</label>
+            </div>
           </div>
-          <div class="col-md-3">
-            <label for="recurso" class="form-label">Recursos</label>
-            <select class="form-select" id="recurso">
-              <option value="">Todos</option>
-              <option
-                value="TELEVISOR"
-                th:selected="${recursoSelecionado == 'TELEVISOR'}"
-              >
-                TV
-              </option>
-              <option
-                value="PROJETOR"
-                th:selected="${recursoSelecionado == 'PROJETOR'}"
-              >
-                Projetor
-              </option>
-              <option
-                value="COMPUTADORES"
-                th:selected="${recursoSelecionado == 'COMPUTADORES'}"
-              >
-                Computador
-              </option>
-              <option
-                value="NOTEBOOK"
-                th:selected="${recursoSelecionado == 'NOTEBOOK'}"
-              >
-                Notebook
-              </option>
-            </select>
+
+          <div class="col-12 col-md">
+            <div class="form-floating">
+              <select class="form-select" id="recurso" placeholder="Recursos" aria-label="Recursos">
+                <option value="">Todos</option>
+                <option value="TELEVISOR" th:selected="${recursoSelecionado == 'TELEVISOR'}">TV</option>
+                <option value="PROJETOR" th:selected="${recursoSelecionado == 'PROJETOR'}">Projetor</option>
+                <option value="COMPUTADOR" th:selected="${recursoSelecionado == 'COMPUTADOR'}">Computador</option>
+                <option value="NOTEBOOK" th:selected="${recursoSelecionado == 'NOTEBOOK'}">Notebook</option>
+              </select>
+              <label for="recurso">Recursos</label>
+            </div>
           </div>
-          <div class="col-md-3">
-            <label for="tiposala" class="form-label">Tipo de Sala</label>
-            <select class="form-select" id="tiposala">
-              <option value="">Todos</option>
-              <option
-                value="LABORATORIO"
-                th:selected="${tipoSalaSelecionado == 'LABORATORIO'}"
-              >
-                Laboratório
-              </option>
-              <option
-                value="SALA_AULA"
-                th:selected="${tipoSalaSelecionado == 'SALA_AULA'}"
-              >
-                Sala de aula
-              </option>
-            </select>
+
+          <div class="col-12 col-md">
+            <div class="form-floating">
+              <select class="form-select" id="tiposala" placeholder="Tipo de Sala" aria-label="Tipo de Sala">
+                <option value="">Todos</option>
+                <option value="LABORATORIO" th:selected="${tipoSalaSelecionado == 'LABORATORIO'}">Laboratório</option>
+                <option value="SALA_AULA" th:selected="${tipoSalaSelecionado == 'SALA_AULA'}">Sala de aula</option>
+              </select>
+              <label for="tiposala">Tipo de Sala</label>
+            </div>
           </div>
-          <div class="col-md-2 align-self-end">
-            <button
-              type="button"
-              class="btn-filtro w-100"
-              onclick="aplicarFiltros()"
-            >
+
+          <div class="col-12 col-md">
+            <div class="form-floating">
+              <input type="date" class="form-control" id="dataFiltro" th:value="${dataFiltro}" placeholder="Data">
+              <label for="dataFiltro">Data</label>
+            </div>
+          </div>
+
+          <div class="col-12 col-md">
+            <div class="form-floating">
+              <input type="time" class="form-control" id="horaInicioFiltro" th:value="${horaInicioFiltro}" placeholder="Hora Início">
+              <label for="horaInicioFiltro">Hora Início</label>
+            </div>
+          </div>
+
+          <div class="col-12 col-md">
+            <div class="form-floating">
+              <input type="time" class="form-control" id="horaFimFiltro" th:value="${horaFimFiltro}" placeholder="Hora Fim">
+              <label for="horaFimFiltro">Hora Fim</label>
+            </div>
+          </div>
+
+          <div class="col-12 col-md d-flex align-items-end">
+            <button type="button" class="btn-filtro w-100" onclick="aplicarFiltros()">
               Filtrar
             </button>
           </div>
         </form>
       </div>
-
+      <div class="container px-0" sec:authorize="hasRole('ADMIN')">
+        <div class="d-flex justify-content-end mb-2">
+            <a th:href="@{/admin/adicionar-sala}" class="btn btn-secondary btn-cadastrar-sala">
+               <i class="bi bi-plus-lg me-1"></i>              
+               Cadastrar Nova Sala
+            </a>
+        </div>
+      </div>
       <div
-        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '2'}"
+        th:if="${!#lists.isEmpty(salasAndar2) or andarSelecionado == '2'}"
       >
         <h2 id="andar2-titulo">Salas e Laboratórios - 2º Andar</h2>
         <section class="andar2" id="andar2-section">
@@ -190,7 +178,7 @@
       </div>
 
       <div
-        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '3'}"
+        th:if="${!#lists.isEmpty(salasAndar3) or andarSelecionado == '3'}"
       >
         <h2 id="andar3-titulo">Salas e Laboratórios - 3º Andar</h2>
         <section class="andar3" id="andar3-section">
@@ -242,7 +230,7 @@
       </div>
 
       <div
-        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '5'}"
+        th:if="${!#lists.isEmpty(salasAndar5) or andarSelecionado == '5'}"
       >
         <h2 id="andar5-titulo">Salas e Laboratórios - 5º Andar</h2>
         <section class="andar5" id="andar5-section">
