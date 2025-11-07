@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="pt-br"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,6 +26,21 @@
         object-fit: cover;
         width: 100%;
       }
+
+      /* =================== MUDANÇA 1: DEIXAR O "FILTRAR" MAIOR =================== */
+      /* Adicionando padding vertical (py-2) e horizontal (px-3) */
+      .btn-filtro {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        /* Se você também quiser a cor vermelha nele, descomente as linhas abaixo */
+        /* background-color: #c30000;
+          color: white;
+          border: none;
+          */
+      }
+      /* =================== FIM DA MUDANÇA 1 =================== */
     </style>
     <title>Página principal</title>
   </head>
@@ -32,7 +51,16 @@
       <h1>Reserva de Salas e Laboratórios - FATEC Rubens Lara</h1>
 
       <div class="container my-4 filtro-div">
-        <h4>Filtros</h4>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Filtros</h4>
+          <div sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/adicionar-sala}" class="btn btn-sm btn-danger">
+              <i class="bi bi-plus-circle-fill me-1"></i>
+              Cadastrar Nova Sala
+            </a>
+          </div>
+        </div>
+
         <form class="row g-3">
           <div class="col-md-3">
             <label for="andar" class="form-label">Andar</label>
@@ -49,7 +77,7 @@
               </option>
             </select>
           </div>
-<div class="col-md-3">
+          <div class="col-md-3">
             <label for="recurso" class="form-label">Recursos</label>
             <select class="form-select" id="recurso">
               <option value="">Todos</option>
@@ -65,10 +93,9 @@
               >
                 Projetor
               </option>
-
               <option
-                value="COMPUTADOR"
-                th:selected="${recursoSelecionado == 'COMPUTADOR'}"
+                value="COMPUTADORES"
+                th:selected="${recursoSelecionado == 'COMPUTADORES'}"
               >
                 Computador
               </option>
@@ -80,7 +107,7 @@
               </option>
             </select>
           </div>
-          <div class="col-md-3">          
+          <div class="col-md-3">
             <label for="tiposala" class="form-label">Tipo de Sala</label>
             <select class="form-select" id="tiposala">
               <option value="">Todos</option>
@@ -111,7 +138,7 @@
       </div>
 
       <div
-      th:if="${!#lists.isEmpty(salasAndar2) or andarSelecionado == '2'}"
+        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '2'}"
       >
         <h2 id="andar2-titulo">Salas e Laboratórios - 2º Andar</h2>
         <section class="andar2" id="andar2-section">
@@ -138,7 +165,6 @@
               th:src="@{/img/sala_padrao.jpg}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
             />
-
             <h3 th:text="${sala.numero}">Tipo e Número</h3>
             <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
               Capacidade
@@ -162,18 +188,18 @@
           </div>
         </section>
       </div>
+
       <div
-        th:if="${!#lists.isEmpty(salasAndar3) or andarSelecionado == '3'}"
+        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '3'}"
       >
         <h2 id="andar3-titulo">Salas e Laboratórios - 3º Andar</h2>
         <section class="andar3" id="andar3-section">
-
-        <div
-          th:if="${#lists.isEmpty(salasAndar3)}"
-          class="text-center text-muted p-5"
-        >
-          Nenhuma sala encontrada no 3º andar.
-        </div>
+          <div
+            th:if="${#lists.isEmpty(salasAndar3)}"
+            class="text-center text-muted p-5"
+          >
+            Nenhuma sala encontrada no 3º andar.
+          </div>
           <div
             class="div-reservar"
             th:each="sala : ${salasAndar3}"
@@ -186,15 +212,12 @@
               th:src="${sala.imagemUrl}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
             />
-
             <img
               th:unless="${sala.imagemUrl != null}"
               th:src="@{/img/sala_padrao.jpg}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
             />
-
             <h3 th:text="${sala.numero}">Tipo e Número</h3>
-
             <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
               Capacidade
             </p>
@@ -211,26 +234,24 @@
               </span>
               <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
             </div>
-            <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
-              Reservar
-            </a>
+            <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn"
+              >Reservar</a
+            >
           </div>
         </section>
       </div>
 
       <div
-        th:if="${!#lists.isEmpty(salasAndar5) or andarSelecionado == '5'}"
+        th:if="${andarSelecionado == null or andarSelecionado == '' or andarSelecionado == '5'}"
       >
         <h2 id="andar5-titulo">Salas e Laboratórios - 5º Andar</h2>
         <section class="andar5" id="andar5-section">
-
           <div
             th:if="${#lists.isEmpty(salasAndar5)}"
             class="text-center text-muted p-5"
           >
             Nenhuma sala encontrada no 5º andar.
           </div>
-          
           <div
             class="div-reservar"
             th:each="sala : ${salasAndar5}"
@@ -243,15 +264,12 @@
               th:src="${sala.imagemUrl}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
             />
-
             <img
               th:unless="${sala.imagemUrl != null}"
               th:src="@{/img/sala_padrao.jpg}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
             />
-
             <h3 th:text="${sala.numero}">Tipo e Número</h3>
-
             <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
               Capacidade
             </p>
@@ -268,15 +286,15 @@
               </span>
               <span th:if="${#lists.isEmpty(sala.recursos)}">Nenhum</span>
             </div>
-            <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn">
-              Reservar
-            </a>
+            <a th:href="@{'/reservar?numero=' + ${sala.numero}}" class="btn"
+              >Reservar</a
+            >
           </div>
         </section>
       </div>
     </main>
     <script th:src="@{/js/filtroprincipal.js}"></script>
-     <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

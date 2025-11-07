@@ -123,8 +123,16 @@ div p{
     color: white;
     background-color: #8d0000;
 }
-.btn:active{
-    background-color: rgb(221, 111, 111); 
+
+.btn-danger{
+    background-color: #c30000
+}
+
+.btn-danger{
+    background-color: #c30000
+}
+.btn-danger:hover{
+    background-color: #c30000;
     transform: scale(0.98);   
 }
 .div-reservar a.btn {
