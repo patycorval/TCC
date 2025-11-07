@@ -1,5 +1,3 @@
-// Adicione este código ao final do seu arquivo filtroprincipal.js
-
 // Esta função será executada quando o documento HTML estiver totalmente carregado
 // document.addEventListener('DOMContentLoaded', function() {
 //     // Pega os parâmetros da URL atual

@@ -760,7 +760,6 @@ form:not(.login-form):not(.register-form) input[type="submit"] {
     cursor: pointer;
     border: none;
     transition: background-color 0.3s ease;
-    width: 40%;
 }
 #reservar:hover, #atualiza:hover {
     background-color:rgb(87, 1, 1);
@@ -1128,7 +1127,6 @@ form.register-form .btn-custom-red:hover {
 button#reservar{
     width: 90%;
     padding: 0.75rem;
-    background-color: #c30000;
     color: #fff;
     border: none;
     border-radius: 5px;

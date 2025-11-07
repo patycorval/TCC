@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listener principal para os dias do calendário
     document.querySelectorAll('.dia.mensal:not(.vazio, .bloqueado, .indisponivel)').forEach(diaElemento => {
         diaElemento.addEventListener('click', (event) => {
-            // Se o clique foi no botão de adicionar, não faz mais nada aqui
             if (event.target.closest('.btn-solicitar-reserva')) {
                 return;
             }
@@ -104,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         statusBadge = `<span class="badge status-${evento.status.toLowerCase()}">${statusText}</span>`;
                     }
 
-                    // O HTML é montado numa única vez, com a variável statusBadge já incluída.
                     elemento.innerHTML = `
                         <div class="evento-info d-flex flex-column">
                             <strong class="evento-nome-modal">${evento.evento}</strong>
@@ -130,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listener para o botão de solicitar reserva (símbolo '+')
     document.querySelectorAll('.btn-solicitar-reserva').forEach(button => {
         button.addEventListener('click', (event) => {
-            event.stopPropagation(); // Impede que o modal de visualização abra
+            event.stopPropagation();
             
             const diaElemento = event.currentTarget.closest('.dia.mensal');
             const dia = diaElemento.getAttribute('data-dia');

@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const modalFooter = document.getElementById('modal-gestao-footer');
 
-    // NOVAS REFERÊNCIAS para o modal de confirmação de bloqueio
+    // para o modal de confirmação de bloqueio
     const formBloqueio = document.getElementById('formBloqueio');
     const btnBloquearTrigger = document.getElementById('btn-bloquear-selecionados-trigger');
     const btnBloquearReal = document.getElementById('submit-bloqueio-real');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const aplicarMudancas = async () => {
         const changesArray = Object.values(pendingChanges);
         if (changesArray.length === 0) {
-            fecharTodosModais(); // Se não houver mudanças, apenas fecha o modal
+            fecharTodosModais(); 
             return;
         }
 
@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
         if (response.ok) {
-                // ✨ INÍCIO DA ATUALIZAÇÃO DINÂMICA (SEM RELOAD) ✨
                 
                 let eventos = JSON.parse(diaElementoAtivo.getAttribute('data-eventos'));
                 
@@ -95,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const indicadoresContainer = diaElementoAtivo.querySelector('.indicadores-evento');
                 if (indicadoresContainer) {
-                    indicadoresContainer.innerHTML = ''; // Limpa os indicadores antigos
+                    indicadoresContainer.innerHTML = '';
                     if (eventosAtualizados.length > 0) {
                         eventosAtualizados.forEach(reserva => {
                             const indicadorSpan = document.createElement('span');
@@ -103,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             indicadoresContainer.appendChild(indicadorSpan);
                         });
                     } else {
-                        // Se não sobraram eventos, o dia volta a ser disponível
                         diaElementoAtivo.classList.remove('evento');
                         diaElementoAtivo.classList.add('disponivel');
                     }
@@ -136,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         diaElemento.addEventListener('click', () => {
             diaElementoAtivo = diaElemento;
-            pendingChanges = {}; // Limpa as mudanças pendentes ao abrir um novo dia
+            pendingChanges = {}; 
             btnAplicarMudancas.disabled = true;
 
             const dia = diaElemento.getAttribute('data-dia');
@@ -154,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
            if (eventos && eventos.length > 0) {
                 semEventosAviso.style.display = 'none';
-                modalFooter.className = 'modal-footer d-flex justify-content-between'; // Alinhamento dividido
+                modalFooter.className = 'modal-footer d-flex justify-content-between'; 
                 btnAplicarMudancas.style.display = 'block';
                 eventos.forEach(evento => {
                     const li = document.createElement('li');
@@ -194,19 +192,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         statusSelect.focus();
                     });
 
-                    // Este listener agora funciona corretamente para habilitar o botão
                     statusSelect.addEventListener('change', () => {
                         pendingChanges[evento.id] = { reservaId: evento.id, novoStatus: statusSelect.value };
                         
                         // Habilita o botão "Aplicar Alterações"
                         btnAplicarMudancas.disabled = false; 
 
-                        // Atualiza a interface para dar feedback imediato
                         const newStatusText = statusSelect.options[statusSelect.selectedIndex].text;
                         statusBadge.textContent = newStatusText;
                         statusBadge.className = `badge status-${statusSelect.value.toLowerCase()}`;
                         
-                        // Esconde o select e volta a mostrar o badge e o botão de editar
                         statusSelect.style.display = 'none';
                         statusBadge.style.display = 'inline-block';
                         editButton.style.display = 'inline-block';
@@ -215,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
             } else {
                 semEventosAviso.style.display = 'block';
-                modalFooter.className = 'modal-footer d-flex justify-content-end'; // Alinhamento à direita
+                modalFooter.className = 'modal-footer d-flex justify-content-end';
                 btnAplicarMudancas.style.display = 'none'; // Esconde o botão "Aplicar"
             }
             modalView.style.display = 'flex';
@@ -229,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // NOVO: Lógica de Interceptação de Bloqueio
+    // Lógica de Interceptação de Bloqueio
 btnBloquearTrigger.addEventListener('click', (event) => {
     event.preventDefault();
 
@@ -256,7 +251,6 @@ btnBloquearTrigger.addEventListener('click', (event) => {
                 const activeEventDetails = []; 
                 eventos.forEach(e => {
                     if (e.status !== 'REJEITADA') {
-                        // CORREÇÃO: Adicionamos horaFim aqui
                         activeEventDetails.push({ 
                             evento: e.evento,
                             hora: formatarHora(e.hora),
@@ -273,7 +267,7 @@ btnBloquearTrigger.addEventListener('click', (event) => {
                     diasComEventos.push({ 
                         dia: diaNumero, 
                         data: dataFormatada,
-                        eventos: activeEventDetails // <-- Variável preenchida corretamente
+                        eventos: activeEventDetails
                     });
                 }  
             } catch (e) {
@@ -282,7 +276,6 @@ btnBloquearTrigger.addEventListener('click', (event) => {
         }
     });
 
-    // 2. Decidir se mostra o modal ou submete o formulário
 
 /*
 // Itera sobre CADA EVENTO individualmente
@@ -296,8 +289,7 @@ btnBloquearTrigger.addEventListener('click', (event) => {
 
             // Escapa o nome do evento para segurança
             const nomeEvento = evento.eventoNome ? evento.eventoNome.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Evento sem nome";
-            
-            // Monta o HTML no formato "Dia - Evento: Nome (Inicio-Fim)"
+           
             li.innerHTML = `
                 <strong>Dia ${evento.data}</strong> - Evento: ${nomeEvento} (${evento.hora}-${evento.horaFim})
             `;
@@ -315,7 +307,6 @@ btnBloquearTrigger.addEventListener('click', (event) => {
             // Constrói a string de eventos formatada
             const eventosTexto = dia.eventos.map(e => `${e.evento} (${e.hora} - ${e.horaFim})`).join(' e ');
             
-            // MODIFICADO: Inclui a lista de eventos no item
             li.innerHTML = dia.eventos.length>1? `<strong> Dia ${dia.data} </strong>- Eventos: ${eventosTexto}`: `<strong> Dia ${dia.data} </strong>- Evento: ${eventosTexto}` ;
             diasComEventosLista.appendChild(li);
         });
@@ -329,16 +320,12 @@ btnBloquearTrigger.addEventListener('click', (event) => {
 
 // Listener para confirmar o bloqueio no modal
 btnConfirmBlock.addEventListener('click', () => {
-    // CORRIGIDO: fecharTodosModais para incluir o modal de confirmação
     modalView.style.display = 'none';
     if (modalReservaForm) modalReservaForm.style.display = 'none';
     confirmBlockModal.style.display = 'none';
 
-    // 3. Força o clique no botão de submissão real para bloquear
     btnBloquearReal.click();
 });
-// FIM da NOVO: Lógica de Interceptação de Bloqueio
-
 
     // Listener para o botão "Solicitar Nova Reserva"
     btnAbrirFormReserva.addEventListener('click', () => {

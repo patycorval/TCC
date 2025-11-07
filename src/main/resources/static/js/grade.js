@@ -7,10 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const diasDaSemanaJava = { MONDAY: 'Segunda', TUESDAY: 'Terça', WEDNESDAY: 'Quarta', THURSDAY: 'Quinta', FRIDAY: 'Sexta', SATURDAY: 'Sábado' };
     const diasDaSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-    // --- SELETORES DOM (REMOVIDO usuarioFiltroSelect) ---
     const cursoSelect = document.getElementById('curso');
-    const semestreSelect = document.getElementById('semestre');
-    // const usuarioFiltroSelect = document.getElementById('usuarioFiltro'); // REMOVIDO
+    const semestreSelect = document.getElementById('semestre')
     const gradeBody = document.getElementById('gradeBody');
 
     // Modal
@@ -40,20 +38,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- FUNÇÕES ---
 
-    // --- NOVA FUNÇÃO PLACEHOLDER ---
     function mostrarPlaceholderGrade() {
         if (!gradeBody) return;
-        gradeBody.innerHTML = ''; // Limpa a grade
+        gradeBody.innerHTML = '';
         const placeholder = document.createElement('div');
-        placeholder.className = 'grade-placeholder'; // Usa a nova classe CSS
+        placeholder.className = 'grade-placeholder';
         placeholder.textContent = 'Selecione um curso e um semestre para exibir a grade.';
         gradeBody.appendChild(placeholder);
     }
-    // --- FIM DA NOVA FUNÇÃO ---
-
-
+   
     async function carregarUsuariosEGrade() {
-        // --- VERIFICAÇÃO CORRIGIDA (removido !usuarioFiltroSelect) ---
         if (!cursoSelect || !semestreSelect || !modalUsuarioSelect || !gradeBody) {
              console.error("Elementos essenciais do filtro ou grade não encontrados.");
              return;
@@ -66,12 +60,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Limpa grade e selects
         gradeBody.innerHTML = '<tr><td colspan="7">Carregando...</td></tr>';
-        // limparSelect(usuarioFiltroSelect, "Carregando..."); // REMOVIDO
         limparSelect(modalUsuarioSelect, "Carregando...");
 
         if (!cursoId || !periodo) {
-            mostrarPlaceholderGrade(); // Mostra placeholder se curso/periodo não selecionado
-            // limparSelect(usuarioFiltroSelect, "Selecione um curso"); // REMOVIDO
+            mostrarPlaceholderGrade(); 
             limparSelect(modalUsuarioSelect, "Selecione um curso");
             return;
         }
@@ -81,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
             popularSelectUsuarios(usuariosDoCurso);
         }
 
-        await gerarGrade(cursoId, periodo, semestre); // Passa o período em minúsculo
+        await gerarGrade(cursoId, periodo, semestre); 
     }
 
     async function buscarUsuariosDoCurso(cursoId) {
@@ -98,20 +90,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- FUNÇÃO CORRIGIDA (só popula o modal) ---
     function popularSelectUsuarios(usuarios) {
-        // limparSelect(usuarioFiltroSelect, "Todos"); // REMOVIDO
         limparSelect(modalUsuarioSelect, "Selecione..."); // Popula SÓ o modal
         usuarios.forEach(user => {
             const displayText = user.nome || user.email;
             if (user.id) {
-                // usuarioFiltroSelect.options.add(new Option(displayText, user.id)); // REMOVIDO
                 modalUsuarioSelect.options.add(new Option(displayText, user.id));
             }
         });
     }
 
-    // ... (função gerarGrade(cursoId, periodo, semestre) continua EXATAMENTE IGUAL) ...
     async function gerarGrade(cursoId, periodo, semestre) {
         gradeBody.innerHTML = '<tr><td colspan="7">Carregando grade...</td></tr>';
         const horariosDoPeriodo = horarios[periodo];
@@ -164,12 +152,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- FUNÇÃO CORRIGIDA (não depende mais do filtro) ---
     function abrirModalParaAdicionar(dia, horario) {
         if (!modal) { console.error("Instância do modal não encontrada."); return; }
         modalTitle.textContent = `Alocar Horário (${dia} - ${horario})`;
         
-        // Remove a lógica de pré-preenchimento
         modalUsuarioSelect.value = ""; 
         modalUsuarioSelect.disabled = false; 
 
@@ -179,7 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.show();
     }
 
-    // ... (função salvarAulaSemestre continua EXATAMENTE IGUAL) ...
     async function salvarAulaSemestre() {
          if (!modalUsuarioSelect || !modalSalaSelect || !cursoSelect || !semestreSelect || !modalDiaInput || !modalHorarioInput || !btnSalvarAula) {
              console.error("Elementos necessários para salvar não encontrados.");
@@ -230,7 +215,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // ... (função atualizarCelulaNaGrade continua EXATAMENTE IGUAL) ...
     function atualizarCelulaNaGrade(payload) {
          if (!modalUsuarioSelect || !modalSalaSelect || !gradeBody) return;
         const horarioDaCelula = payload.horario;
@@ -257,14 +241,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ... (função limparSelect continua EXATAMENTE IGUAL) ...
     function limparSelect(selectElement, placeholder) {
         if(selectElement) {
              selectElement.innerHTML = `<option value="">${placeholder || 'Selecione...'}</option>`;
         }
     }
 
-    // --- INICIALIZAÇÃO ATUALIZADA ---
     if (cursoSelect && cursoSelect.value) {
         carregarUsuariosEGrade();
     } else if (gradeBody) {
@@ -273,4 +255,4 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error("Elemento 'curso' ou 'gradeBody' não encontrado na inicialização.");
     }
 
-}); // Fim do DOMContentLoaded
+}); 
