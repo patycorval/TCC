@@ -107,7 +107,7 @@
                   <option
                     th:each="sala : ${salas}"
                     th:value="${sala.id}"
-                    th:text="${sala.getTipoSalaDisplayName() + ' ' + sala.numero}"
+                    th:text="${sala.numero}"
                   ></option>
                 </select>
               </div>
