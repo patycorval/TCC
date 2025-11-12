@@ -29,12 +29,16 @@ public class GradeController {
 
     @Autowired
     private CursoRepository cursoRepository;
+
     @Autowired
     private UsuarioRepository usuarioRepository;
+
     @Autowired
     private SalaService salaService;
+
     @Autowired
     private ReservaService reservaService;
+
     @Autowired
     private ReservaRepository reservaRepository;
 
@@ -56,8 +60,6 @@ public class GradeController {
                 List.of(TipoUsuario.PROFESSOR, TipoUsuario.MONITOR));
     }
 
-    // Dentro de GradeController.java
-
     @GetMapping("/api/grade/reservas")
     @ResponseBody
     public List<ReservaDTO> getReservasParaGrade(
@@ -68,28 +70,24 @@ public class GradeController {
         System.out.println("[DEBUG GET /api/grade/reservas]");
         System.out.println("Buscando grade para Curso ID: " + cursoId + ", Semestre: " + semestre);
 
-        // --- NOVA LÓGICA DE BUSCA (MAIS ROBUSTA) ---
-        // 1. Busca TODAS as reservas que são da GRADE para este CURSO e SEMESTRE
         List<Reserva> todasAsReservasDaGrade = reservaRepository.findByCursoIdAndSemestreAndGradeReservaTrue(
                 cursoId, semestre);
 
         System.out.println("Reservas da grade encontradas no banco (total): " + todasAsReservasDaGrade.size());
 
-        // 2. Filtra para obter apenas UMA reserva para cada slot (dia/horário)
         List<Reserva> gradeUnica = todasAsReservasDaGrade.stream()
                 .collect(Collectors.groupingBy(
-                        // Agrupa por uma chave combinada de Dia da Semana + Horário de Início
                         r -> r.getData().getDayOfWeek().toString() + "_" + r.getHora().toString(),
-                        // Pega apenas o primeiro item de cada grupo (a reserva com a data mais antiga)
                         Collectors.collectingAndThen(Collectors.minBy(Comparator.comparing(Reserva::getData)),
                                 Optional::get)))
-                .values().stream().toList(); // Pega os valores do mapa (a reserva única de cada slot)
+                .values().stream().toList();
 
         System.out.println("Retornando " + gradeUnica.size() + " slots únicos para o frontend.");
         System.out.println("==========================================================");
 
-        // 3. Converte para DTO e retorna
-        return gradeUnica.stream().map(ReservaDTO::new).collect(Collectors.toList());
+        return gradeUnica.stream()
+                .map(reserva -> new ReservaDTO(reserva, salaService))
+                .collect(Collectors.toList());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -126,34 +124,19 @@ public class GradeController {
             LocalTime horaInicio = LocalTime.parse(horarios[0]);
             LocalTime horaFim = LocalTime.parse(horarios[1]);
 
-            // --- CORREÇÃO APLICADA AQUI ---
-            // Mapear String do dia para DayOfWeek usando switch case
-            DayOfWeek diaOfWeek = DayOfWeek.MONDAY; // Padrão seguro
+            DayOfWeek diaOfWeek;
             switch (diaSemanaStr) {
-                case "Segunda":
-                    diaOfWeek = DayOfWeek.MONDAY;
-                    break;
-                case "Terça":
-                    diaOfWeek = DayOfWeek.TUESDAY;
-                    break;
-                case "Quarta":
-                    diaOfWeek = DayOfWeek.WEDNESDAY;
-                    break;
-                case "Quinta":
-                    diaOfWeek = DayOfWeek.THURSDAY;
-                    break;
-                case "Sexta":
-                    diaOfWeek = DayOfWeek.FRIDAY;
-                    break;
-                case "Sábado":
-                    diaOfWeek = DayOfWeek.SATURDAY;
-                    break;
-                default:
-                    // Loga o erro e retorna bad request se o dia for inválido
+                case "Segunda" -> diaOfWeek = DayOfWeek.MONDAY;
+                case "Terça" -> diaOfWeek = DayOfWeek.TUESDAY;
+                case "Quarta" -> diaOfWeek = DayOfWeek.WEDNESDAY;
+                case "Quinta" -> diaOfWeek = DayOfWeek.THURSDAY;
+                case "Sexta" -> diaOfWeek = DayOfWeek.FRIDAY;
+                case "Sábado" -> diaOfWeek = DayOfWeek.SATURDAY;
+                default -> {
                     System.err.println("Dia da semana inválido recebido no payload: " + diaSemanaStr);
                     return ResponseEntity.badRequest().body("Dia da semana inválido: " + diaSemanaStr);
+                }
             }
-            // --- FIM DA CORREÇÃO ---
 
             LocalDate dataAtual = inicioSemestre.with(TemporalAdjusters.nextOrSame(diaOfWeek));
 
@@ -193,19 +176,39 @@ public class GradeController {
         }
     }
 
+    // Classe DTO interna corrigida
     public static class ReservaDTO {
         public String diaSemana;
         public String horario;
         public String professorNome;
-        public String salaNumero;
+        public String salaNomeCompleto;
 
-        public ReservaDTO(Reserva reserva) {
+        public ReservaDTO(Reserva reserva, SalaService salaService) {
             this.diaSemana = reserva.getData().getDayOfWeek().name();
             this.horario = String.format("%02d:%02d às %02d:%02d",
                     reserva.getHora().getHour(), reserva.getHora().getMinute(),
                     reserva.getHoraFim().getHour(), reserva.getHoraFim().getMinute());
             this.professorNome = reserva.getNome();
-            this.salaNumero = reserva.getNumero();
+
+            // Busca sala correspondente
+            Sala salaEncontrada = salaService.listarTodas().stream()
+                    .filter(s -> s.getNumero().equals(reserva.getNumero()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (salaEncontrada != null) {
+                String tipo = salaEncontrada.getTipoSalaDisplayName();
+                String numero = salaEncontrada.getNumero();
+
+                // 🔧 Correção: evita duplicar o nome do tipo da sala
+                if (numero.toLowerCase().contains(tipo.toLowerCase())) {
+                    this.salaNomeCompleto = numero.trim();
+                } else {
+                    this.salaNomeCompleto = tipo + " " + numero;
+                }
+            } else {
+                this.salaNomeCompleto = reserva.getNumero(); // fallback
+            }
         }
     }
 }
