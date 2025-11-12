@@ -22,6 +22,9 @@ public class ReservaService {
         @Autowired
         private ReservaRepository reservaRepository;
 
+        private static final LocalTime HORA_INICIO_FUNCIONAMENTO = LocalTime.of(7, 30);
+        private static final LocalTime HORA_FIM_FUNCIONAMENTO = LocalTime.of(22, 30);
+
         public boolean temConflito(Reserva novaReserva) {
                 List<Reserva> reservasNoMesmoDia = reservaRepository.findByNumeroAndData(novaReserva.getNumero(),
                                 novaReserva.getData());
@@ -63,25 +66,23 @@ public class ReservaService {
                                 novaReserva.getData(),
                                 StatusReserva.APROVADA);
 
-                // 2. Pega os horários da nova solicitação
+                // Pega os horários da nova solicitação
                 LocalTime inicioNova = novaReserva.getHora();
                 LocalTime fimNova = novaReserva.getHoraFim();
 
-                // 3. Verifica se há algum conflito de horário
+                // Verifica se há algum conflito de horário
                 for (Reserva r : reservasAprovadasNoDia) {
                         LocalTime inicioExistente = r.getHora();
                         LocalTime fimExistente = r.getHoraFim();
-                        // Lógica de verificação de sobreposição
                         boolean conflito = inicioNova.isBefore(fimExistente) && fimNova.isAfter(inicioExistente);
                         if (conflito) {
-                                return true; // Encontrou um conflito!
+                                return true;
                         }
                 }
-                return false; // Nenhum conflito encontrado
+                return false;
         }
 
         public Reserva salvar(Reserva reserva) {
-                // --- VALIDAÇÃO DE DATA E HORA RETROATIVA ---
                 LocalDate hoje = LocalDate.now();
                 LocalTime agora = LocalTime.now();
 
@@ -91,12 +92,17 @@ public class ReservaService {
                 if (reserva.getData().isEqual(hoje) && reserva.getHora().isBefore(agora)) {
                         throw new IllegalArgumentException("Não é possível fazer reservas para horários retroativos.");
                 }
-                // --- FIM DA VALIDAÇÃO --
 
                 if (reserva.getHoraFim().isBefore(reserva.getHora())
                                 || reserva.getHoraFim().equals(reserva.getHora())) {
                         throw new IllegalArgumentException("A hora de fim não pode ser menor ou igual à de início.");
                 }
+
+                if (reserva.getHora().isBefore(HORA_INICIO_FUNCIONAMENTO) ||
+                                reserva.getHoraFim().isAfter(HORA_FIM_FUNCIONAMENTO)) {
+                        throw new IllegalArgumentException("O horário da reserva deve ser entre 07:30 e 22:30.");
+                }
+
                 Duration duracao = Duration.between(reserva.getHora(), reserva.getHoraFim());
                 if (duracao.toMinutes() < 30) {
                         throw new IllegalArgumentException("A reserva deve durar ao menos 30 minutos.");
@@ -130,7 +136,7 @@ public class ReservaService {
         }
 
         public Reserva atualizar(Reserva reserva) {
-                // --- VALIDAÇÃO DE DATA E HORA RETROATIVA ---
+
                 LocalDate hoje = LocalDate.now();
                 LocalTime agora = LocalTime.now();
 
@@ -141,11 +147,17 @@ public class ReservaService {
                         throw new IllegalArgumentException(
                                         "Não é possível atualizar reservas para horários retroativos.");
                 }
-                // --- FIM DA VALIDAÇÃO ---
+
                 if (reserva.getHoraFim().isBefore(reserva.getHora())
                                 || reserva.getHoraFim().equals(reserva.getHora())) {
                         throw new IllegalArgumentException("A hora de fim não pode ser menor ou igual à de início.");
                 }
+
+                if (reserva.getHora().isBefore(HORA_INICIO_FUNCIONAMENTO) ||
+                                reserva.getHoraFim().isAfter(HORA_FIM_FUNCIONAMENTO)) {
+                        throw new IllegalArgumentException("O horário da reserva deve ser entre 07:30 e 22:30.");
+                }
+
                 Duration duracao = Duration.between(reserva.getHora(), reserva.getHoraFim());
                 if (duracao.toMinutes() < 30) {
                         throw new IllegalArgumentException("A reserva deve durar ao menos 30 minutos.");
@@ -185,7 +197,6 @@ public class ReservaService {
                 reservaRepository.deleteById(id);
         }
 
-        // Este método busca apenas reservas APROVADAS (visão geral)
         public List<Reserva> buscarReservasAuditorio(YearMonth ym) {
                 LocalDate startOfMonth = ym.atDay(1);
                 LocalDate endOfMonth = ym.atEndOfMonth();
@@ -193,8 +204,6 @@ public class ReservaService {
                                 StatusReserva.APROVADA, startOfMonth, endOfMonth);
         }
 
-        // Este método busca as reservas para a visão do usuário (aprovadas de outros +
-        // todas as suas)
         public List<Reserva> buscarReservasAuditorioParaUsuario(YearMonth ym, String email) {
                 LocalDate startOfMonth = ym.atDay(1);
                 LocalDate endOfMonth = ym.atEndOfMonth();
@@ -204,12 +213,10 @@ public class ReservaService {
         public List<Reserva> buscarReservasAuditorioParaAdmin(YearMonth ym) {
                 LocalDate startOfMonth = ym.atDay(1);
                 LocalDate endOfMonth = ym.atEndOfMonth();
-                // Chama o novo método do repositório, excluindo as rejeitadas
                 return reservaRepository.findByNumeroAndDataBetweenAndStatusNotOrderByDataAscHoraAsc(
                                 "Auditorio", startOfMonth, endOfMonth, StatusReserva.REJEITADA);
         }
 
-        // NOVO MÉTODO COM A LÓGICA DO FILTRO
         public List<Reserva> listarPorUsuarioEPeriodo(String email, String periodo) {
                 LocalDate hoje = LocalDate.now();
 
@@ -230,14 +237,6 @@ public class ReservaService {
                 }
         }
 
-        /**
-         * NOVO MÉTODO: Determina qual filtro de período é o mais apropriado para uma
-         * data de reserva.
-         * 
-         * @param dataReserva A data da reserva.
-         * @return Uma string representando o período ('15dias', '30dias', 'proximas',
-         *         'anteriores').
-         */
         public String determinarPeriodoParaData(LocalDate dataReserva) {
                 LocalDate hoje = LocalDate.now();
                 if (dataReserva.isBefore(hoje)) {

@@ -58,57 +58,98 @@ public class ReservaController {
             return "reservar";
         }
     }
-
-    /**
-     * MÉTODO CORRIGIDO
-     * Agora ele recebe o parâmetro 'periodo' da URL. Se nenhum for passado, ele usa
-     * '15dias' como padrão.
-     * Isso garante que o filtro enviado pelo calendário seja aplicado.
-     */
+     
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/listagem")
     public String listarReservas(
             @RequestParam(name = "periodo", defaultValue = "15dias") String periodo,
+            @RequestParam(name = "view", defaultValue = "all") String view,
             Model model,
-            Authentication authentication) { // Recebe Authentication
+            Authentication authentication) {
 
         String emailUsuario = authentication.getName();
-        // Verifica se o usuário tem a ROLE_ADMIN
+        model.addAttribute("usuarioEmail", emailUsuario);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        List<Reserva> todasAsReservas;
+        List<Reserva> reservasParaFiltrar;
 
         if (isAdmin) {
-            // Se for ADMIN, busca TODAS as reservas (ainda usando o filtro de período, se
-            // necessário)
-            // Se o filtro de período NÃO se aplica ao Admin, chame
-            // reservaService.listarTodas()
-            System.out.println("DEBUG: Usuário é ADMIN. Buscando todas as reservas.");
-            // Vamos assumir que o admin também quer filtrar por período
-            todasAsReservas = reservaService.listarTodasPorPeriodo(periodo); // <--- PRECISAMOS CRIAR ESTE MÉTODO
+            reservasParaFiltrar = reservaService.listarTodas();
         } else {
-            // Se não for Admin, busca apenas as do usuário logado
-            System.out.println("DEBUG: Usuário NÃO é ADMIN. Buscando reservas para: " + emailUsuario);
-            todasAsReservas = reservaService.listarPorUsuarioEPeriodo(emailUsuario, periodo);
+            reservasParaFiltrar = reservaService.listarPorUsuario(emailUsuario);
+            view = "me";
         }
 
-        // Separa as reservas por tipo (Auditório ou Sala/Lab)
-        List<Reserva> reservasAuditorio = todasAsReservas.stream()
+        List<Reserva> reservasPorVisao; 
+        if (isAdmin) {
+            if ("me".equals(view)) {
+                reservasPorVisao = reservasParaFiltrar.stream()
+                        .filter(r -> (r.getEmailRequisitor() != null && r.getEmailRequisitor().equals(emailUsuario))
+                                || r.isGradeReserva()) 
+                        .collect(Collectors.toList());
+            } else if ("others".equals(view)) {
+                reservasPorVisao = reservasParaFiltrar.stream()
+                        .filter(r -> (r.getEmailRequisitor() != null && !r.getEmailRequisitor().equals(emailUsuario))
+                                && !r.isGradeReserva()) 
+                        .collect(Collectors.toList());
+            } else {
+                reservasPorVisao = reservasParaFiltrar;
+            }
+        } else {
+            reservasPorVisao = reservasParaFiltrar;
+        }
+
+        LocalDate hoje = LocalDate.now();
+        List<Reserva> reservasFinais;
+
+        switch (periodo) {
+            case "15dias":
+                reservasFinais = reservasPorVisao.stream()
+                        .filter(r -> r.getData() != null && !r.getData().isBefore(hoje)
+                                && !r.getData().isAfter(hoje.plusDays(15)))
+                        .collect(Collectors.toList());
+                break;
+            case "30dias":
+                reservasFinais = reservasPorVisao.stream()
+                        .filter(r -> r.getData() != null && !r.getData().isBefore(hoje)
+                                && !r.getData().isAfter(hoje.plusDays(30)))
+                        .collect(Collectors.toList());
+                break;
+            case "proximas":
+                reservasFinais = reservasPorVisao.stream()
+                        .filter(r -> r.getData() != null && !r.getData().isBefore(hoje))
+                        .collect(Collectors.toList());
+                break;
+            case "anteriores":
+                reservasFinais = reservasPorVisao.stream()
+                        .filter(r -> r.getData() != null && r.getData().isBefore(hoje))
+                        .collect(Collectors.toList());
+                break;
+            default:
+                reservasFinais = reservasPorVisao.stream()
+                        .filter(r -> r.getData() != null && !r.getData().isBefore(hoje)
+                                && !r.getData().isAfter(hoje.plusDays(15)))
+                        .collect(Collectors.toList());
+                periodo = "15dias";
+                break;
+        }
+
+        List<Reserva> reservasAuditorio = reservasFinais.stream()
                 .filter(r -> "Auditorio".equalsIgnoreCase(r.getNumero()))
                 .collect(Collectors.toList());
 
-        List<Reserva> reservasSalas = todasAsReservas.stream()
+        List<Reserva> reservasSalas = reservasFinais.stream()
                 .filter(r -> r.getNumero() != null && !"Auditorio".equalsIgnoreCase(r.getNumero()))
                 .collect(Collectors.toList());
 
-        System.out.println("DEBUG: Total " + todasAsReservas.size() + ", Salas " + reservasSalas.size() + ", Auditório "
-                + reservasAuditorio.size());
-
+        
         model.addAttribute("reservasAuditorio", reservasAuditorio);
         model.addAttribute("reservasSalas", reservasSalas);
         model.addAttribute("activePage", "listagem");
         model.addAttribute("periodoSelecionado", periodo);
+        model.addAttribute("viewSelecionada", view);
 
         return "listagem";
     }

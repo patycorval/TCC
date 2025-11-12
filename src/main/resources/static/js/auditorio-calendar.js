@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDiaTitulo = document.getElementById('modal-dia-titulo');
     const listaEventosContainer = document.getElementById('lista-eventos-modal');
     const semEventosAviso = document.getElementById('sem-eventos-aviso');
-    const campoDataForm = document.getElementById('dataEvento');
+
+    const campoDataFormOculto = document.getElementById('dataEvento'); 
+    const campoDataFormDisplay = document.getElementById('dataEventoDisplay'); 
 
     // Botões
     const btnAbrirFormReserva = document.getElementById('btn-abrir-form-reserva');
@@ -40,12 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
         modalReservaForm.style.display = 'none';
         modalDiaView.style.display = 'flex';
     });
-     btnAbrirFormReserva.addEventListener('click', () => {
-        const dataSelecionada = btnAbrirFormReserva.getAttribute('data-dia-selecionado');
-        campoDataForm.value = dataSelecionada;
-        modalDiaView.style.display = 'none';
-        modalReservaForm.style.display = 'flex';
-    });
+    
+    btnAbrirFormReserva.addEventListener('click', () => {
+        const dataSelecionada = btnAbrirFormReserva.getAttribute('data-dia-selecionado');
+        
+        campoDataFormOculto.value = dataSelecionada;
+
+        const [ano, mes, dia] = dataSelecionada.split('-');
+        const dataFormatadaDisplay = `${dia}/${mes}/${ano}`;
+        
+        campoDataFormDisplay.value = dataFormatadaDisplay;
+
+        modalDiaView.style.display = 'none';
+        modalReservaForm.style.display = 'flex';
+    });
 
     // Listener principal para os dias do calendário
     document.querySelectorAll('.dia.mensal:not(.vazio, .bloqueado, .indisponivel)').forEach(diaElemento => {
@@ -126,24 +136,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Listener para o botão de solicitar reserva (símbolo '+')
-    document.querySelectorAll('.btn-solicitar-reserva').forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.stopPropagation();
-            
-            const diaElemento = event.currentTarget.closest('.dia.mensal');
-            const dia = diaElemento.getAttribute('data-dia');
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const ano = urlParams.get('ano') || new Date().getFullYear();
-            const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
-            
-            const dataParaForm = `${ano}-${mes.toString().padStart(2, '0')}-${dia.padStart(2, '0')}`;
-            campoDataForm.value = dataParaForm;
-            
-            modalReservaForm.style.display = 'flex';
-        });
-    });
+    document.querySelectorAll('.btn-solicitar-reserva').forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            
+            const diaElemento = event.currentTarget.closest('.dia.mensal');
+            const dia = diaElemento.getAttribute('data-dia');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const ano = urlParams.get('ano') || new Date().getFullYear();
+            const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
 
+            const diaStr = dia.padStart(2, '0');
+            const mesStr = mes.toString().padStart(2, '0');
+            
+            const dataParaBackend = `${ano}-${mesStr}-${diaStr}`;
+            const dataParaDisplay = `${diaStr}/${mesStr}/${ano}`; 
+            
+            campoDataFormOculto.value = dataParaBackend;
+            campoDataFormDisplay.value = dataParaDisplay;
+            
+            modalReservaForm.style.display = 'flex';
+        });
+    });
     window.addEventListener('click', (event) => {
         // Se o alvo do clique for o overlay do modal de visualização, fecha
         if (event.target === modalDiaView) {

@@ -26,13 +26,6 @@
         object-fit: cover;
         width: 100%;
       }
-/* 
-      .btn-filtro {
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-      } */
 
     </style>
     <title>Página principal</title>
@@ -119,7 +112,7 @@
       </div>
       <div class="container px-0" sec:authorize="hasRole('ADMIN')">
         <div class="d-flex justify-content-end mb-2">
-            <a th:href="@{/admin/adicionar-sala}" class="btn btn-secondary btn-cadastrar-sala">
+            <a th:href="@{/admin/adicionar-sala}" class="btn btn-cadastrar-sala">
                <i class="bi bi-plus-lg me-1"></i>              
                Cadastrar Nova Sala
             </a>

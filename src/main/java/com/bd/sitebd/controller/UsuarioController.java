@@ -52,8 +52,9 @@ public class UsuarioController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime horaFimFiltro,
             Model model) {
 
-       List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala, dataFiltro, horaInicioFiltro, horaFimFiltro);
-       
+        List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala, dataFiltro,
+                horaInicioFiltro, horaFimFiltro);
+
         List<Sala> salasAndar2 = salasFiltradas.stream()
                 .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("2"))
                 .toList();

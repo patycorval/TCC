@@ -112,6 +112,14 @@ h3{
     color: white; 
     border: 2px solid #8d0000;
 }
+
+.btn-cadastrar-sala:active {
+    background-color: #8d0000 !important; 
+    color: white !important; 
+    border-color: #8d0000 !important;
+}
+
+
 .btn-cadastrar-sala .bi {
     font-size: 1rem; 
 }

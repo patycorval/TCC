@@ -1,89 +1,63 @@
 <!DOCTYPE html>
-<html
-  lang="pt-br"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
->
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-    />
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-    </style>
-    <title>Minhas Reservas</title>
-    <meta name="_csrf" th:content="${_csrf.token}" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-  </head>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-  <body>
-    <div th:replace="~{fragments/header :: header}"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+  </style>
+  <title>Minhas Reservas</title>
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
 
-    <main class="container my-5">
-      <div
-        class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3"
-      >
-        <h1>Minhas Reservas</h1>
-        <form
-          th:action="@{/listagem}"
-          method="get"
-          class="d-flex align-items-center"
-        >
-          <select
-            name="periodo"
-            class="form-select w-auto"
-            onchange="this.form.submit()"
-          >
-            <option
-              value="15dias"
-              th:selected="${periodoSelecionado == '15dias'}"
-            >
-              Próximos 15 dias
-            </option>
-            <option
-              value="30dias"
-              th:selected="${periodoSelecionado == '30dias'}"
-            >
-              Próximos 30 dias
-            </option>
-            <option
-              value="proximas"
-              th:selected="${periodoSelecionado == 'proximas'}"
-            >
-              Todas as Próximas
-            </option>
-            <option
-              value="anteriores"
-              th:selected="${periodoSelecionado == 'anteriores'}"
-            >
-              Reservas Anteriores
-            </option>
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <main class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <h1 sec:authorize="hasRole('ADMIN')">Todas as reservas</h1>
+      <h1 sec:authorize="!hasRole('ADMIN')">Minhas Reservas</h1>
+
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <form th:action="@{/listagem}" method="get" class="d-flex align-items-center">
+          <input type="hidden" name="view" th:value="${viewSelecionada}" />
+          <select name="periodo" class="form-select w-auto" onchange="this.form.submit()">
+            <option value="15dias" th:selected="${periodoSelecionado == '15dias'}">Próximos 15 dias</option>
+            <option value="30dias" th:selected="${periodoSelecionado == '30dias'}">Próximos 30 dias</option>
+            <option value="proximas" th:selected="${periodoSelecionado == 'proximas'}">Todas as Próximas</option>
+            <option value="anteriores" th:selected="${periodoSelecionado == 'anteriores'}">Reservas Anteriores</option>
+          </select>
+        </form>
+
+        <form th:action="@{/listagem}" method="get" class="d-flex align-items-center"
+              sec:authorize="hasRole('ADMIN')">
+          <input type="hidden" name="periodo" th:value="${periodoSelecionado}" />
+          <select name="view" class="form-select w-auto" onchange="this.form.submit()">
+            <option value="all" th:selected="${viewSelecionada == 'all'}">Todas as reservas</option>
+            <option value="me" th:selected="${viewSelecionada == 'me'}">Realizadas por mim (e Grade)</option>
+            <option value="others" th:selected="${viewSelecionada == 'others'}">Realizadas por outros usuários</option>
           </select>
         </form>
       </div>
+    </div>
 
-      <h3 class="mt-5">Salas e Laboratórios</h3>
+    <!-- SALAS E LABORATÓRIOS -->
+    <section class="mt-5">
+      <h3 class="mb-3">Salas e Laboratórios</h3>
       <div class="card shadow-sm">
         <div class="card-body">
-          <div
-            th:if="${#lists.isEmpty(reservasSalas)}"
-            class="alert alert-info"
-          >
-            Você não possui reservas de salas ou laboratórios para o período
-            selecionado.
+          <div th:if="${#lists.isEmpty(reservasSalas)}" class="alert alert-info">
+            Você não possui reservas de salas ou laboratórios para o período selecionado.
           </div>
-          <div
-            class="table-responsive"
-            th:if="${not #lists.isEmpty(reservasSalas)}"
-          >
+
+          <div class="table-responsive" th:if="${not #lists.isEmpty(reservasSalas)}">
             <table class="table table-hover align-middle">
               <thead class="table-dark">
                 <tr>
@@ -97,54 +71,51 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  th:each="reserva : ${reservasSalas}"
-                  th:id="'reserva-' + ${reserva.id}"
-                  th:classappend="${param.destaque != null and param.destaque[0] == reserva.id.toString()} ? 'table-warning' : ''"
-                >
+                <tr th:each="reserva : ${reservasSalas}"
+                    th:id="'reserva-' + ${reserva.id}"
+                    th:classappend="${param.destaque != null and param.destaque[0] == reserva.id.toString()} ? 'table-warning' : 
+                                    (${#authorization.expression('hasRole(''ADMIN'')') and 
+                                      reserva.emailRequisitor != usuarioEmail and 
+                                      (reserva.gradeReserva == false or reserva.gradeReserva == null)} ? 'fw-bold' : '')">
                   <td th:text="${reserva.numero}"></td>
-                  <td
-                    th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"
-                  ></td>
- <td
-                    th:text="${#temporals.format(reserva.hora, 'HH:mm') + ' - ' + #temporals.format(reserva.horaFim, 'HH:mm')}"
-                  ></td>
+                  <td th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"></td>
+                  <td th:text="${#temporals.format(reserva.hora, 'HH:mm') + ' - ' + #temporals.format(reserva.horaFim, 'HH:mm')}"></td>
                   <td sec:authorize="hasRole('ADMIN')" th:text="${reserva.nome}"></td>
                   <td>
-                    <span
-                      th:class="'badge bg-' + ${reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).APROVADA ? 'success' : (reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).PENDENTE ? 'warning text-dark' : 'secondary')}"
-                      th:text="${reserva.status.displayName}"
-                    ></span>
+                    <span th:class="'badge bg-' + ${reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).APROVADA ? 'success' : (reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).PENDENTE ? 'warning text-dark' : 'secondary')}"
+                          th:text="${reserva.status.displayName}"></span>
                   </td>
                   <td>
-                    <span
-                      th:if="${reserva.gradeReserva}"
-                      class="badge bg-info text-dark"
-                      >Grade</span
-                    >
-                    <span
-                      th:unless="${reserva.gradeReserva}"
-                      class="badge bg-light text-dark"
-                      >Individual</span
-                    >
+                    <span th:if="${reserva.gradeReserva}" class="badge bg-info text-dark">Grade</span>
+                    <span th:unless="${reserva.gradeReserva}" class="badge bg-light text-dark">Individual</span>
                   </td>
 
                   <td class="text-center">
-                    <a
-                      th:href="@{'/reservas/editar/' + ${reserva.id}}"
-                      class="btn btn-secondary btn-sm"
-                      title="Editar Reserva"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </a>
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm btn-apagar"
-                      th:attr="data-id=${reserva.id}"
-                      title="Cancelar Reserva"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button>
+                    <th:block th:if="${!#authorization.expression('hasRole(''ADMIN'')') or 
+                                      (reserva.emailRequisitor == usuarioEmail) or 
+                                      (reserva.gradeReserva == true)}">
+                      <a th:href="@{'/reservas/editar/' + ${reserva.id}}" class="btn btn-secondary btn-sm"
+                         title="Editar detalhes da Reserva">
+                        <i class="bi bi-pencil"></i> Editar Detalhes
+                      </a>
+                      <button type="button" class="btn btn-danger btn-sm btn-apagar" th:attr="data-id=${reserva.id}"
+                              title="Cancelar Reserva">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </th:block>
+
+                    <th:block sec:authorize="hasRole('ADMIN')" 
+                              th:if="${reserva.emailRequisitor != usuarioEmail and (reserva.gradeReserva == false or reserva.gradeReserva == null)}">
+                      <button type="button" class="btn btn-secondary btn-sm btn-gerenciar-status"
+                              data-bs-toggle="modal" data-bs-target="#modalEditarStatus"
+                              th:data-reserva-id="${reserva.id}"
+                              th:data-evento-nome="'Sala ' + ${reserva.numero}"
+                              th:data-solicitante-nome="${reserva.nome}"
+                              th:data-data-hora="${#temporals.format(reserva.data, 'dd/MM/yy')} + ' às ' + ${#temporals.format(reserva.hora, 'HH:mm')}"
+                              th:data-status-atual="${reserva.status.name()}">
+                        <i class="bi bi-pencil"></i> Editar Status
+                      </button>
+                    </th:block>
                   </td>
                 </tr>
               </tbody>
@@ -152,20 +123,18 @@
           </div>
         </div>
       </div>
+    </section>
 
-      <h3 class="mt-5">Auditório</h3>
+    <!-- AUDITÓRIO -->
+    <section class="mt-5">
+      <h3 class="mb-3">Auditório</h3>
       <div class="card shadow-sm">
         <div class="card-body">
-          <div
-            th:if="${#lists.isEmpty(reservasAuditorio)}"
-            class="alert alert-info"
-          >
+          <div th:if="${#lists.isEmpty(reservasAuditorio)}" class="alert alert-info">
             Você não possui reservas do auditório para o período selecionado.
           </div>
-          <div
-            class="table-responsive"
-            th:if="${not #lists.isEmpty(reservasAuditorio)}"
-          >
+
+          <div class="table-responsive" th:if="${not #lists.isEmpty(reservasAuditorio)}">
             <table class="table table-hover align-middle">
               <thead class="table-dark">
                 <tr>
@@ -178,35 +147,38 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  th:each="reserva : ${reservasAuditorio}"
-                  th:id="'reserva-' + ${reserva.id}"
-                >
+                <tr th:each="reserva : ${reservasAuditorio}"
+                    th:id="'reserva-' + ${reserva.id}"
+                    th:classappend="(${#authorization.expression('hasRole(''ADMIN'')') and reserva.emailRequisitor != usuarioEmail} ? 'fw-bold' : '')">
                   <td th:text="${reserva.evento}"></td>
-                  <td
-                    th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"
-                  ></td>
-                  <td
-                    th:text="${#temporals.format(reserva.hora, 'HH:mm') + ' - ' + #temporals.format(reserva.horaFim, 'HH:mm')}"
-                  ></td>
+                  <td th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"></td>
+                  <td th:text="${#temporals.format(reserva.hora, 'HH:mm') + ' - ' + #temporals.format(reserva.horaFim, 'HH:mm')}"></td>
                   <td sec:authorize="hasRole('ADMIN')" th:text="${reserva.nome}"></td>
                   <td>
-                    <span
-    th:classappend="${reserva.status.name() == 'APROVADA'} ? 'bg-success' : (${reserva.status.name() == 'PENDENTE'} ? 'bg-warning text-dark' : 'bg-danger')"
-    class="badge"
-    th:text="${#strings.capitalize( #strings.toLowerCase(reserva.status) )}"
-  >
+                    <span class="badge"
+                          th:classappend="${reserva.status.name() == 'APROVADA'} ? 'bg-success' : (${reserva.status.name() == 'PENDENTE'} ? 'bg-warning text-dark' : 'bg-danger')"
+                          th:text="${#strings.capitalize(#strings.toLowerCase(reserva.status))}">
                     </span>
                   </td>
                   <td class="text-center">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm btn-apagar"
-                      th:attr="data-id=${reserva.id}"
-                      title="Cancelar Reserva"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button>
+                    <th:block th:if="${reserva.emailRequisitor == usuarioEmail}">
+                      <button type="button" class="btn btn-danger btn-sm btn-apagar" th:attr="data-id=${reserva.id}"
+                              title="Cancelar Reserva">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </th:block>
+
+                    <th:block sec:authorize="hasRole('ADMIN')" th:if="${reserva.emailRequisitor != usuarioEmail}">
+                      <button type="button" class="btn btn-secondary btn-sm btn-gerenciar-status"
+                              data-bs-toggle="modal" data-bs-target="#modalEditarStatus"
+                              th:data-reserva-id="${reserva.id}"
+                              th:data-evento-nome="${reserva.evento}"
+                              th:data-solicitante-nome="${reserva.nome}"
+                              th:data-data-hora="${#temporals.format(reserva.data, 'dd/MM/yy')} + ' às ' + ${#temporals.format(reserva.hora, 'HH:mm')}"
+                              th:data-status-atual="${reserva.status.name()}">
+                        <i class="bi bi-pencil"></i> Editar Status
+                      </button>
+                    </th:block>
                   </td>
                 </tr>
               </tbody>
@@ -214,98 +186,126 @@
           </div>
         </div>
       </div>
-    </main>
+    </section>
+  </main>
 
-    <div id="confirmModal" class="modal">
+  <!-- MODAL EDITAR STATUS -->
+  <div class="modal fade" id="modalEditarStatus" tabindex="-1" aria-labelledby="modalEditarStatusLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
-        <button
-          type="button"
-          id="btnCloseConfirmModal"
-          class="btn-close"
-        ></button>
-        <p>Tem certeza que deseja excluir esta reserva?</p>
-        <div class="modal-buttons">
-          <button id="btnConfirm" class="btn">Sim</button>
-          <button id="btnCancel" class="btn">Não</button>
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarStatusLabel">Gerenciar Status da Reserva</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <form id="formEditarStatus" th:action="@{/admin/reserva/atualizar-status}" method="post">
+          <div class="modal-body">
+            <input type="hidden" id="modalReservaId" name="reservaId" />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <p><strong>Evento:</strong> <span id="modalEventoNome"></span></p>
+            <p><strong>Solicitante:</strong> <span id="modalSolicitanteNome"></span></p>
+            <p><strong>Data/Hora:</strong> <span id="modalDataHora"></span></p>
+            <hr />
+            <div class="form-group">
+              <label for="modalNovoStatus" class="form-label"><strong>Alterar Status Para:</strong></label>
+              <select id="modalNovoStatus" name="novoStatus" class="form-select">
+                <option th:each="status : ${T(com.bd.sitebd.model.enums.StatusReserva).values()}"
+                        th:value="${status.name()}"
+                        th:text="${status.displayName}"></option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar Mudanças</button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Lógica do modal de confirmação (sem alterações)
-        const modal = document.getElementById("confirmModal");
-        const btnConfirm = document.getElementById("btnConfirm");
-        const btnCancel = document.getElementById("btnCancel");
-        const btnCloseConfirm = document.getElementById("btnCloseConfirmModal");
-        let reservaIdParaExcluir = null;
+  <!-- MODAL CONFIRMAR EXCLUSÃO -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <button type="button" id="btnCloseConfirmModal" class="btn-close"></button>
+      <p>Tem certeza que deseja excluir esta reserva?</p>
+      <div class="modal-buttons">
+        <button id="btnConfirm" class="btn btn-primary">Sim</button>
+        <button id="btnCancel" class="btn btn-secondary">Não</button>
+      </div>
+    </div>
+  </div>
 
-        const fecharModalConfirmacao = () => {
-          modal.style.display = "none";
-          reservaIdParaExcluir = null;
-        };
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const modal = document.getElementById("confirmModal");
+      const btnConfirm = document.getElementById("btnConfirm");
+      const btnCancel = document.getElementById("btnCancel");
+      const btnCloseConfirm = document.getElementById("btnCloseConfirmModal");
+      let reservaIdParaExcluir = null;
 
-        document.querySelectorAll(".btn-apagar").forEach((botao) => {
-          botao.addEventListener("click", () => {
-            reservaIdParaExcluir = botao.getAttribute("data-id");
-            modal.style.display = "flex";
-          });
+      const fecharModalConfirmacao = () => {
+        modal.style.display = "none";
+        reservaIdParaExcluir = null;
+      };
+
+      document.querySelectorAll(".btn-apagar").forEach((botao) => {
+        botao.addEventListener("click", () => {
+          reservaIdParaExcluir = botao.getAttribute("data-id");
+          modal.style.display = "flex";
         });
+      });
 
-        // Adiciona eventos de clique para todos os botões que fecham o modal
-        btnCancel.addEventListener("click", fecharModalConfirmacao);
-        btnCloseConfirm.addEventListener("click", fecharModalConfirmacao); // 3. Adiciona evento ao 'X'
+      [btnCancel, btnCloseConfirm].forEach(btn => btn.addEventListener("click", fecharModalConfirmacao));
+      window.addEventListener("click", (e) => { if (e.target === modal) fecharModalConfirmacao(); });
 
-        // 4. Adiciona evento para fechar ao clicar FORA do conteúdo do modal
-        window.addEventListener("click", (event) => {
-          if (event.target == modal) {
-            fecharModalConfirmacao();
-          }
-        });
-
-        btnCancel.addEventListener("click", () => {
-          modal.style.display = "none";
-          reservaIdParaExcluir = null;
-        });
-
-        btnConfirm.addEventListener("click", () => {
-          if (reservaIdParaExcluir) {
-            const form = document.createElement("form");
-            form.method = "post";
-            form.action = "/deletar/" + reservaIdParaExcluir;
-            const csrfToken = document
-              .querySelector('meta[name="_csrf"]')
-              .getAttribute("content");
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "_csrf";
-            input.value = csrfToken;
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
-          }
-        });
-
-        // --- NOVO SCRIPT DE DESTAQUE ---
-        const hash = window.location.hash;
-        if (hash && hash.startsWith("#reserva-")) {
-          const idParaDestaque = hash.substring(1); // Remove o '#'
-          const linhaParaDestaque = document.getElementById(idParaDestaque);
-
-          if (linhaParaDestaque) {
-            // Adiciona a classe de destaque do Bootstrap (fundo amarelo)
-            linhaParaDestaque.classList.add("table-warning");
-
-            // Rola a página até a linha para garantir que ela esteja visível
-            linhaParaDestaque.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
-          }
+      btnConfirm.addEventListener("click", () => {
+        if (reservaIdParaExcluir) {
+          const form = document.createElement("form");
+          form.method = "post";
+          form.action = "/deletar/" + reservaIdParaExcluir;
+          const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute("content");
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "_csrf";
+          input.value = csrfToken;
+          form.appendChild(input);
+          document.body.appendChild(form);
+          form.submit();
         }
       });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-    <div th:replace="~{fragments/footer :: footer}"></div>
-  </body>
+
+      const modalEditarStatus = document.getElementById('modalEditarStatus');
+      if (modalEditarStatus) {
+        modalEditarStatus.addEventListener('show.bs.modal', (event) => {
+          const button = event.relatedTarget;
+          const reservaId = button.getAttribute('data-reserva-id');
+          const eventoNome = button.getAttribute('data-evento-nome');
+          const solicitanteNome = button.getAttribute('data-solicitante-nome');
+          const dataHora = button.getAttribute('data-data-hora');
+          const statusAtual = button.getAttribute('data-status-atual');
+          const modal = event.target;
+          modal.querySelector('#modalReservaId').value = reservaId;
+          modal.querySelector('#modalEventoNome').textContent = eventoNome;
+          modal.querySelector('#modalSolicitanteNome').textContent = solicitanteNome;
+          modal.querySelector('#modalDataHora').textContent = dataHora;
+          modal.querySelector('#modalNovoStatus').value = statusAtual;
+        });
+      }
+
+      const hash = window.location.hash;
+      if (hash && hash.startsWith("#reserva-")) {
+        const idParaDestaque = hash.substring(1);
+        const linha = document.getElementById(idParaDestaque);
+        if (linha) {
+          linha.classList.add("table-warning");
+          linha.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    });
+  </script>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
 </html>

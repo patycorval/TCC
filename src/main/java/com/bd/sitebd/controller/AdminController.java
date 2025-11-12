@@ -59,10 +59,8 @@ public class AdminController {
     @Autowired
     private DiaBloqueadoService diaBloqueadoService;
 
-    // --- INJEÇÃO ADICIONADA ---
     @Autowired
     private SalaService salaService;
-    // --- FIM ---
 
     // --- SEU MÉTODO GET/cadastro (JÁ ESTÁ CORRETO) ---
     @PreAuthorize("hasRole('ADMIN')")
@@ -372,5 +370,20 @@ public class AdminController {
         public void setNovoStatus(StatusReserva novoStatus) {
             this.novoStatus = novoStatus;
         }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/reserva/atualizar-status")
+    public String atualizarStatusDaListagem(@RequestParam("reservaId") Long id,
+            @RequestParam("novoStatus") StatusReserva status,
+            RedirectAttributes redirectAttributes) {
+        try {
+            reservaService.atualizarStatus(id, status);
+            redirectAttributes.addFlashAttribute("mensagemSucesso", "Status da reserva atualizado!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensagemErro", "Erro ao atualizar status.");
+            e.printStackTrace();
+        }
+        return "redirect:/listagem";
     }
 }
