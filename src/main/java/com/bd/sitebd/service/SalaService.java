@@ -75,7 +75,7 @@ public class SalaService {
         }
         String uniqueFilename = UUID.randomUUID().toString() + extensao;
 
-        Path caminhoFisico = Paths.get(uploadDir + uniqueFilename);
+        Path caminhoFisico = Paths.get(uploadDir, uniqueFilename);
 
         Files.createDirectories(caminhoFisico.getParent());
         Files.copy(arquivoImagem.getInputStream(), caminhoFisico);
