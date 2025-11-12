@@ -117,8 +117,12 @@ public class GradeController {
             }
 
             int mesInicio = LocalDate.now().getMonthValue() >= 8 ? 8 : 2;
+
+            int mesesParaAdicionar = (mesInicio == 8) ? 4 : 5;
+
             LocalDate inicioSemestre = LocalDate.now().withMonth(mesInicio).with(TemporalAdjusters.firstDayOfMonth());
-            LocalDate fimSemestre = inicioSemestre.plusMonths(5).with(TemporalAdjusters.lastDayOfMonth());
+            LocalDate fimSemestre = inicioSemestre.plusMonths(mesesParaAdicionar)
+                    .with(TemporalAdjusters.lastDayOfMonth());
 
             String[] horarios = horarioStr.split(" às ");
             LocalTime horaInicio = LocalTime.parse(horarios[0]);
