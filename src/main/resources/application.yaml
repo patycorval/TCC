@@ -5,9 +5,9 @@ file.upload-dir: src/main/resources/static/uploads/
 
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/dbzinho
-        username: postgres
-        password: root
+        url: jdbc:postgresql://dpg-d4add4idbo4c73c9q2eg-a.oregon-postgres.render.com:5432/databasereserva
+        username: databasereserva_user 
+        password: jgwlvInhwZ0DAH4NEQfmx0w6RlnGhhiy
         driver-class-name: org.postgresql.Driver
         initialize: true
     
@@ -29,7 +29,7 @@ servlet:
 
 
 
-########## RODANDO LOCAL ############
+########### RODANDO LOCAL ############
 # server: 
 #     port: 8080
 
@@ -42,7 +42,7 @@ servlet:
 #         username: postgres
 #         password: root
 #         driver-class-name: org.postgresql.Driver
-#         initialize: true
+#         initialize: true 
     
 #     jpa:
 #         hibernate:
