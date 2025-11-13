@@ -1,13 +1,13 @@
 # server: 
 #     port: 8080
 
-# file.upload-dir: C:/fatec_uploads/
+# file.upload-dir: src/main/resources/static/uploads/
 
 # spring:
 #     datasource:
-#         url: jdbc:postgresql://dpg-d4add4idbo4c73c9q2eg-a.oregon-postgres.render.com:5432/databasereserva
-#         username: databasereserva_user 
-#         password: jgwlvInhwZ0DAH4NEQfmx0w6RlnGhhiy
+#         url: jdbc:postgresql://localhost:5432/dbzinho
+#         username: postgres
+#         password: root
 #         driver-class-name: org.postgresql.Driver
 #         initialize: true
     
@@ -33,8 +33,8 @@
 server: 
     port: 8080
 
-# file.upload-dir: C:/fatec_uploads/
-file.upload-dir: src/main/resources/static/uploads/
+file.upload-dir: C:/fatec_uploads/
+# file.upload-dir: src/main/resources/static/uploads/
 
 spring:
     datasource:

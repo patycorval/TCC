@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // --- FIM DA CORREÇÃO ---
                 } else {
                     const btnAdd = document.createElement('button');
-                    btnAdd.className = 'btn btn-sm btn-outline-primary btn-add';
+                    btnAdd.className = 'btn btn-sm btn-outline-danger btn-add';
                     btnAdd.innerHTML = '+';
                     btnAdd.addEventListener('click', () => {
                         abrirModalParaAdicionar(dia, horario);
