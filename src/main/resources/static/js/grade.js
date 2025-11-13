@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     const horarios = {
-        matutino: ['07:40 às 08:30', '08:30 às 09:20', '09:30 às 10:20', '10:20 às 11:10', '11:10 às 12:00', '12:00 às 12:50'],
-        noturno: ['18:40 às 19:30', '19:30 às 20:20', '20:30 às 21:20', '21:20 às 22:10', '22:10 às 23:00']
+        matutino: ['07:40 às 08:30', '08:30 às 09:30', '09:30 às 10:20', '10:20 às 11:20', '11:20 às 12:10', '12:10 às 13:00'],
+        noturno: ['19:00 às 19:50', '19:50 às 20:50', '20:50 às 21:40', '21:40 às 22:30']
     };
     const diasDaSemanaJava = { MONDAY: 'Segunda', TUESDAY: 'Terça', WEDNESDAY: 'Quarta', THURSDAY: 'Quinta', FRIDAY: 'Sexta', SATURDAY: 'Sábado' };
     const diasDaSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // --- FIM DA CORREÇÃO ---
                 } else {
                     const btnAdd = document.createElement('button');
-                    btnAdd.className = 'btn btn-sm btn-outline-primary btn-add';
+                    btnAdd.className = 'btn btn-sm btn-outline-danger btn-add';
                     btnAdd.innerHTML = '+';
                     btnAdd.addEventListener('click', () => {
                         abrirModalParaAdicionar(dia, horario);

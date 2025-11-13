@@ -15,6 +15,7 @@ public class UsuarioService {
         if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             throw new RuntimeException("Este e-mail já está cadastrado.");
         }
+        System.out.println("teste");
         return usuarioRepository.save(usuario);
     }
 }

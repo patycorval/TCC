@@ -8,6 +8,7 @@ import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.service.SalaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -45,7 +46,8 @@ public class GradeController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/grade")
     public String grade(Model model) {
-        model.addAttribute("cursos", cursoRepository.findAll());
+        List<Curso> cursos = cursoRepository.findAll(Sort.by("sigla").ascending().and(Sort.by("periodo").ascending()));
+        model.addAttribute("cursos", cursos);
         model.addAttribute("professores", usuarioRepository.findByTipoIn(
                 List.of(TipoUsuario.PROFESSOR, TipoUsuario.MONITOR)));
         model.addAttribute("salas", salaService.listarTodas());
