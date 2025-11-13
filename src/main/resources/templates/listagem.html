@@ -126,7 +126,7 @@
     </section>
 
     <!-- AUDITÓRIO -->
-    <section class="mt-5">
+    <section class="mt-5" sec:authorize="hasAnyRole('ADMIN', 'PROFESSOR')">
       <h3 class="mb-3">Auditório</h3>
       <div class="card shadow-sm">
         <div class="card-body">
