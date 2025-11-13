@@ -53,86 +53,87 @@
                 th:value="${_csrf.token}"
               />
 
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <div class="form-floating">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="numero"
-                      name="numero"
-                      placeholder="Nome/Número da Sala"
-                      required
-                    />
-                    <label for="numero">Nome/Número (Ex: 3.01)</label>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="numero"
+                        name="numero"
+                        placeholder="Nome e Número (Ex: Laboratório 3.01)"
+                        required
+                      />
+                      <label for="numero" class="label-longa">Nome e Número (Ex: Laboratório 3.01) <span class="text-danger ms-1">*</span></label>
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <div class="form-floating">
-                    <select
-                      class="form-select"
-                      id="localizacao"
-                      name="localizacao"
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Selecione o andar...
-                      </option>
-                      <option value="Térreo">Térreo</option>
-                      <option value="2º Andar">2º Andar</option>
-                      <option value="3º Andar">3º Andar</option>
-                      <option value="5º Andar">5º Andar</option>
-                    </select>
-                    <label for="localizacao">Andar</label>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <div class="form-floating">
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="capacidade"
-                      name="capacidade"
-                      placeholder="Capacidade"
-                      required
-                      min="1"
-                    />
-                    <label for="capacidade">Capacidade (Alunos)</label>
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <div class="form-floating">
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="qtdComputadores"
-                      name="qtdComputadores"
-                      placeholder="Computadores"
-                      required
-                      value="0"
-                      min="0"
-                    />
-                    <label for="qtdComputadores">Qtde. Computadores</label>
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <select
+                        class="form-select"
+                        id="localizacao"
+                        name="localizacao"
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Selecione o andar...
+                        </option>
+                        <option value="2º Andar">2º Andar</option>
+                        <option value="3º Andar">3º Andar</option>
+                        <option value="5º Andar">5º Andar</option>
+                      </select>
+                      <label for="localizacao">Andar <span class="text-danger ms-1">*</span></label>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="form-floating mb-3">
-                <select class="form-select" id="tipo" name="tipo" required>
-                  <option value="" disabled selected>
-                    Selecione o tipo...
-                  </option>
-                  <option value="SALA_AULA">Sala de Aula</option>
-                  <option value="LABORATORIO">Laboratório</option>
-                </select>
-                <label for="tipo">Tipo de Sala</label>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="capacidade"
+                        name="capacidade"
+                        placeholder="Capacidade"
+                        required
+                        min="1"
+                      />
+                      <label for="capacidade">Capacidade (Alunos) <span class="text-danger ms-1">*</span></label>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="qtdComputadores"
+                        name="qtdComputadores"
+                        placeholder="Computadores"
+                        required
+                        value="0"
+                        min="0"
+                      />
+                      <label for="qtdComputadores">Qtde. Computadores <span class="text-danger ms-1">*</span></label>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="mb-3 p-3 border rounded">
-                <label class="form-label d-block">Recursos Disponíveis</label>
+                <div class="form-floating mb-3">
+                  <select class="form-select" id="tipo" name="tipo" required>
+                    <option value="" disabled selected>
+                      Selecione o tipo...
+                    </option>
+                    <option value="SALA_AULA">Sala de Aula</option>
+                    <option value="LABORATORIO">Laboratório</option>
+                  </select>
+                  <label for="tipo">Tipo de Sala <span class="text-danger ms-1">*</span></label>
+                </div>
+
+                <div class="mb-3 p-3 border rounded">
+                  <label class="form-label d-block">Recursos Disponíveis <span class="text-danger ms-1">*</span></label>
 
                 <div class="row g-2">
                   <div class="col-6">
