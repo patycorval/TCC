@@ -1168,6 +1168,14 @@ form.register-form .btn-custom-red:hover {
     position: absolute;
 }
 
+.label-longa {
+  white-space: normal; 
+  text-overflow: ellipsis; 
+  overflow: visible;
+  line-height: 1.2;
+  font-size: 0.9rem; 
+}
+
 .password-icon-toggle {
     position: absolute;
     top: 50%;
