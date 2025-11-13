@@ -21,6 +21,7 @@
 //         }
 //     }
 // });
+//
 
 function aplicarFiltros() {
     const andarFiltro = document.getElementById('andar').value;
