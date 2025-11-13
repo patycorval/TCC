@@ -1,56 +1,56 @@
-# server: 
-#     port: 8080
-
-# file.upload-dir: src/main/resources/static/uploads/
-
-# spring:
-#     datasource:
-#         url: jdbc:postgresql://localhost:5432/dbzinho
-#         username: postgres
-#         password: root
-#         driver-class-name: org.postgresql.Driver
-#         initialize: true
-    
-#     jpa:
-#         hibernate:
-#             ddl-auto: update
-#         generate-ddl: true
-#         show-sql: true
-        
-#     sql:
-#         init:
-#             schema-locations: classpath:/schema-postgresql.sql
-#             mode: always
-#             platform: postgres
-# servlet:
-#         multipart:
-#             max-file-size: 10MB       
-#             max-request-size: 10MB
-
-
-
-
 server: 
     port: 8080
 
-file.upload-dir: C:/fatec_uploads/
-# file.upload-dir: src/main/resources/static/uploads/
+file.upload-dir: src/main/resources/static/uploads/
 
 spring:
     datasource:
         url: jdbc:postgresql://localhost:5432/dbzinho
         username: postgres
-        password: 1234
+        password: root
         driver-class-name: org.postgresql.Driver
-        initialize: true 
+        initialize: true
     
     jpa:
         hibernate:
-            ddl-auto: update 
+            ddl-auto: update
         generate-ddl: true
         show-sql: true
-
-    servlet:
+        
+    sql:
+        init:
+            schema-locations: classpath:/schema-postgresql.sql
+            mode: always
+            platform: postgres
+servlet:
         multipart:
             max-file-size: 10MB       
             max-request-size: 10MB
+
+
+
+
+# server: 
+#     port: 8080
+
+# file.upload-dir: C:/fatec_uploads/
+# # file.upload-dir: src/main/resources/static/uploads/
+
+# spring:
+#     datasource:
+#         url: jdbc:postgresql://localhost:5432/dbzinho
+#         username: postgres
+#         password: 1234
+#         driver-class-name: org.postgresql.Driver
+#         initialize: true 
+    
+#     jpa:
+#         hibernate:
+#             ddl-auto: update 
+#         generate-ddl: true
+#         show-sql: true
+
+#     servlet:
+#         multipart:
+#             max-file-size: 10MB       
+#             max-request-size: 10MB
