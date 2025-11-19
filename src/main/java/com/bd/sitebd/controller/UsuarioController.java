@@ -55,6 +55,11 @@ public class UsuarioController {
         List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala, dataFiltro,
                 horaInicioFiltro, horaFimFiltro);
 
+        List<Sala> salasTerreo = salasFiltradas.stream()
+                .filter(s -> s.getLocalizacao() != null &&
+                        (s.getLocalizacao().equalsIgnoreCase("Térreo") || s.getLocalizacao().startsWith("0")))
+                .toList();
+
         List<Sala> salasAndar2 = salasFiltradas.stream()
                 .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("2"))
                 .toList();
@@ -67,9 +72,8 @@ public class UsuarioController {
                 .filter(s -> s.getLocalizacao() != null && s.getLocalizacao().startsWith("5"))
                 .toList();
 
+        model.addAttribute("salasTerreo", salasTerreo);
         model.addAttribute("salasAndar2", salasAndar2);
-
-        // 5. Seus atributos existentes (sem alteração)
         model.addAttribute("salasAndar3", salasAndar3);
         model.addAttribute("salasAndar5", salasAndar5);
         model.addAttribute("activePage", "principal");

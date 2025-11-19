@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -83,13 +85,17 @@ public class ReservaService {
         }
 
         public Reserva salvar(Reserva reserva) {
-                LocalDate hoje = LocalDate.now();
-                LocalTime agora = LocalTime.now();
+                // Define o fuso horário da Fatec (Santos/São Paulo)
+                ZoneId saoPauloZone = ZoneId.of("America/Sao_Paulo");
+                LocalDate hojeEmSaoPaulo = LocalDate.now(saoPauloZone);
+                LocalTime agoraEmSaoPaulo = LocalTime.now(saoPauloZone);
 
-                if (reserva.getData().isBefore(hoje)) {
+                if (reserva.getData().isBefore(hojeEmSaoPaulo)) {
                         throw new IllegalArgumentException("Não é possível fazer reservas para datas retroativas.");
                 }
-                if (reserva.getData().isEqual(hoje) && reserva.getHora().isBefore(agora)) {
+
+                // 3. VALIDAÇÃO DE HORÁRIO RETROATIVO (somente se a data for hoje)
+                if (reserva.getData().isEqual(hojeEmSaoPaulo) && reserva.getHora().isBefore(agoraEmSaoPaulo)) {
                         throw new IllegalArgumentException("Não é possível fazer reservas para horários retroativos.");
                 }
 

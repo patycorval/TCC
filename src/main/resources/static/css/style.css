@@ -30,19 +30,19 @@ h3{
     padding-top: 6px;
 }
 
-.andar3, .andar5, .andar2 {
+.andarTerreo, .andar2, .andar3, .andar5{
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start; 
-    gap: 15px; /* espaço entre os cards */
+    gap: 15px;  
     width: 100%;
-    margin: 10px auto; /* centraliza o bloco todo */
+    margin: 10px auto; 
     box-sizing: border-box;
     padding-left: 9%; 
 }
 
 .div-reservar {
-    width: 17%; /* volta ao tamanho original */
+    width: 17%; 
     background-color: rgb(120, 4, 4);
     color: white;
     padding: 10px;
@@ -53,19 +53,6 @@ h3{
     text-align: center;
 }
 
-/* .andar3, .andar5, .andar2{
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    gap:15px;
-    width: 100vw;
-    max-width: 100%;
-    box-sizing: border-box;
-    padding: 5px 10px 5px 10px;
-    flex-wrap: wrap;
-    text-align: center;
-    align-items: center;
-} */
 .subtitulo{
     display: block;
 }
@@ -1023,6 +1010,18 @@ a.voltar:hover {
 
 table .badge {
   display: inline;
+}
+
+#editarStatus{
+ background-color: rgb(120, 4, 4);
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+#editarStatus:hover {
+    background-color:rgb(87, 1, 1);
 }
 
 /****** PAGINA SUCESSO ******/

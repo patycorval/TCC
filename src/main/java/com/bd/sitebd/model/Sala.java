@@ -7,10 +7,9 @@ import com.bd.sitebd.model.enums.TipoSala;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "sala") // Garante que o nome da tabela esteja correto
+@Table(name = "sala") 
 public class Sala {
 
-    // --- SEUS CAMPOS EXISTENTES ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +18,7 @@ public class Sala {
     private Integer capacidade;
     private String localizacao;
 
-    @Enumerated(EnumType.STRING) // Assumindo que seu 'tipo' é um Enum
+    @Enumerated(EnumType.STRING) 
     private TipoSala tipo;
 
     private boolean ativa = true;
@@ -30,19 +29,12 @@ public class Sala {
     @Column(name = "recurso")
     private List<Recurso> recursos;
 
-    // --- CAMPO DE IMAGEM ATUALIZADO ---
-    @Column(name = "imagem_url") // Mapeia para a nova coluna do banco
-    private String imagemUrl; // Apenas um campo de texto
-    // --- FIM DA ATUALIZAÇÃO ---
+    @Column(name = "imagem_url") 
+    private String imagemUrl; 
 
-    // Construtores
     public Sala() {
     }
-    // (Seu outro construtor, se houver)
-
-    // --- GETTERS E SETTERS ---
-
-    // (Getters/setters existentes: id, numero, capacidade, etc.)
+   
     public Long getId() {
         return id;
     }
@@ -107,7 +99,6 @@ public class Sala {
         this.recursos = recursos;
     }
 
-    // --- GETTER E SETTER PARA IMAGEM_URL ---
     public String getImagemUrl() {
         return imagemUrl;
     }
@@ -115,9 +106,7 @@ public class Sala {
     public void setImagemUrl(String imagemUrl) {
         this.imagemUrl = imagemUrl;
     }
-    // --- FIM ---
-
-    // --- Seus métodos @Transient (MANTENHA-OS) ---
+    
     @Transient
     public TipoSala getTipoSala() {
         if (this.qtdComputadores > 1) {
