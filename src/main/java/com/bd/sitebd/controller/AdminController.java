@@ -220,7 +220,8 @@ public class AdminController {
         List<LocalDate> diasBloqueados = diaBloqueadoService.buscarDiasBloqueadosNoMes(ym);
         YearMonth mesCorrente = YearMonth.now();
         model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
-        List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorio(ym);
+
+        List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaAdmin(ym);
 
         List<DiaCalendario> diasDoMes = new ArrayList<>();
         LocalDate primeiroDiaDoMes = ym.atDay(1);

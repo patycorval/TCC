@@ -170,18 +170,12 @@ div p{
     background-color: #c30000
 }
 
-.btn-danger{
-    background-color: #c30000
-}
 .btn-danger:hover{
-    background-color: #c30000;
-    transform: scale(0.98);   
+    background-color:  #8d0000;
 }
 .div-reservar a.btn {
     display: inline-block;
     width: 80%;
-    /* padding: 8px 12px; */
-    /* margin-bottom: 5px; */
     background-color: #ffffff;
     color: #000000;
     text-decoration: none;
