@@ -11,6 +11,7 @@ import com.bd.sitebd.repositories.CursoRepository;
 import com.bd.sitebd.service.DiaBloqueadoService;
 import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.service.UsuarioService;
+import org.springframework.data.domain.Sort;
 
 // --- IMPORTS ADICIONADOS PARA CADASTRO DE SALA ---
 import com.bd.sitebd.model.Sala;
@@ -67,7 +68,8 @@ public class AdminController {
     @GetMapping("/cadastro")
     public String exibirCadastro(Model model) {
         model.addAttribute("activePage", "cadastro"); // Mantido
-        List<Curso> todosOsCursos = cursoRepository.findAll();
+        List<Curso> todosOsCursos = cursoRepository.findAll(
+                Sort.by("sigla").ascending().and(Sort.by("periodo").ascending()));
         model.addAttribute("listaDeCursos", todosOsCursos);
 
         System.out.println("--- DEBUG AdminController ---");
