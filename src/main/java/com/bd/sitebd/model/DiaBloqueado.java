@@ -15,14 +15,12 @@ public class DiaBloqueado {
 
     private LocalDate data;
 
-    // Construtores
     public DiaBloqueado() {}
 
     public DiaBloqueado(LocalDate data) {
         this.data = data;
     }
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

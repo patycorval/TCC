@@ -155,30 +155,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalFooter.className = 'modal-footer d-flex justify-content-between'; 
                 btnAplicarMudancas.style.display = 'block';
                 eventos.forEach(evento => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    const statusText = evento.status.charAt(0).toUpperCase() + evento.status.slice(1).toLowerCase();
-                    
-                    li.innerHTML = `
-                        <div class="d-flex w-100 justify-content-between">
-                            <div>
-                                <h6 class="mb-1">${evento.evento}</h6>
-                                <small class="text-muted">Solicitante: ${evento.nome} (${evento.emailRequisitor})</small>
-                                <br>
-                                <small class="text-muted">Horário: ${formatarHora(evento.hora)} - ${formatarHora(evento.horaFim)}</small>
-                            </div>
-                            <div class="status-container" id="status-container-${evento.id}">
-                                <span class="badge status-${evento.status.toLowerCase()}">${statusText}</span>
-                                <button class="btn btn-link btn-sm p-0 btn-edit-status"><i class="bi bi-pencil-square"></i></button>
-                                <select class="form-select form-select-sm select-status" style="display: none;">
-                                    <option value="APROVADA" ${evento.status === 'APROVADA' ? 'selected' : ''}>Aprovada</option>
-                                    <option value="PENDENTE" ${evento.status === 'PENDENTE' ? 'selected' : ''}>Pendente</option>
-                                    <option value="REJEITADA" ${evento.status === 'REJEITADA' ? 'selected' : ''}>Rejeitada</option>
-                                </select>
-                            </div>
+                   const li = document.createElement('li');
+                
+                // Adiciona classes para efeito visual de clique (hover) e muda o cursor
+                li.className = 'list-group-item list-group-item-action';
+                li.style.cursor = 'pointer';
+
+                const statusText = evento.status.charAt(0).toUpperCase() + evento.status.slice(1).toLowerCase();
+                
+                // HTML limpo: removemos a tag <a> e deixamos apenas as infos e o container de status
+                li.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">${evento.evento}</h6>
+                            <small class="text-muted">Solicitante: ${evento.nome} (${evento.emailRequisitor})</small>
+                            <br>
+                            <small class="text-muted">Horário: ${formatarHora(evento.hora)} - ${formatarHora(evento.horaFim)}</small>
                         </div>
-                    `;
-                    listaEventosContainer.appendChild(li);
+                        
+                        <div class="status-container" id="status-container-${evento.id}">
+                            <span class="badge status-${evento.status.toLowerCase()}">${statusText}</span>
+                            <button class="btn btn-link btn-sm p-0 btn-edit-status"><i class="bi bi-pencil-square"></i></button>
+                            <select class="form-select form-select-sm select-status" style="display: none;">
+                                <option value="APROVADA" ${evento.status === 'APROVADA' ? 'selected' : ''}>Aprovada</option>
+                                <option value="PENDENTE" ${evento.status === 'PENDENTE' ? 'selected' : ''}>Pendente</option>
+                                <option value="REJEITADA" ${evento.status === 'REJEITADA' ? 'selected' : ''}>Rejeitada</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+                // EVENTO DE CLIQUE NA LINHA INTEIRA
+                li.addEventListener('click', (e) => {
+                    // Se o clique foi dentro da área de status (botão, select ou badge), NÃO redireciona
+                    if (e.target.closest('.status-container')) {
+                        return;
+                    }
+                    // Redireciona para a listagem usando o filtro de período correto e o hash para destaque
+                    // Importante: O backend (AdminController) precisa ter calculado o 'periodoIdeal'
+                    window.location.href = `/listagem?periodo=${evento.periodoIdeal}#reserva-${evento.id}`;
+                });
+
+                listaEventosContainer.appendChild(li);
 
                     const statusContainer = li.querySelector(`#status-container-${evento.id}`);
                     const editButton = statusContainer.querySelector('.btn-edit-status');

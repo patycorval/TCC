@@ -15,11 +15,9 @@ public class GlobalControllerAdvice {
     public void addUserDetailsToModel(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Verifica se o usuário está autenticado
         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
             String email = authentication.getName();
 
-            // Pega a primeira "ROLE" do usuário e a formata para exibição
             String tipo = authentication.getAuthorities().stream()
                     .findFirst()
                     .map(GrantedAuthority::getAuthority)

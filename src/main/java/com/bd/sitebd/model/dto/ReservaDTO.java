@@ -5,7 +5,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalTime;
 
-// Esta classe formata os dados da Reserva para o JavaScript
 public class ReservaDTO {
 
     public Long id;
@@ -15,7 +14,7 @@ public class ReservaDTO {
     public LocalTime hora;
     public LocalTime horaFim;
     public String status;
-    public boolean owner; // A propriedade que o JavaScript precisa!
+    public boolean owner; 
 
     public ReservaDTO(Reserva reserva) {
         this.id = reserva.getId();
@@ -26,7 +25,6 @@ public class ReservaDTO {
         this.horaFim = reserva.getHoraFim();
         this.status = reserva.getStatus().name();
 
-        // Verifica se o email da reserva é o mesmo do usuário logado
         String usuarioLogadoEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         this.owner = usuarioLogadoEmail.equals(reserva.getEmailRequisitor());
     }

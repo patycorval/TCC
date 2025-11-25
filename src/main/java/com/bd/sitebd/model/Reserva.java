@@ -10,7 +10,6 @@ import java.time.LocalTime;
 @Entity
 public class Reserva {
 
-    // ... (id, numero, nome, etc. ... )
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,18 +31,12 @@ public class Reserva {
     @Transient
     private String periodoIdeal;
 
-    // --- CORREÇÃO AQUI ---
     @Column(name = "is_grade_reserva")
-    private boolean gradeReserva = false; // <-- NOME DO CAMPO ALTERADO (removido o 'is')
-    // --- FIM DA CORREÇÃO ---
+    private boolean gradeReserva = false;
 
-    // Construtores
     public Reserva() {
     }
 
-    // --- GETTERS E SETTERS ---
-
-    // ... (getters/setters para id, numero, nome, etc.) ...
     public Long getId() {
         return id;
     }
@@ -132,15 +125,13 @@ public class Reserva {
         this.semestre = semestre;
     }
 
-    // --- GETTER/SETTER CORRIGIDOS PARA O NOVO NOME DO CAMPO ---
     public boolean isGradeReserva() {
-        return gradeReserva; // <-- Agora referencia o campo 'gradeReserva'
+        return gradeReserva;
     }
 
     public void setGradeReserva(boolean gradeReserva) {
-        this.gradeReserva = gradeReserva; // <-- Agora referencia o campo 'gradeReserva'
+        this.gradeReserva = gradeReserva;
     }
-    // --- FIM DA CORREÇÃO ---
 
     public String getPeriodoIdeal() {
         return periodoIdeal;

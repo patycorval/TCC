@@ -102,16 +102,12 @@ public class UsuarioController {
         YearMonth mesCorrente = YearMonth.now();
         model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
 
-        // --- INÍCIO DA MODIFICAÇÃO ---
-
-        // 3. BUSQUE OS DIAS BLOQUEADOS
         List<LocalDate> diasBloqueados = diaBloqueadoService.buscarDiasBloqueadosNoMes(ym);
         List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaUsuario(ym, emailUsuario);
 
-        // ATUALIZAÇÃO: Adiciona o período ideal para cada reserva
         reservasAuditorio.forEach(reserva -> {
             String periodoIdeal = reservaService.determinarPeriodoParaData(reserva.getData());
-            reserva.setPeriodoIdeal(periodoIdeal); // Um novo campo temporário no modelo Reserva
+            reserva.setPeriodoIdeal(periodoIdeal);
         });
 
         List<DiaCalendario> diasDoMes = new ArrayList<>();
@@ -181,7 +177,6 @@ public class UsuarioController {
 
             reservaService.salvar(novaSolicitacao);
 
-            // Verifica se o usuário é ADMIN para personalizar a mensagem
             boolean isAdmin = authentication.getAuthorities().stream()
                     .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
@@ -195,26 +190,16 @@ public class UsuarioController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
         }
-        // --- INÍCIO DA CORREÇÃO ---
-        // Pega a autenticação novamente para decidir para onde redirecionar
+       
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
         if (isAdmin) {
-            // Se for admin, redireciona para a página de admin
             return "redirect:/admin/auditorio-admin?mes=" + dataEvento.getMonthValue() + "&ano=" + dataEvento.getYear();
         } else {
-            // Caso contrário, redireciona para a página normal
             return "redirect:/auditorio?mes=" + dataEvento.getMonthValue() + "&ano=" + dataEvento.getYear();
         }
-        // --- FIM DA CORREÇÃO ---
+
     }
 }
-
-// @PreAuthorize("hasAnyRole('ADMIN','PROFESSOR')")
-// @GetMapping("/grade")
-// public String grade(Model model) {
-// model.addAttribute("activePage", "grade");
-// return "grade";
-// }

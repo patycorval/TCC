@@ -13,14 +13,12 @@ import com.bd.sitebd.service.ReservaService;
 import com.bd.sitebd.service.UsuarioService;
 import org.springframework.data.domain.Sort;
 
-// --- IMPORTS ADICIONADOS PARA CADASTRO DE SALA ---
 import com.bd.sitebd.model.Sala;
 import com.bd.sitebd.model.enums.Recurso;
 import com.bd.sitebd.model.enums.TipoSala;
 import com.bd.sitebd.service.SalaService;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-// --- FIM DOS IMPORTS ADICIONADOS ---
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -63,11 +61,10 @@ public class AdminController {
     @Autowired
     private SalaService salaService;
 
-    // --- SEU MÉTODO GET/cadastro (JÁ ESTÁ CORRETO) ---
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cadastro")
     public String exibirCadastro(Model model) {
-        model.addAttribute("activePage", "cadastro"); // Mantido
+        model.addAttribute("activePage", "cadastro");
         List<Curso> todosOsCursos = cursoRepository.findAll(
                 Sort.by("sigla").ascending().and(Sort.by("periodo").ascending()));
         model.addAttribute("listaDeCursos", todosOsCursos);
@@ -83,7 +80,6 @@ public class AdminController {
         return "cadastro";
     }
 
-    // --- SEU MÉTODO POST/cadastro (JÁ ESTÁ CORRETO) ---
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/cadastro")
     public String processarCadastro(@RequestParam String email,
@@ -94,8 +90,6 @@ public class AdminController {
             @RequestParam(required = false) List<Long> cursos,
             RedirectAttributes redirectAttributes) {
 
-        // ... (Seu código completo para processar o cadastro do usuário) ...
-        // (Mantido exatamente como você enviou)
         if (!senha.equals(confirmarSenha)) {
             redirectAttributes.addFlashAttribute("mensagemErro", "As senhas não conferem!");
             redirectAttributes.addFlashAttribute("usuarioInput",
@@ -146,8 +140,6 @@ public class AdminController {
         return "redirect:/admin/cadastro";
     }
 
-    // --- MÉTODOS ADICIONADOS PARA CADASTRO DE SALA ---
-
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/adicionar-sala")
     public String exibirFormularioSala(Model model) {
@@ -162,12 +154,11 @@ public class AdminController {
             @RequestParam("localizacao") String localizacao,
             @RequestParam("capacidade") Integer capacidade,
             @RequestParam("qtdComputadores") int qtdComputadores,
-            @RequestParam("tipo") TipoSala tipo, // Espera a String "SALA_AULA" ou "LABORATORIO"
-            @RequestParam(name = "recursos", required = false) List<Recurso> recursos, // Espera Lista de Enums
-            @RequestParam("imagem") MultipartFile imagem, // O arquivo de upload
+            @RequestParam("tipo") TipoSala tipo,
+            @RequestParam(name = "recursos", required = false) List<Recurso> recursos,
+            @RequestParam("imagem") MultipartFile imagem, 
             RedirectAttributes redirectAttributes) {
 
-        // Validação básica do arquivo
         if (imagem.isEmpty()) {
             redirectAttributes.addFlashAttribute("mensagemErro", "A imagem é obrigatória.");
             return "redirect:/admin/adicionar-sala";
@@ -188,7 +179,6 @@ public class AdminController {
             novaSala.setRecursos(recursos);
             novaSala.setAtiva(true);
 
-            // Chama o SalaService para salvar o arquivo físico e atualizar a entidade
             salaService.salvarSalaComUpload(novaSala, imagem);
 
             redirectAttributes.addFlashAttribute("mensagemSucesso",
@@ -206,7 +196,6 @@ public class AdminController {
         }
     }
 
-    // --- SEUS MÉTODOS DE AUDITÓRIO (JÁ ESTÃO CORRETOS) ---
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/auditorio-admin")
     public String auditorioAdmin(@RequestParam(value = "mes", required = false) Integer mes,
@@ -224,6 +213,11 @@ public class AdminController {
         model.addAttribute("desabilitarAnterior", !ym.isAfter(mesCorrente));
 
         List<Reserva> reservasAuditorio = reservaService.buscarReservasAuditorioParaAdmin(ym);
+
+        reservasAuditorio.forEach(reserva -> {
+            String periodoIdeal = reservaService.determinarPeriodoParaData(reserva.getData());
+            reserva.setPeriodoIdeal(periodoIdeal);
+        });
 
         List<DiaCalendario> diasDoMes = new ArrayList<>();
         LocalDate primeiroDiaDoMes = ym.atDay(1);

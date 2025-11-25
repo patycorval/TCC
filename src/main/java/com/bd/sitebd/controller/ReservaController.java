@@ -20,29 +20,25 @@ public class ReservaController {
     @Autowired
     private ReservaService reservaService;
 
-    // Exibir formulário de reserva de sala
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservar")
     public String exibirFormulario(@RequestParam String numero, Model model) {
         Reserva reserva = new Reserva();
         reserva.setNumero(numero);
         model.addAttribute("reserva", reserva);
-        // Adiciona o atributo com valor 'false' para que a página sempre o encontre.
         model.addAttribute("reservaEfetuada", false);
         model.addAttribute("dataMinima", LocalDate.now().toString());
         return "reservar";
     }
 
-    // Salvar reserva de sala (agora com status APROVADA por padrão)
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/reservar")
     public String realizarReserva(@ModelAttribute Reserva reserva, Model model, Authentication authentication) {
         try {
-            reserva.setEmailRequisitor(authentication.getName()); // Esta linha está CORRETA
+            reserva.setEmailRequisitor(authentication.getName()); 
 
             reserva.setGradeReserva(false);
-            reservaService.salvar(reserva); // Agora 'reserva' tem o nome do formulário
-            // --- FIM DA MODIFICAÇÃO ---
+            reservaService.salvar(reserva); 
 
             model.addAttribute("reservaEfetuada", true);
             Reserva novaReserva = new Reserva();
@@ -154,7 +150,6 @@ public class ReservaController {
         return "listagem";
     }
 
-    // Deletar reserva
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/deletar/{id}")
     public String deletarReserva(@PathVariable Long id) {
@@ -162,7 +157,6 @@ public class ReservaController {
         return "redirect:/listagem";
     }
 
-    // Exibir formulário de edição de reserva
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/reservas/editar/{id}")
     public String exibirFormularioEdicao(@PathVariable Long id, Model model) {
@@ -177,7 +171,6 @@ public class ReservaController {
         return "atualizar";
     }
 
-    // Atualizar reserva
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/reservas/editar/{id}")
     public String atualizarReserva(@PathVariable Long id, @ModelAttribute Reserva reservaAtualizada, Model model) {
@@ -203,7 +196,6 @@ public class ReservaController {
         return "redirect:/listagem";
     }
 
-    // Página de contato (acesso livre)
     @GetMapping("/contato")
     public String paginaContato(Model model) {
         model.addAttribute("activePage", "contato");

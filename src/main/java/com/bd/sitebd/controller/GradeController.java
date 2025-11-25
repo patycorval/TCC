@@ -182,7 +182,6 @@ public class GradeController {
         }
     }
 
-    // Classe DTO interna corrigida
     public static class ReservaDTO {
         public String diaSemana;
         public String horario;
@@ -196,7 +195,6 @@ public class GradeController {
                     reserva.getHoraFim().getHour(), reserva.getHoraFim().getMinute());
             this.professorNome = reserva.getNome();
 
-            // Busca sala correspondente
             Sala salaEncontrada = salaService.listarTodas().stream()
                     .filter(s -> s.getNumero().equals(reserva.getNumero()))
                     .findFirst()
@@ -206,14 +204,13 @@ public class GradeController {
                 String tipo = salaEncontrada.getTipoSalaDisplayName();
                 String numero = salaEncontrada.getNumero();
 
-                // 🔧 Correção: evita duplicar o nome do tipo da sala
                 if (numero.toLowerCase().contains(tipo.toLowerCase())) {
                     this.salaNomeCompleto = numero.trim();
                 } else {
                     this.salaNomeCompleto = tipo + " " + numero;
                 }
             } else {
-                this.salaNomeCompleto = reserva.getNumero(); // fallback
+                this.salaNomeCompleto = reserva.getNumero();
             }
         }
     }

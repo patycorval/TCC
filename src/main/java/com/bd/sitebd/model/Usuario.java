@@ -13,7 +13,7 @@ public class Usuario {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String email; // login
+    private String email;
 
     @Column(nullable = false)
     private String senha;
@@ -37,7 +37,6 @@ public class Usuario {
     @JoinTable(name = "usuario_curso", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "curso_id"))
     private Set<Curso> cursos;
 
-    // Getters e Setters
     public Long getId() {
         return id;
     }

@@ -3,11 +3,6 @@ package com.bd.sitebd.model.dto;
 import com.bd.sitebd.model.Reserva;
 import java.time.LocalTime;
 
-/**
- * DTO (Data Transfer Object) para serializar os dados da Reserva para o
- * JavaScript.
- * Inclui apenas os campos necessários para o frontend.
- */
 public class ReservaJsonDTO {
 
     private Long id;
@@ -30,8 +25,6 @@ public class ReservaJsonDTO {
         this.status = reserva.getStatus().name();
     }
 
-    // Getters públicos para que a biblioteca Jackson possa encontrá-los e criar o
-    // JSON
     public Long getId() {
         return id;
     }
