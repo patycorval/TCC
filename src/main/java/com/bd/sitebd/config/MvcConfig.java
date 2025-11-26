@@ -15,8 +15,6 @@ public class MvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-		// 2. Converte o caminho do seu PC (ex: C:/fatec_uploads/) para um formato de
-		// recurso
 		String resourcePath = Paths.get(uploadDir).toAbsolutePath().toUri().toString();
 
 		// 3. Mapeia a URL pública "/uploads/**" para o diretório físico

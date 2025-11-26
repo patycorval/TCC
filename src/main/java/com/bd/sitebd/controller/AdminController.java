@@ -351,7 +351,6 @@ public class AdminController {
         private Long reservaId;
         private StatusReserva novoStatus;
 
-        // Getters e Setters
         public Long getReservaId() {
             return reservaId;
         }
