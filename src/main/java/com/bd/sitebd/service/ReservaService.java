@@ -67,9 +67,11 @@ public class ReservaService {
                                 novaReserva.getData(),
                                 StatusReserva.APROVADA);
 
+                // Pega os horários da nova solicitação
                 LocalTime inicioNova = novaReserva.getHora();
                 LocalTime fimNova = novaReserva.getHoraFim();
 
+                // Verifica se há algum conflito de horário
                 for (Reserva r : reservasAprovadasNoDia) {
                         LocalTime inicioExistente = r.getHora();
                         LocalTime fimExistente = r.getHoraFim();
@@ -82,6 +84,7 @@ public class ReservaService {
         }
 
         public Reserva salvar(Reserva reserva) {
+                // Define o fuso horário da Fatec (Santos/São Paulo)
                 ZoneId saoPauloZone = ZoneId.of("America/Sao_Paulo");
                 LocalDate hojeEmSaoPaulo = LocalDate.now(saoPauloZone);
                 LocalTime agoraEmSaoPaulo = LocalTime.now(saoPauloZone);
@@ -90,6 +93,7 @@ public class ReservaService {
                         throw new IllegalArgumentException("Não é possível fazer reservas para datas retroativas.");
                 }
 
+                // 3. VALIDAÇÃO DE HORÁRIO RETROATIVO (somente se a data for hoje)
                 if (reserva.getData().isEqual(hojeEmSaoPaulo) && reserva.getHora().isBefore(agoraEmSaoPaulo)) {
                         throw new IllegalArgumentException("Não é possível fazer reservas para horários retroativos.");
                 }
@@ -112,6 +116,7 @@ public class ReservaService {
                         throw new IllegalArgumentException("Já existe uma reserva para essa sala nesse horário.");
                 }
 
+                // Se for o auditório, verifica conflito apenas com reservas APROVADAS
                 if ("Auditorio".equals(reserva.getNumero())) {
                         if (temConflitoComAprovadas(reserva)) {
                                 throw new IllegalArgumentException(
@@ -269,14 +274,17 @@ public class ReservaService {
         }
 
         public void rejeitarReservasAuditorioPorData(LocalDate data) {
+                // Busca todas as reservas (APROVADA, PENDENTE, etc.) para o Auditório no dia
                 List<Reserva> reservasDoDia = reservaRepository.findByNumeroAndData("Auditorio", data);
 
                 if (reservasDoDia != null && !reservasDoDia.isEmpty()) {
                         for (Reserva reserva : reservasDoDia) {
+                                // Altera o status apenas se não estiver já rejeitada
                                 if (reserva.getStatus() != StatusReserva.REJEITADA) {
                                         reserva.setStatus(StatusReserva.REJEITADA);
                                 }
                         }
+                        // Salva todas as alterações no banco de dados de uma vez
                         reservaRepository.saveAll(reservasDoDia);
                 }
         }

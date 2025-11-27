@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const csrfToken = document.querySelector('input[name="_csrf"]').value;
 
+    // Referências aos modais e botões
     const modalView = document.getElementById('modal-dia-view');
     const modalReservaForm = document.getElementById('overlay-reserva');
     const modalTitulo = document.getElementById('modal-dia-titulo');
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const modalFooter = document.getElementById('modal-gestao-footer');
 
+    // para o modal de confirmação de bloqueio
     const formBloqueio = document.getElementById('formBloqueio');
     const btnBloquearTrigger = document.getElementById('btn-bloquear-selecionados-trigger');
     const btnBloquearReal = document.getElementById('submit-bloqueio-real');
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCancelBlock = document.getElementById('btn-cancel-block');
     const diasComEventosLista = document.getElementById('dias-com-eventos-lista');
 
+    // Objeto para armazenar as mudanças de status pendentes
     let pendingChanges = {};
     let diaElementoAtivo = null;
 
@@ -36,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return '00:00';
     };
 
+     // Listeners para fechar e alternar entre os modais
     const fecharTodosModais = () => {
         modalView.style.display = 'none';
         if (modalReservaForm) modalReservaForm.style.display = 'none';
@@ -65,6 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modalReservaForm.style.display = 'flex';
     });
 
+
+    // Função para enviar as alterações em massa
     const aplicarMudancas = async () => {
         const changesArray = Object.values(pendingChanges);
         if (changesArray.length === 0) {
@@ -83,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let eventos = JSON.parse(diaElementoAtivo.getAttribute('data-eventos'));
                 
+                // Filtra os eventos, removendo os que foram rejeitados
                 const eventosAtualizados = eventos.map(evento => {
                     const change = pendingChanges[evento.id];
                     if (change) {
@@ -122,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnAplicarMudancas.addEventListener('click', aplicarMudancas);
 
+    // Listener principal para os dias do calendário
         document.querySelectorAll('.dia.mensal:not(.vazio, .bloqueado, .indisponivel)').forEach(diaElemento => {
 
         diaElemento.addEventListener('click', () => {
@@ -149,11 +157,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 eventos.forEach(evento => {
                    const li = document.createElement('li');
                 
+                // Adiciona classes para efeito visual de clique (hover) e muda o cursor
                 li.className = 'list-group-item list-group-item-action';
                 li.style.cursor = 'pointer';
 
                 const statusText = evento.status.charAt(0).toUpperCase() + evento.status.slice(1).toLowerCase();
                 
+                // HTML limpo: removemos a tag <a> e deixamos apenas as infos e o container de status
                 li.innerHTML = `
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <div>
@@ -175,11 +185,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
+                // EVENTO DE CLIQUE NA LINHA INTEIRA
                 li.addEventListener('click', (e) => {
                     // Se o clique foi dentro da área de status (botão, select ou badge), NÃO redireciona
                     if (e.target.closest('.status-container')) {
                         return;
                     }
+                    // Redireciona para a listagem usando o filtro de período correto e o hash para destaque
+                    // Importante: O backend (AdminController) precisa ter calculado o 'periodoIdeal'
                     window.location.href = `/listagem?periodo=${evento.periodoIdeal}#reserva-${evento.id}`;
                 });
 
@@ -200,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     statusSelect.addEventListener('change', () => {
                         pendingChanges[evento.id] = { reservaId: evento.id, novoStatus: statusSelect.value };
                         
+                        // Habilita o botão "Aplicar Alterações"
                         btnAplicarMudancas.disabled = false; 
 
                         const newStatusText = statusSelect.options[statusSelect.selectedIndex].text;
@@ -215,18 +229,20 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 semEventosAviso.style.display = 'block';
                 modalFooter.className = 'modal-footer d-flex justify-content-end';
-                btnAplicarMudancas.style.display = 'none'; 
+                btnAplicarMudancas.style.display = 'none'; // Esconde o botão "Aplicar"
             }
             modalView.style.display = 'flex';
         });
     });
 
+//      Adicionar listener para o checkbox e impedir a propagação
     document.querySelectorAll('.checkbox-bloqueio').forEach(checkbox => {
         checkbox.addEventListener('click', (event) => {
-            event.stopPropagation(); 
+            event.stopPropagation(); // Impede que o clique no checkbox acione o evento de clique do dia
         });
     });
 
+    // Lógica de Interceptação de Bloqueio
 btnBloquearTrigger.addEventListener('click', (event) => {
     event.preventDefault();
 
@@ -239,6 +255,7 @@ btnBloquearTrigger.addEventListener('click', (event) => {
 
     const diasComEventos = [];
 
+    // 1. Encontrar dias selecionados que têm eventos
     diasSelecionadosCheckboxes.forEach(checkbox => {
         const diaElemento = checkbox.closest('.dia.mensal');
         const eventosJson = diaElemento.getAttribute('data-eventos');

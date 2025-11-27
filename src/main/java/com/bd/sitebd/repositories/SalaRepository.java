@@ -11,9 +11,11 @@ import java.util.List;
 @Repository
 public interface SalaRepository extends JpaRepository<Sala, Long> {
 
-    List<Sala> findByAtivaTrue(); 
+    // Personalizações úteis
 
-    List<Sala> findByTipo(TipoSala tipo);
+    List<Sala> findByAtivaTrue(); // Listar apenas salas ativas
 
-    List<Sala> findByRecursosContaining(Recurso recurso);
+    List<Sala> findByTipo(TipoSala tipo); // Filtrar por tipo de sala
+
+    List<Sala> findByRecursosContaining(Recurso recurso); // Buscar salas com recurso específico (ex: "PROJETOR")
 }

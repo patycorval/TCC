@@ -26,7 +26,7 @@ public class DiaBloqueadoService {
 
     @Transactional
     public void desbloquearDia(LocalDate data) {
-        diaBloqueadoRepository.deleteByData(data); 
+        diaBloqueadoRepository.deleteByData(data); // Usando um método de exclusão direta
     }
 
     public List<LocalDate> buscarDiasBloqueadosNoMes(YearMonth ym) {

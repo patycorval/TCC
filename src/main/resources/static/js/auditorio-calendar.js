@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const usuarioLogadoEmail = document.body.getAttribute('data-usuario-logado');
 
+    // Referências aos elementos
     const modalDiaView = document.getElementById('modal-dia-view');
     const modalReservaForm = document.getElementById('overlay-reserva');
     const modalDiaTitulo = document.getElementById('modal-dia-titulo');
@@ -10,14 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const campoDataFormOculto = document.getElementById('dataEvento'); 
     const campoDataFormDisplay = document.getElementById('dataEventoDisplay'); 
 
+    // Botões
     const btnAbrirFormReserva = document.getElementById('btn-abrir-form-reserva');
     const btnVoltarListagem = document.getElementById('btn-voltar-listagem');
     const btnFecharView = document.getElementById('fechar-modal-view');
     const btnFecharForm = document.getElementById('fechar-modal-reserva');
 
+    // Função para formatar a hora (se o backend enviar como array)
     const formatarHora = (horaInput) => {
         if (typeof horaInput === 'string') {
-            return horaInput.substring(0, 5); 
+            return horaInput.substring(0, 5); // Retorna HH:mm se já for string
         }
         if (Array.isArray(horaInput) && horaInput.length >= 2) {
             const hora = horaInput[0].toString().padStart(2, '0');
@@ -27,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return '00:00';
     };
     
+    // Listeners para fechar e alternar entre os modais
     const fecharTodosModais = () => {
         modalDiaView.style.display = 'none';
         modalReservaForm.style.display = 'none';
@@ -53,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalReservaForm.style.display = 'flex';
     });
 
+    // Listener principal para os dias do calendário
     document.querySelectorAll('.dia.mensal:not(.vazio, .bloqueado, .indisponivel)').forEach(diaElemento => {
         diaElemento.addEventListener('click', (event) => {
             if (event.target.closest('.btn-solicitar-reserva')) {
@@ -155,9 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     window.addEventListener('click', (event) => {
+        // Se o alvo do clique for o overlay do modal de visualização, fecha
         if (event.target === modalDiaView) {
             fecharTodosModais();
         }
+        // Se o alvo do clique for o overlay do modal de formulário, fecha
         if (event.target === modalReservaForm) {
             fecharTodosModais();
         }

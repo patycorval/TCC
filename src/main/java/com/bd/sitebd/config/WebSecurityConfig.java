@@ -44,6 +44,7 @@ public class WebSecurityConfig {
         http
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
+                        // 1. REGRAS MAIS ESPECÍFICAS PRIMEIRO:
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**").permitAll() // Recursos
                                                                                                     // estáticos
                         .requestMatchers("/login", "/register").permitAll() // Páginas públicas

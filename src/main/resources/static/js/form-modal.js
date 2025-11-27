@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     botoesSolicitacao.forEach(botao => {
         botao.addEventListener('click', (event) => {
+            // Garante que o evento de clique padrão não ocorra
             event.preventDefault();
             
             overlay.style.display = 'flex';
@@ -19,14 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const mes = urlParams.get('mes') || (new Date().getMonth() + 1);
 
+            // Formata a data para o padrão YYYY-MM-DD
             const diaFormatado = diaNumero.padStart(2, '0');
             const mesFormatado = mes.toString().padStart(2, '0');
             const dataFormatada = `${ano}-${mesFormatado}-${diaFormatado}`;
             
+            // Define o valor no campo de data do formulário
             campoData.value = dataFormatada;
         });
     });
 
+    // Função para fechar o modal
     const fecharModal = () => {
         overlay.style.display = 'none';
     };
@@ -34,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     botaoFechar.addEventListener('click', fecharModal);
 
     overlay.addEventListener('click', (event) => {
+        // Fecha o modal apenas se o clique for no fundo escuro 
         if (event.target.id === 'overlay-reserva') {
             fecharModal();
         }

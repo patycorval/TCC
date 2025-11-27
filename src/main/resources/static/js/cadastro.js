@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function (event) {
             erroClienteDiv.style.display = 'none'; 
 
+            // Validação de senha
             if (inputSenha.value !== inputConfirmarSenha.value) {
                 event.preventDefault(); 
                 erroClienteDiv.innerText = 'As senhas não conferem!'; 
