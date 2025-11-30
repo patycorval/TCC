@@ -86,34 +86,44 @@ public class SalaService {
         return salaRepository.save(sala);
     }
 
+    // FILTRO
+
    public List<Sala> getSalasFiltradas(String andar, String recurso, String tiposala,
                                           LocalDate data, LocalTime horaInicio, LocalTime horaFim) {
+        // Pega TODAS as salas do banco
         List<Sala> todasAsSalas = salaRepository.findAll();
 
+        // Aplica os filtros e retorna a lista resultante
+        // 2. Aplica os filtros estáticos (andar, tipo, recurso)
         List<Sala> salasFiltradas = todasAsSalas.stream()
                 .filter(sala -> andar == null || andar.isEmpty() || (sala.getLocalizacao() != null && sala.getLocalizacao().startsWith(andar)))
                 .filter(sala -> tiposala == null || tiposala.isEmpty() || sala.getTipoSala().name().equals(tiposala))
                 .filter(sala -> recurso == null || recurso.isEmpty() || sala.getRecursosAsString().contains(recurso))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); // Coleta a lista aqui
 
+        // 3. Se não houver filtro de data/hora, retorna a lista filtrada por estáticos
         if (data == null || horaInicio == null || horaFim == null) {
             return salasFiltradas;
         }
 
+        // 4. Se houver filtro de data/hora, verifica a disponibilidade
         List<Sala> salasDisponiveis = new ArrayList<>();
         
         for (Sala sala : salasFiltradas) {
+            // Cria uma reserva "fictícia" para usar a lógica de verificação
             Reserva dummyReserva = new Reserva();
             dummyReserva.setNumero(sala.getNumero());
             dummyReserva.setData(data);
             dummyReserva.setHora(horaInicio);
             dummyReserva.setHoraFim(horaFim);
 
+            // Re-usa a lógica de conflito que você já criou no ReservaService
+            // Se NÃO tem conflito, a sala está disponível
             if (!reservaService.temConflito(dummyReserva)) {
                 salasDisponiveis.add(sala);
             }
         }
         
-        return salasDisponiveis; 
+        return salasDisponiveis; // Retorna apenas as salas disponíveis
     }
 }

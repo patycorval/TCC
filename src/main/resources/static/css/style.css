@@ -70,6 +70,7 @@ h3{
     min-height: -webkit-fill-available;
     text-align: center;
 }  */
+ 
 
 .div-reservar img {
     width: 100%;
@@ -258,6 +259,11 @@ a.d-flex.align-items-center.me-md-auto:hover .logo-cps {
 .nav-pills .nav-link.active {
     background-color: #c30000; 
     color: white;
+}
+.nav-pills .nav-link:hover,
+.nav-pills .nav-link:focus,
+.nav-pills .nav-link:active {
+    color: white !important;
 }
 @media (max-width: 500px) {
     .header {
