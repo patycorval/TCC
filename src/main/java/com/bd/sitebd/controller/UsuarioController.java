@@ -52,7 +52,13 @@ public class UsuarioController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime horaFimFiltro,
             Model model) {
 
-        List<Sala> salasFiltradas = salaService.getSalasFiltradas(andar, recurso, tiposala, dataFiltro,
+        String andarBusca = andar;
+
+        if ("0".equals(andar)) {
+            andarBusca = "Térreo";
+        }
+
+        List<Sala> salasFiltradas = salaService.getSalasFiltradas(andarBusca, recurso, tiposala, dataFiltro,
                 horaInicioFiltro, horaFimFiltro);
 
         List<Sala> salasTerreo = salasFiltradas.stream()
@@ -190,7 +196,7 @@ public class UsuarioController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
         }
-       
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));

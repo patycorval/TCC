@@ -217,11 +217,13 @@
               th:if="${sala.imagemUrl != null}"
               th:src="${sala.imagemUrl}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <img
               th:unless="${sala.imagemUrl != null}"
               th:src="@{/img/sala_padrao.jpg}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <h3 th:text="${sala.numero}">Tipo e Número</h3>
             <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
@@ -266,11 +268,13 @@
               th:if="${sala.imagemUrl != null}"
               th:src="${sala.imagemUrl}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <img
               th:unless="${sala.imagemUrl != null}"
               th:src="@{/img/sala_padrao.jpg}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <h3 th:text="${sala.numero}">Tipo e Número</h3>
             <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
@@ -316,11 +320,13 @@
               th:if="${sala.imagemUrl != null}"
               th:src="${sala.imagemUrl}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <img
               th:unless="${sala.imagemUrl != null}"
               th:src="@{/img/sala_padrao.jpg}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <h3 th:text="${sala.numero}">Tipo e Número</h3>
             <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
@@ -366,11 +372,13 @@
               th:if="${sala.imagemUrl != null}"
               th:src="${sala.imagemUrl}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <img
               th:unless="${sala.imagemUrl != null}"
               th:src="@{/img/sala_padrao.jpg}"
               th:alt="'Imagem da sala ' + ${sala.numero}"
+              loading="lazy"
             />
             <h3 th:text="${sala.numero}">Tipo e Número</h3>
             <p th:text="'Capacidade: ' + ${sala.capacidade} + ' alunos'">
