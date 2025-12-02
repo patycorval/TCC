@@ -81,8 +81,9 @@
                   <td th:text="${#temporals.format(reserva.data, 'dd/MM/yyyy')}"></td>
                   <td th:text="${#temporals.format(reserva.hora, 'HH:mm') + ' - ' + #temporals.format(reserva.horaFim, 'HH:mm')}"></td>
                   <td sec:authorize="hasRole('ADMIN')" th:text="${reserva.nome}"></td>
+                  <!-- /*******************************************/ -->
                   <td>
-                    <span th:class="'badge bg-' + ${reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).APROVADA ? 'success' : (reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).PENDENTE ? 'warning text-dark' : 'secondary')}"
+                    <span th:class="'badge bg-' + ${reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).APROVADA ? 'success' : (reserva.status == T(com.bd.sitebd.model.enums.StatusReserva).PENDENTE ? 'warning text-dark' : 'danger')}"
                           th:text="${reserva.status.displayName}"></span>
                   </td>
                   <td>

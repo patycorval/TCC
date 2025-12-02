@@ -3,15 +3,14 @@ package com.bd.sitebd.repositories;
 import com.bd.sitebd.model.Reserva;
 import com.bd.sitebd.model.enums.StatusReserva;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query; // Necessário para a consulta customizada
-import org.springframework.data.repository.query.Param; // Necessário para a consulta customizada
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
-        // --- MÉTODOS QUE VOCÊ JÁ TINHA (MANTIDOS) ---
         List<Reserva> findByNumeroAndData(String numero, LocalDate data);
 
         List<Reserva> findByStatus(StatusReserva status);
